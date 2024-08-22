@@ -1,0 +1,15 @@
+.g-bg {
+    background: linear-gradient(40deg, var(--color-bg1), var(--color-bg2));
+}
+
+/* styles for Header */
+header {
+    position: relative;
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.8);
+    /* Легкое размытие для читабельности */
+    backdrop-filter: blur(10px);
+}
+
+@import './fonts.scss';
+
