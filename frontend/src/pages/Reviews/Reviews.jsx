@@ -1,8 +1,13 @@
 import React from 'react'
+import Container from "@/components/ui/Container";
 
 const Reviews = () => {
   return (
-    <div>Reviews</div>
+    <>
+      <Container>
+        <div>Reviews</div>
+      </Container>
+    </>
   )
 }
 

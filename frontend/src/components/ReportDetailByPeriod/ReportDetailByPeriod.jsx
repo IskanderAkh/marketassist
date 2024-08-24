@@ -2,12 +2,15 @@ import React, { useState } from 'react';
 import ApiInput from '../APIINPUT/ApiInput';
 import ReportTable from '../ReportTable/ReportTable';
 import useFetchData from '../../hooks/useFetchData';
+import DateRangePicker from '../DateRangePicker/DateRangePicker';
 
 const ReportDetailByPeriod = () => {
     const [apiKey, setApiKey] = useState('');
+    const [dateRange, setDateRange] = useState([null, null]);
     const [fetchData, setFetchData] = useState(false);
 
-    const { data, isLoading, groupedData, handleCostChange } = useFetchData(apiKey, fetchData);
+    const [startDate, endDate] = dateRange;
+    const { data, isLoading, groupedData, handleCostChange } = useFetchData(apiKey, fetchData, startDate, endDate);
 
     const handleFetchData = () => {
         setFetchData(true);
@@ -15,8 +18,11 @@ const ReportDetailByPeriod = () => {
 
     return (
         <div>
-            <ApiInput apiKey={apiKey} setApiKey={setApiKey} handleFetchData={handleFetchData} />
-            {isLoading && <div>Loading....</div>}
+            <div className='flex items-center mb-10 gap-4'>
+                <DateRangePicker dateRange={dateRange} setDateRange={setDateRange} />
+                <ApiInput apiKey={apiKey} setApiKey={setApiKey} handleFetchData={handleFetchData} />
+            </div>
+            {isLoading && <div>Загрузка....</div>}
             {!isLoading && <ReportTable groupedData={groupedData} handleCostChange={handleCostChange} />}
         </div>
     );

@@ -1,35 +1,28 @@
 import { useQuery } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import * as XLSX from 'xlsx';
 
-const useFetchData = (apiKey, fetchData) => {
-    const url = 'https://statistics-api.wildberries.ru/api/v5/supplier/reportDetailByPeriod';
-    const params = {
-        dateFrom: '2024-05-01',
-        dateTo: '2024-05-30',
-        rrdid: ''
-    };
+const useFetchData = (apiKey, fetchData, dateFrom, dateTo) => {
+    const url = '/api/report/report-detail'; // Backend endpoint
 
     const { data, isLoading } = useQuery({
-        queryKey: ['sold', fetchData],
+        queryKey: ['sold', apiKey, fetchData, dateFrom, dateTo],
         queryFn: async () => {
-            if (!fetchData) return;
+            if (!fetchData || !apiKey || !dateFrom || !dateTo) return [];
             try {
-                const res = await axios.get(url, {
-                    headers: {
-                        'Authorization': apiKey,
-                        'Content-Type': 'application/json'
-                    },
-                    params: params
+                const res = await axios.post(url, {
+                    apiKey,
+                    dateFrom,
+                    dateTo,
                 });
-                console.log(res.data);
                 return res.data;
             } catch (error) {
-                console.error(error);
+                console.error('Error fetching data:', error);
                 throw error;
             }
         },
-        enabled: fetchData,
+        enabled: fetchData && !!apiKey && !!dateFrom && !!dateTo,
     });
 
     const [groupedData, setGroupedData] = useState([]);
@@ -50,9 +43,7 @@ const useFetchData = (apiKey, fetchData) => {
                             nm_id: 0,
                         };
                     }
-                    item.delivery_rub > 0
-                        ? acc[barcode].logisticsCost += Number(item.delivery_rub)
-                        : acc[barcode].logisticsCost += Number(item.delivery_rub * -1);
+                    acc[barcode].logisticsCost += Math.abs(Number(item.delivery_rub));
 
                 } else if (item.supplier_oper_name === "Продажа") {
                     if (!acc[barcode]) {
@@ -69,15 +60,15 @@ const useFetchData = (apiKey, fetchData) => {
 
                     acc[barcode].totalPrice += Number(item.retail_amount);
                     acc[barcode].quantity += Number(item.quantity);
-                    acc[barcode].checkingAccount += Number(item.retail_amount)
-                        - acc[barcode].logisticsCost
-                        - (Number(item.retail_amount) * 0.07);
+                    acc[barcode].checkingAccount +=
+                        Number(item.retail_amount) -
+                        acc[barcode].logisticsCost -
+                        Number(item.retail_amount) * 0.07;
                     acc[barcode].nm_id = item.nm_id;
                 }
 
                 return acc;
             }, {});
-            console.log(grouped);
             setGroupedData(Object.values(grouped));
         }
     }, [data]);
@@ -89,17 +80,58 @@ const useFetchData = (apiKey, fetchData) => {
                     ? {
                         ...item,
                         productCost: Number(cost),
-                        checkingAccount: item.totalPrice 
-                            - item.logisticsCost
-                            - (item.totalPrice * 0.07)
-                            - (Number(cost) * item.quantity)
+                        checkingAccount:
+                            item.totalPrice -
+                            item.logisticsCost -
+                            item.totalPrice * 0.07 -
+                            Number(cost) * item.quantity,
                     }
                     : item
             )
         );
     };
+    const handleFileUpload = (file) => {
+        const reader = new FileReader();
 
-    return { data, isLoading, groupedData, handleCostChange };
+        reader.onload = (event) => {
+            const data = new Uint8Array(event.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+
+            const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+            // Extract barcode and cost price
+            const extractedData = jsonData.slice(1).map(row => {
+                const barcode = row[0];
+                let costPrice = row[1];
+                console.log(barcode, "=", costPrice);
+
+                // Ensure costPrice is a string before trying to replace
+                if (typeof costPrice === 'number') {
+                    costPrice = costPrice.toFixed(2);
+                } else if (typeof costPrice === 'string') {
+                    costPrice = costPrice.replace(',', '.');
+                } else {
+                    costPrice = null;
+                }
+
+                return {
+                    barcode,
+                    costPrice: parseFloat(costPrice)
+                };
+            });
+
+            // Update the table with the new cost prices
+            extractedData.forEach(({ barcode, costPrice }) => {
+                if (!isNaN(costPrice)) {
+                    handleCostChange(barcode, costPrice);
+                }
+            });
+        };
+
+        reader.readAsArrayBuffer(file);
+    };
+    return { data, isLoading, groupedData, handleCostChange, handleFileUpload };
 };
 
 export default useFetchData;
