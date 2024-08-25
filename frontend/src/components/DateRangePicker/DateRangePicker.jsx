@@ -12,16 +12,16 @@ const DateRangePicker = ({ dateRange, setDateRange }) => {
     };
 
     return (
-        <div className='flex items-center border pr-2'>
+        <div className='flex items-center border pr-2 max-w-60 w-full'>
             <DatePicker
                 selectsRange
                 startDate={startDate}
                 endDate={endDate}
                 onChange={handleDateChange}
                 dateFormat="yyyy/MM/dd"
-                className="py-2 pl-2 outline-none cursor-pointer"
+                className="py-2 pl-2 outline-none cursor-pointer "
                 placeholderText="Выберите период"
-                locale={ru}  // Set the locale to Russian
+                locale={ru} 
             />
             <img src="/calendar.svg" alt="" />
         </div>

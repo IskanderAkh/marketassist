@@ -70,6 +70,7 @@ const useFetchData = (apiKey, fetchData, dateFrom, dateTo) => {
                 return acc;
             }, {});
             setGroupedData(Object.values(grouped));
+            
         }
     }, [data]);
 

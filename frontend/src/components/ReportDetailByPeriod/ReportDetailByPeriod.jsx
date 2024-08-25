@@ -18,12 +18,13 @@ const ReportDetailByPeriod = () => {
 
     return (
         <div>
-            <div className='flex items-center mb-10 gap-4'>
+            <div className='flex mb-10 gap-4 flex-col '>
                 <DateRangePicker dateRange={dateRange} setDateRange={setDateRange} />
                 <ApiInput apiKey={apiKey} setApiKey={setApiKey} handleFetchData={handleFetchData} />
             </div>
             {isLoading && <div>Загрузка....</div>}
-            {!isLoading && <ReportTable groupedData={groupedData} handleCostChange={handleCostChange} />}
+            {!isLoading && <ReportTable groupedData={groupedData} handleCostChange={handleCostChange} fetchData={fetchData} />
+        }
         </div>
     );
 };
