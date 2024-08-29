@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import connectMongoDB from './db/connectMongoDB.js';
 import authRoutes from './routes/auth.routes.js';
+import apiKeyRoute from './routes/apiKey.routes.js';
 import reviewsRouter from './routes/reviews.routes.js'
 import reportRouter from './routes/report.routes.js'
 import OpenAI from 'openai';
@@ -25,7 +26,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/auth', authRoutes);
 app.use('/api/reviews', reviewsRouter)
 app.use('/api/report', reportRouter);
-
+app.use('/api/user', apiKeyRoute)
 
 app.listen(PORT, () => {
   console.log('Server is running on port', PORT);

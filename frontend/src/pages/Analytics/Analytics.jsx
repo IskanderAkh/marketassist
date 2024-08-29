@@ -4,7 +4,7 @@ const Analytics = () => {
   return (
     <>
         <Container>
-          <div className="">Analytics</div>
+          <div className="">Калькулятор прибыли AUTH PROBLEM</div>
         </Container>
     </>
   );

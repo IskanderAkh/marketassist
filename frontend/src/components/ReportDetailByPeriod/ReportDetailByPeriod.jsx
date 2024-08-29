@@ -8,7 +8,6 @@ const ReportDetailByPeriod = () => {
     const [apiKey, setApiKey] = useState('');
     const [dateRange, setDateRange] = useState([null, null]);
     const [fetchData, setFetchData] = useState(false);
-
     const [startDate, endDate] = dateRange;
     const { data, isLoading, groupedData, handleCostChange } = useFetchData(apiKey, fetchData, startDate, endDate);
 

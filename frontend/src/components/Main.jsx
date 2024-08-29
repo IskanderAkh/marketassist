@@ -7,6 +7,7 @@ import Reviews from '../pages/Reviews/Reviews'
 import AppReviews from '../pages/Reviews/AppReviews'
 import Home from '../pages/Home/Home'
 import Analytics from '../pages/Analytics/Analytics'
+import Contact from '../pages/Contact/Contact'
 
 const Main = () => {
     return (
@@ -19,6 +20,7 @@ const Main = () => {
                 <Route path='/reviews' element={<Reviews />} />
                 <Route path='/app-reviews' element={<AppReviews />} />
                 <Route path='/profile' element={<Profile />} />
+                <Route path='/contact' element={<Contact />} />
             </Routes>
         </div>
     )

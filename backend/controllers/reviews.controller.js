@@ -2,6 +2,7 @@ import fs from 'fs';
 import axios from 'axios';
 import OpenAI from 'openai';
 import dotenv from 'dotenv';
+import { log } from 'console';
 dotenv.config();
 
 const WB_API_BASE_URL = 'https://feedbacks-api.wildberries.ru/api/v1';
@@ -12,14 +13,13 @@ const openai = new OpenAI({
 
 export const getReviews = async (req, res) => {
   try {
-    const { page = 1, size = 10 } = req.query;
-    const { apiKey } = req.body
-
+    const apiKey = req.headers.authorization;
+        
     const { data } = await axios.get(`https://feedbacks-api.wildberries.ru/api/v1/feedbacks`, {
       headers: { 'Authorization': apiKey },
       params: {
         isAnswered: true,
-        take: 10,
+        take: 5000,
         skip: 0
       }
     });
