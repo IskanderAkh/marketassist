@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, Navigate, useLocation } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from 'react-hot-toast';
 
@@ -27,27 +27,31 @@ const Login = () => {
         const data = await res.json();
 
         if (!res.ok) {
-          throw new Error(data.error || "Something went wrong");
+          throw new Error(data.error || "Что-то пошло не так");
         }
       } catch (error) {
         throw new Error(error);
       }
     },
     onSuccess: () => {
-      toast.success("Login successful");
+      toast.success("Вы вошли в систему");
       queryClient.invalidateQueries({ queryKey: ["authUser"] });
       setIsSignIn(true);
-      location.pathname('/')
+      setTimeout(() => {
+        formData.email = "";
+        formData.password = "";
+      }, 500);
+      return <Navigate to="/" replace />;
     },
+    onError: () => {
+      toast.error("Проверьте правильность введенных данных")
+    }
   });
 
   const handleSubmit = (e) => {
     e.preventDefault();
     loginMutation(formData);
-    setTimeout(() => {
-      formData.email = "";
-      formData.password = "";
-    }, 500);
+
   };
 
   const handleInputChange = (e) => {
@@ -60,7 +64,7 @@ const Login = () => {
         <div className='flex flex-col gap-4 mb-8 mt-32'>
           <input
             type="email"
-            placeholder="Email"
+            placeholder="E-mail"
             name='email'
             className="form-container-input bg-transparent"
             onChange={handleInputChange}
@@ -69,20 +73,17 @@ const Login = () => {
           <input
             type="password"
             name='password'
-            placeholder="Password"
+            placeholder="Пароль"
             className="form-container-input mt-10 bg-transparent"
             onChange={handleInputChange}
             value={formData.password} />
           <span className='border-b border-gray-300'></span>
         </div>
-        <div className="remember-me">
-          <input type="checkbox" id="remember" />
-          <label htmlFor="remember">Remember me</label>
-        </div>
+
         <button className="submit-button bg-black text-white w-full py-4 mt-16">{isPending ? "Loading..." : "Sign in"}</button>
         <div href="/forgot-password" className="forgot-password text-center">
           <Link to="/forgot-password">
-            Have you forgotten your password?
+            Забыли свой пароль?
           </Link>
         </div>
       </form>

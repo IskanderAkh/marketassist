@@ -1,6 +1,6 @@
 import Container from "@/components/ui/Container";
 
-const Analytics = () => {
+const Calculator = () => {
   return (
     <>
         <Container>
@@ -10,4 +10,4 @@ const Analytics = () => {
   );
 }
 
-export default Analytics
+export default Calculator

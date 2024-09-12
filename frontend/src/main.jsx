@@ -12,7 +12,7 @@ const queryClient = new QueryClient({
 		},
 	},
 })
-;
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <BrowserRouter>
     <QueryClientProvider client={queryClient}>

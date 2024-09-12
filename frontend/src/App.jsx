@@ -6,28 +6,30 @@ import { Toaster } from 'react-hot-toast';
 import Main from './components/Main';
 
 function App() {
+ 
+
   const { data: authUser, isLoading, isError } = useQuery({
     queryKey: ["authUser"],
     queryFn: async () => {
       try {
         const res = await axios.get('/api/auth/me')
         const response = res.data
-        console.log(response);
-
-        return res.data
+        return response
       } catch (error) {
         console.log(error);
       }
     }
   })
+  
   return (
-    <div className=''>
-      {/* <Navbar/> */}
-      <Header />
-      <Main />
-      <Footer />
+    <>
+      <div className='flex min-h-screen flex-col'>
+        <Header />
+        <Main />
+        <Footer />
+      </div>
       <Toaster />
-    </div>
+    </>
   );
 }
 

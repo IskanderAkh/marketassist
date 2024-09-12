@@ -1,91 +1,74 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import React, { useState } from "react";
 import RatingStars from "../RatingStars/RatingStars";
+import toast from "react-hot-toast";
 
-const ReviewsTable = ({responses}) => {
-  const [apiKey, setApiKey] = useState('');
-  const [reviews, setReviews] = useState([]);
-  const [selectedProductIds, setSelectedProductIds] = useState([])
+
+const ReviewsTable = ({ apiKey, responses, isError, isLoading, reviews, marketName, contacts }) => {
+  const { data: authUser } = useQuery({ queryKey: ["authUser"] })
+  const [selectedReviewsIds, setselectedReviewsIds] = useState([])
   const [selectAll, setSelectAll] = useState(false);
-
-
-  const handleApiKeyChange = (event) => {
-    setApiKey(event.target.value);
-  }
-
-  const { mutate: fetchReviews, isLoading, isError } = useMutation({
-    mutationFn: async () => {
-      const res = await axios.get('/api/reviews/get-reviews', {
-        headers: { Authorization: `${apiKey}` },
-      });
-      return res.data.data.feedbacks;
-    },
-    onSuccess: (data) => {
-      console.log(data);
-
-      setReviews(data);
-    },
-    onError: (error) => {
-      console.error('Ошибка при получении отзывов:', error);
-    },
-  });
-
-  const handleGetReviews = () => {
-    fetchReviews();
-  }
+  const queryClient = useQueryClient();
 
   const handleSelectAll = (event) => {
     const checked = event.target.checked;
     setSelectAll(checked);
     if (checked) {
       const allProductIds = reviews.map((review) => review.id);
-      setSelectedProductIds(allProductIds);
+      setselectedReviewsIds(allProductIds);
     } else {
-      setSelectedProductIds([]);
+      setselectedReviewsIds([]);
     }
   }
 
   const handleRowSelect = (event, productId) => {
     const checked = event.target.checked;
     if (checked) {
-      setSelectedProductIds((prev) => [...prev, productId]);
+      setselectedReviewsIds((prev) => [...prev, productId]);
     } else {
-      setSelectedProductIds((prev) => prev.filter((id) => id !== productId));
+      setselectedReviewsIds((prev) => prev.filter((id) => id !== productId));
     }
+  }
+  const { mutate: setAnswers, isPending, isError: error } = useMutation({
+    mutationFn: async () => {
+      try {
+        const res = await axios.patch('/api/reviews/respond-to-all-reviews', {
+          apiKey,
+          reviewIds: selectedReviewsIds,
+          responses,
+          marketName,
+          contacts,
+        })
+        console.log(res.data);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    onSuccess: () => {
+      toast.success('Ответы на отзывы отправлены')
+      queryClient.invalidateQueries({ queryKey: ['reviews'] })
+    }
+  })
+  const answerOnReviews = () => {
+    if (!marketName || !contacts) {
+      toast.error("Ввведите название магазина и контакты!")
+      return;
+    }
+    setAnswers()
   }
   return (
     <div>
-      <div className="flex justify-between items-center mt-10 w-full mb-8">
-        <div className="flex-1">
-          <input
-            type="text"
-            placeholder="Введите API ключ"
-            className="border p-2 mr-2"
-            onChange={handleApiKeyChange}
-            value={apiKey}
-          />
-          <button
-            className="bg-blue-500 text-white p-2"
-            onClick={handleGetReviews}
-            disabled={isLoading}
-          >
-            {isLoading ? 'Loading...' : 'Submit'}
-          </button>
-        </div>
-        <div className="flex items-center justify-end gap-3 flex-1 w-full">
-          <div className="w-1/2">
-            <h2>Название магазина</h2>
-            <input type="text" placeholder="Введите Название магазина" className="border p-2 mr-2 w-full" />
-          </div>
-          <div className=" w-1/2">
-            <h2>Контакты</h2>
-            <input type="text" placeholder="Введите контакты email или номер телефона" className="border p-2 mr-2 w-full" />
-          </div>
-        </div>
+
+
+      {/* Ответ на выбранные отзывы */}
+
+      <div className="flex w-full items-end justify-end">
+        <button className="btn btn-primary self-end" title="Ответить на выбранные отзывы" onClick={answerOnReviews} disabled={selectedReviewsIds.length === 0 || !apiKey}>Ответить на отзывы</button>
       </div>
+
+
       <div className="overflow-x-auto">
-        {isError && <p>Error fetching reviews.</p>}
         {isLoading && <p>Загрузка...</p>}
         {!isLoading && <table className="table">
           <thead>
@@ -108,7 +91,7 @@ const ReviewsTable = ({responses}) => {
             </tr>
           </thead>
           <tbody>
-            {reviews.length > 0 ? (
+            {(reviews?.length > 0) && !isError ? (
               reviews.map((review, i) => (
                 <tr key={i}>
                   <th>
@@ -116,7 +99,7 @@ const ReviewsTable = ({responses}) => {
                       <input
                         type="checkbox"
                         className="checkbox"
-                        checked={selectedProductIds.includes(review.id)}
+                        checked={selectedReviewsIds.includes(review.id)}
                         onChange={(e) => handleRowSelect(e, review.id)}
                       />
                     </label>
@@ -142,7 +125,7 @@ const ReviewsTable = ({responses}) => {
                 </tr>
               ))
             ) : (
-              <p>No reviews available.</p>
+              <p>Нет подходящих отзывов.</p>
             )}
           </tbody>
         </table>}

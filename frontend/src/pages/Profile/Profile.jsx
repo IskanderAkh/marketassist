@@ -3,22 +3,26 @@ import AuthorizedProfile from "@/components/Profile/AuthorizedProfile/Authorized
 import UnauthorizedProfile from "@/components/Profile/UnauthorizedProfile/UnauthorizedProfile";
 import Container from "@/components/ui/Container";
 import { useQuery } from "@tanstack/react-query";
+import UnverifiedUser from "../../components/Profile/UnverifiedUser/UnverifiedUser";
+import LoadingPage from "../../components/LoadingPage/LoadingPage";
 
 export default function Profile() {
   const { data: authUser, isLoading } = useQuery({ queryKey: ['authUser'] });
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <LoadingPage />
   }
 
   return (
     <section className="py-8">
       <Container>
-        <div className="text-2xl font-semibold mb-4 mx-auto">Profile</div>
-        {authUser ? (
-          <AuthorizedProfile firstName={authUser?.firstName} />
-        ) : (
+        {/* Conditional Rendering */}
+        {!authUser ? (
           <UnauthorizedProfile />
+        ) : !authUser.isVerified ? (
+          <UnverifiedUser authUser={authUser} />
+        ) : (
+          <AuthorizedProfile authUser={authUser} />
         )}
       </Container>
     </section>

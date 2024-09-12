@@ -13,6 +13,7 @@ export default {
       {
         light: {
           ...daisyUIThemes["light"],
+          
         }
       },
       {

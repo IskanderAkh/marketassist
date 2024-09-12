@@ -3,7 +3,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { ru } from 'date-fns/locale'; // Import Russian locale
 
-const DateRangePicker = ({ dateRange, setDateRange }) => {
+const DateRangePicker = ({ dateRange, setDateRange, authUser, hasAccess }) => {
     const [startDate, endDate] = dateRange;
 
     const handleDateChange = (dates) => {
@@ -21,7 +21,8 @@ const DateRangePicker = ({ dateRange, setDateRange }) => {
                 dateFormat="yyyy/MM/dd"
                 className="py-2 pl-2 outline-none cursor-pointer "
                 placeholderText="Выберите период"
-                locale={ru} 
+                locale={ru}
+                disabled={!authUser?.isVerified || !hasAccess }
             />
             <img src="/calendar.svg" alt="" />
         </div>

@@ -1,6 +1,7 @@
 import Container from "@/components/ui/Container";
 import { useEffect } from "react";
 import "./HomeDescription.scss";
+import { Link } from "react-router-dom";
 
 export default function HomeDescription() {
   useEffect(() => {
@@ -26,7 +27,7 @@ export default function HomeDescription() {
   }, []);
 
   return (
-    <section className="">
+    <section className="h-full">
       <div className="relative h-full w-full">
         <div className="text-container">
           <Container>
@@ -45,10 +46,10 @@ export default function HomeDescription() {
                 </h2>
 
                 <div className="flex items-center gap-4">
-                  <a className="btn btn-primary text-white">
+                  <Link to="/calculator" className="btn btn-primary text-white">
                     Попробовать
-                  </a>
-                  <a className="btn btn-wide btn-white">
+                  </Link>
+                  <a className="btn btn-wide btn-white" title="В разработке  In development">
                     Аналитика
                   </a>
                 </div>

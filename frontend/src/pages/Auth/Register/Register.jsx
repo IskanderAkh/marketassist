@@ -1,26 +1,27 @@
 import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
-import CountrySelect from "./CountrySelect";
+import { Navigate, useLocation } from "react-router-dom";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import "./register.scss";
 import toast from "react-hot-toast";
+import { FcCheckmark } from "react-icons/fc";
+import { FcCancel } from "react-icons/fc";
+import axios from "axios";
 
 const Register = () => {
+  const queryClient = useQueryClient();
+  const [showPass, setShowPass] = useState(false);
   const location = useLocation();
-  const [next, setNext] = useState(false);
-
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
     password: "",
     confirmpassword: "",
-    innOrOgrnip: "",
     companyName: "",
     phoneNumber: "",
   });
 
-  const { mutate: loginMutation, isPending, isError } = useMutation({
+  const { mutate: loginMutation, isPending } = useMutation({
     mutationFn: async (formData) => {
       try {
         const res = await fetch("/api/auth/signup", {
@@ -34,33 +35,21 @@ const Register = () => {
         const data = await res.json();
 
         if (!res.ok) {
-          throw new Error(data.error || "Something went wrong");
+          throw new Error(data.error || "Что-то пошло не так");
         }
       } catch (error) {
-        throw new Error(error.message || "Something went wrong");
+        throw new Error(error.message || "Что-то пошло не так");
       }
     },
     onSuccess: () => {
-      toast.success("Registration successful");
-      location.pathname = "/";
+      toast.success("Регистрация прошла успешно");
+      queryClient.invalidateQueries({ queryKey: ["authUser"] });
+      return <Navigate to="/profile" replace />;
+    },
+    onError: (error) => {
+      toast.error(error.message);
     },
   });
-
-  const goNext = () => {
-    if (
-      !formData.firstName ||
-      !formData.lastName ||
-      !formData.email ||
-      !formData.password ||
-      !formData.confirmpassword
-    ) {
-      toast.error("You need to fill all the blanks");
-    } else if (formData.password !== formData.confirmpassword) {
-      toast.error("Passwords do not match");
-    } else {
-      setNext(true);
-    }
-  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -70,173 +59,132 @@ const Register = () => {
     }));
   };
 
-  const handleCountryChange = (country) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      country,
-    }));
-  };
-
-  const validateInnOrOgrnip = (value) => {
-    if (value.length === 10 || value.length === 15) {
-      return true;
-    }
-    return false;
-  };
+  const handleShowPass = (e) => {
+    e.preventDefault()
+    setShowPass(!showPass);
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validateInnOrOgrnip(formData.innOrOgrnip)) {
-      toast.error("ИНН должен быть 10 символов, а ОГРНИП 15 символов");
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.password || !formData.confirmpassword) {
+      toast.error("Вам нужно заполнить все пробелы");
       return;
     }
 
+    if (formData.password !== formData.confirmpassword) {
+      toast.error("Пароли не совпадают");
+      return;
+    }
     try {
       loginMutation(formData);
       location.pathname = "/";
     } catch (error) {
-      console.error("Registration error:", error);
+      console.error("Ошибка регистрации:", error);
     }
   };
 
   return (
     <div className="form-container">
-      <form onSubmit={handleSubmit} className="overflow-hidden flex">
-        {!next && (
-          <div className={`flex flex-col gap-4 mt-10 registration-1 w-full`}>
-            <div className="flex">
-              <input
-                type="text"
-                name="firstName"
-                placeholder="First Name"
-                value={formData.firstName}
-                className="form-container-input bg-transparent"
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <span className="border-b border-gray-300"></span>
-            <div>
-              <input
-                type="text"
-                name="lastName"
-                placeholder="Last Name"
-                value={formData.lastName}
-                className="form-container-input bg-transparent"
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <span className="border-b border-gray-300"></span>
-            <div>
-              <input
-                type="email"
-                name="email"
-                placeholder="Email"
-                value={formData.email}
-                onChange={handleChange}
-                className="form-container-input bg-transparent"
-                required
-              />
-            </div>
-            <span className="border-b border-gray-300"></span>
-            <div>
-              <input
-                type="password"
-                name="password"
-                placeholder="Password"
-                value={formData.password}
-                onChange={handleChange}
-                className="form-container-input bg-transparent"
-                minLength={6}
-                required
-              />
-            </div>
-            <span className="border-b border-gray-300"></span>
-            <div>
-              <input
-                type="password"
-                name="confirmpassword"
-                placeholder="Confirm Password"
-                value={formData.confirmpassword}
-                onChange={handleChange}
-                className="form-container-input bg-transparent"
-                minLength={6}
-                required
-              />
-            </div>
-            <span className="border-b border-gray-300"></span>
-            {!next && (
-              <button
-                className="submit-button bg-black text-white w-full py-4 mt-16"
-                type="button"
-                onClick={goNext}
-              >
-                {isPending ? "Loading..." : "Next"}
-              </button>
-            )}
-          </div>
-        )}
+      <form onSubmit={handleSubmit} className="overflow-hidden flex flex-col gap-4 mt-10 w-full">
+        <div className="flex">
+          <input
+            type="text"
+            name="firstName"
+            placeholder="Имя"
+            value={formData.firstName}
+            className="form-container-input bg-transparent"
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <span className="border-b border-gray-300"></span>
+        <div>
+          <input
+            type="text"
+            name="lastName"
+            placeholder="Фамилия"
+            value={formData.lastName}
+            className="form-container-input bg-transparent"
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <span className="border-b border-gray-300"></span>
+        <div>
+          <input
+            type="email"
+            name="email"
+            placeholder="E-mail"
+            value={formData.email}
+            onChange={handleChange}
+            className="form-container-input bg-transparent"
+            required
+          />
+        </div>
+        <span className="border-b border-gray-300"></span>
+        <div className="flex">
+          <input
+            type={showPass ? "text" : "password"}
+            name="password"
+            placeholder="Пароль"
+            value={formData.password}
+            onChange={handleChange}
+            title="Пароль должен содержать не менее 6 символов, включая заглавные и строчные буквы, цифры и специальные символы"
+            className="form-container-input bg-transparent"
+            minLength={6}
+            required
 
-        {next && (
-          <div className={`flex flex-col gap-4 mt-10 registration-2 w-full`}>
-            <div>
-              <CountrySelect onCountryChange={handleCountryChange} />
+          />
+          <button onClick={handleShowPass} className="border-none outline-none"><img className="w-6 h-6" src={showPass ? './eyeClose.svg' : './eyeOpen.svg'} title={showPass ? "Скрыть пароль" : "Показать пароль"} alt="" /></button>
+        </div>
+        <span className="border-b border-gray-300"></span>
+        <div className="flex pr-4">
+          <input
+            type={showPass ? "text" : "password"}
+            name="confirmpassword"
+            placeholder="Подтвеждение пароля"
+            value={formData.confirmpassword}
+            onChange={handleChange}
+            className="form-container-input bg-transparent"
+            minLength={6}
+            required
+            title="Пароль должен содержать не менее 6 символов, включая заглавные и строчные буквы, цифры и специальные символы"
+
+          />
+          {
+            (formData.confirmpassword == formData.password && formData.password.length >= 6 && formData.confirmpassword.length >= 6) && <div>
+              <span className="" ><FcCheckmark />
+              </span>
             </div>
-            <span className="border-b border-gray-300"></span>
-            <div>
-              <input
-                type="number"
-                name="innOrOgrnip"
-                placeholder="Введите ИНН/ОГРНИП"
-                value={formData.innOrOgrnip}
-                onChange={handleChange}
-                className="form-container-input bg-transparent"
-                required
-              />
-            </div>
-            <span className="border-b border-gray-300"></span>
-            <div>
-              <input
-                type="number"
-                name="phoneNumber"
-                placeholder="Номер телефона"
-                value={formData.phoneNumber}
-                onChange={handleChange}
-                maxLength={15}
-                className="form-container-input bg-transparent"
-                required
-              />
-            </div>
-            <span className="border-b border-gray-300"></span>
-            <div>
-              <input
-                type="text"
-                name="companyName"
-                placeholder="Название компании"
-                value={formData.companyName}
-                onChange={handleChange}
-                className="form-container-input bg-transparent"
-                required
-              />
-            </div>
-            <span className="border-b border-gray-300"></span>
-            <button
-              className="submit-button border-primary border w-full py-4 bg-inherit"
-              type="button"
-              onClick={() => setNext(!next)}
-            >
-              {isPending ? "Loading..." : "Go Back"}
-            </button>
-            <button
-              className="submit-button bg-black text-white w-full py-4 mt-16"
-              type="submit"
-            >
-              {isPending ? "Loading..." : "Register"}
-            </button>
-          </div>
-        )}
+          }
+          {
+            (formData.confirmpassword !== formData.password) &&
+            <div title="Пароли не совпадают"><FcCancel /></div>
+          }
+        </div>
+
+        <span className="border-b border-gray-300"></span>
+        <div>
+          <input
+            type="tel"
+            name="phoneNumber"
+            placeholder="Номер телефона"
+            value={formData.phoneNumber}
+            onChange={handleChange}
+            maxLength={12}
+            className="form-container-input bg-transparent"
+            required
+          />
+
+        </div>
+        <span className="border-b border-gray-300"></span>
+        <button
+          className="submit-button bg-black text-white w-full py-4 mt-16"
+          type="submit"
+        >
+          {isPending ? "Загрузка..." : "Зарегистрироваться"}
+        </button>
       </form>
     </div>
   );

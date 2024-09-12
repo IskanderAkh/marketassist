@@ -11,7 +11,6 @@ const userSchema = new mongoose.Schema({
     },
     innOrOgrnip: {
         type: String,
-        required: true
     },
     phoneNumber: {
         type: String,
@@ -27,13 +26,58 @@ const userSchema = new mongoose.Schema({
         required: true,
         minLength: 6,
     },
-    apiKey: {
-        type: String,
+    allowedNumberOfBarcodes: {
+        type: Number,
+        default: 0,
     },
+    barcodes: [{
+        barcode: String,
+        costPrice: Number
+    }],
     companyName: {
         type: String,
-        required: true
-    }
+        default: ""
+    },
+    bankAccount: {
+        type: String,
+        default: ""
+    },
+    bic: {
+        type: String,
+        default: ""
+    },
+    subscribtionLvl: {
+        type: Number,
+        default: 0
+    },
+    isVerified: {
+        type: Boolean,
+        default: false,
+    },
+    resetPasswordToken: String,
+    resetPasswordExpiresAt: Date,
+    verificationToken: String,
+    verificationTokenExpiresAt: Date,
+    verificationTokenRequestedAt: { type: Date },
+    currentPlans: [{
+        plan: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Plan",
+            required: true,
+        },
+        startDate: {
+            type: Date,
+            required: true,
+            default: Date.now,
+        },
+        endDate: {
+            type: Date,
+            required: true
+        },
+        subscribtionLvl: Number,
+        name: String,
+
+    }]
 }, { timestamps: true })
 
 

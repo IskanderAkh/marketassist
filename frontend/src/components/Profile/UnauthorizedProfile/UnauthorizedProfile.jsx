@@ -5,11 +5,13 @@ import { Link } from "react-router-dom";
 const UnauthorizedProfile = () => {
   return (
     <div className="unauthorized-profile">
-      <h1>Unauthorized Access</h1>
-      <p>Please log in to access your profile.</p>
-      <button className="btn">
-        <Link to="/auth">Go Login</Link>
-      </button>
+      <h1>Несанкционированный доступ</h1>
+      <p>Пожалуйста, войдите в систему, чтобы получить доступ к вашему профилю.</p>
+      <Link to="/auth">
+        <button className="btn">
+          Войти в систему
+        </button>
+      </Link>
     </div>
   );
 };

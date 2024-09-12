@@ -12,7 +12,6 @@ const ReportTable = ({ groupedData, handleCostChange, hasFetchedData }) => {
 
     const calculateTotalFinalResult = () => {
         return groupedData
-            .filter(item => item.barcode)
             .reduce((total, item) => {
                 const finalResult = item.totalPrice
                     - (excelData[item.barcode] !== undefined ? excelData[item.barcode] : item.productCost) * item.quantity

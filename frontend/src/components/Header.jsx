@@ -1,28 +1,23 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { User } from "lucide-react";
-
 import Container from "@/components/ui/Container";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { useLocation } from "react-router-dom";
+import { useEffect } from "react";
 
 const Header = () => {
-  const location = useLocation()
+  const navigate = useNavigate();
   const { data: authUser, isLoading } = useQuery({
     queryKey: ["authUser"],
     queryFn: async () => {
       try {
         const res = await axios.get("/api/auth/me");
-        const response = res.data;
-        console.log(response);
-        return response;
+        return res.data;
       } catch (error) {
         console.log(error);
       }
     },
   });
-
-
 
   return (
     <header className="sticky top-0 z-50 w-full py-4 backdrop-blur bg-white">
@@ -35,9 +30,11 @@ const Header = () => {
           >
             Logo
           </Link>
+
           <div className="flex gap-14 header-links">
             <Link to="/" className={`${location.pathname === "/" ? "active" : ""}`}>Главная</Link>
-            <Link to={authUser ? "/app-analytics" : "/analytics"} className={`${location.pathname === "/app-analytics" || location.pathname === "/analytics" ? "active" : ""}`}>Калькулятор прибыли</Link>
+            {authUser && <Link to="/product-cost" className={`${location.pathname === "/product-cost" ? "active" : ""}`}>Стоимость продукта</Link>}
+            <Link to={authUser ? "/app-calculator" : "/calculator"} className={`${location.pathname === "/app-calculator" || location.pathname === "/calculator" ? "active" : ""}`}>Калькулятор прибыли</Link>
             <Link to={authUser ? "/app-reviews" : "/reviews"} className={`${location.pathname === "/app-reviews" || location.pathname === "/reviews" ? "active" : ""}`}>Отзывы</Link>
             <Link to="/contact" className={`${location.pathname === "/contact" ? "active" : ""}`}>Контакты</Link>
           </div>

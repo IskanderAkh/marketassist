@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ApiInput = ({ apiKey, setApiKey, handleFetchData }) => {
+const ApiInput = ({ apiKey, setApiKey, handleFetchData, authUser, hasAccess }) => {
 
     return (
         <div className="">
@@ -10,8 +10,10 @@ const ApiInput = ({ apiKey, setApiKey, handleFetchData }) => {
                 onChange={(e) => setApiKey(e.target.value)}
                 placeholder="Введите API ключ"
                 className="border p-2 mr-2"
+                disabled={!authUser?.isVerified || !hasAccess}
             />
-            <button onClick={handleFetchData} className="bg-blue-500 text-white p-2">
+            <button onClick={handleFetchData} className="btn btn-outline btn-info" disabled={!authUser?.isVerified || !hasAccess}
+            >
                 Загрузить данные
             </button>
         </div>

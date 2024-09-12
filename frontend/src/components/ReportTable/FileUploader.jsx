@@ -55,7 +55,7 @@ const FileUploader = ({ setExcelData, handleCostChange, groupedData }) => {
                 type="file"
                 accept=".xlsx"
                 onChange={handleFileChange}
-                className="border p-2"
+                className="file-input file-input-bordered w-full max-w-xs"
                 disabled={!groupedData.length}
             />
         </div>

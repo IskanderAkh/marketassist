@@ -32,7 +32,7 @@
 
     @font-face {
         font-family: "Dm Sans";
-        src: url(@/assets/fonts/Dmsans/DMSans-Bold.ttf);
+        src: url(@/assets/fonts/Dmsans/DMSans-Bold.ttf) format('truetype');
         font-weight: 700;
     }
 
@@ -44,7 +44,7 @@
 
     @font-face {
         font-family: "Dm Sans";
-        src: url(@/assets/fonts/Dmsans/DMSans-Regular.ttf);
+        src: url(@/assets/fonts/Dmsans/DMSans-Regular.ttf) format('truetype');
         font-weight: 400;
     }
 }

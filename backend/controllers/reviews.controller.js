@@ -2,7 +2,6 @@ import fs from 'fs';
 import axios from 'axios';
 import OpenAI from 'openai';
 import dotenv from 'dotenv';
-import { log } from 'console';
 dotenv.config();
 
 const WB_API_BASE_URL = 'https://feedbacks-api.wildberries.ru/api/v1';
@@ -14,11 +13,11 @@ const openai = new OpenAI({
 export const getReviews = async (req, res) => {
   try {
     const apiKey = req.headers.authorization;
-        
+
     const { data } = await axios.get(`https://feedbacks-api.wildberries.ru/api/v1/feedbacks`, {
       headers: { 'Authorization': apiKey },
       params: {
-        isAnswered: true,
+        isAnswered: false,
         take: 5000,
         skip: 0
       }
@@ -32,46 +31,69 @@ export const getReviews = async (req, res) => {
 };
 
 export const setAnswersonReviews = async (req, res) => {
-  const { apiKey } = req.body
+  const { apiKey, reviewIds, responses, marketName, contacts } = req.body;
 
   try {
     // Fetch all feedbacks that need a response
     const { data: responseData } = await axios.get(`${WB_API_BASE_URL}/feedbacks`, {
       headers: { Authorization: apiKey },
       params: {
-        isAnswered: true, // Неотвеченные отзывы
-        take: 100, // Получить до 100 отзывов за раз
+        isAnswered: false,
+        take: 5000,
         skip: 0,
       },
     });
 
     const allFeedbacks = responseData.data.feedbacks;
+    const chosenFeedbacks = allFeedbacks.filter((feedback) => reviewIds.includes(feedback.id));
 
-    if (allFeedbacks.length === 0) {
+    if (chosenFeedbacks.length === 0) {
       return res.json({ message: 'Нет отзывов для ответа' });
     }
 
     // Initialize the file and clear existing content
-    //   fs.writeFileSync('answers.txt', '');
+    fs.writeFileSync('answers.txt', '');
+    console.log(typeof contacts);
 
-    // Iterate over each feedback sequentially
-    for (const feedback of allFeedbacks) {
-      const prompt = `Ниже приведен отзыв клиента о продукте:\n\n"${feedback.text}"\n\nСоздайте ответ на этот отзыв. Ответ должен быть вежливым и учитывать опасения клиента на основе отзыва и рейтинга продукта ${feedback.productValuation}. Он не может быть длиннее 1000 символов`;
+    for (const feedback of chosenFeedbacks) {
+      let responseMessage = '';
 
-      // Генерация ответа с использованием OpenAI
-      const aiResponse = await openai.chat.completions.create({
-        model: 'gpt-3.5-turbo',
-        messages: [{ role: 'user', content: prompt }],
-        max_tokens: 300,
-      });
+      // Select response based on rating
+      switch (feedback.productValuation) {
+        case 1:
+          responseMessage = responses.oneStar || '';
+          break;
+        case 2:
+          responseMessage = responses.twoStars || '';
+          break;
+        case 3:
+          responseMessage = responses.threeStars || '';
+          break;
+        case 4:
+          responseMessage = responses.fourStars || '';
+          break;
+        case 5:
+          responseMessage = responses.fiveStars || '';
+          break;
+        default:
+          responseMessage = '';
+      }
 
-      const responseMessage = aiResponse.choices[0].message.content.trim();
-      console.log(responseMessage);
+      // If no user response, generate one with ChatGPT
+      if (!responseMessage) {
+        const prompt = `Сгенерированный тобой текст сразу будет прикреплен к отзыву без изменений! Купленный товар: ${feedback.subjectName}.\n\n Юзернейм покупателя: ${feedback.userName || 'Покупатель не указан'}.\n\n Ниже приведен отзыв клиента о продукте:\n\n"${feedback.text}"\n\nСоздайте ответ на этот отзыв. Ответ должен быть вежливым и учитывать опасения клиента на основе отзыва и рейтинга продукта ${feedback.productValuation} из 5.${feedback.productValuation <= 2 ? `${marketName ? `Название магазина: ${marketName}` : ''} ${contacts ? `Укажи имеющиеся контакты магазина для связи в конце так как оно записано, ксли указан номер телефона и рядом соц сеть то это один контакт: ${contacts}` : ''}` : 'Если рейтинг больше двух, то не нужно говорит о дополнительных вопросах и упоменать обратную связь с магазином.' } Не говорить об обмене. Ответ не может быть длиннее 1000 символов, и должен быть на русском языке`;
 
-      // // Save the response to the file
+        const aiResponse = await openai.chat.completions.create({
+          model: 'gpt-3.5-turbo',
+          messages: [{ role: 'user', content: prompt }],
+          max_tokens: 1000,
+        });
+
+        responseMessage = aiResponse.choices[0].message.content.trim();
+      }
+
       fs.appendFileSync('answers.txt', `Отзыв ID: ${feedback.id}\nОтвет: ${responseMessage}\n\n`);
 
-      // Send the response to Wildberries (uncomment to activate)
       // try {
       //   await axios.patch(
       //     `${WB_API_BASE_URL}/feedbacks`,

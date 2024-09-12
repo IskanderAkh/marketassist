@@ -4,9 +4,10 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import connectMongoDB from './db/connectMongoDB.js';
 import authRoutes from './routes/auth.routes.js';
-import apiKeyRoute from './routes/apiKey.routes.js';
+import userRoutes from './routes/user.routes.js';
 import reviewsRouter from './routes/reviews.routes.js'
 import reportRouter from './routes/report.routes.js'
+import plansRoutes from './routes/plans.routes.js'
 import OpenAI from 'openai';
 dotenv.config();
 
@@ -26,7 +27,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/auth', authRoutes);
 app.use('/api/reviews', reviewsRouter)
 app.use('/api/report', reportRouter);
-app.use('/api/user', apiKeyRoute)
+app.use('/api/user', userRoutes)
+app.use('/api/plans', plansRoutes)
+
 
 app.listen(PORT, () => {
   console.log('Server is running on port', PORT);
