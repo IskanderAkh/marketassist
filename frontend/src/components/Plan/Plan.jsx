@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+
 import axios from 'axios';
 import toast from "react-hot-toast";
 
 const Plan = ({ plan, i, authUser, userPlan }) => {
-    const [barcodeCount, setBarcodeCount] = useState(100); // Default number of barcodes
+    const [barcodeCount, setBarcodeCount] = useState(100);
     const id = plan._id;
     const isPlanWithNoLimit = id === "66dfdc354c02e37851cb52e7";
 

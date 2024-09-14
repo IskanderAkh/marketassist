@@ -1,7 +1,7 @@
 import React from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { ru } from 'date-fns/locale'; // Import Russian locale
+import { ru } from 'date-fns/locale'; 
 
 const DateRangePicker = ({ dateRange, setDateRange, authUser, hasAccess }) => {
     const [startDate, endDate] = dateRange;

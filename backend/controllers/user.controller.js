@@ -173,7 +173,7 @@ export const checkReviewPlanAccess = async (req, res) => {
 
 export const addOrUpdatePlanForUser = async (req, res) => {
     try {
-        const { planId, subscriptionDurationInDays, barcodes } = req.body; // Added barcodes to request body
+        const { planId, subscriptionDurationInDays, barcodes } = req.body; 
         const userId = req.user._id;
         const user = await User.findById(userId);
         const plan = await Plan.findById(planId);
@@ -188,14 +188,12 @@ export const addOrUpdatePlanForUser = async (req, res) => {
         const hasSpecialPlan = user.currentPlans.some(p => p.plan.toString() === specialPlanId);
         const hasUpgradePlan = user.currentPlans.some(p => p.plan.toString() === upgradePlanId);
 
-        // Remove special plan if upgrading
         if (planId === upgradePlanId && hasSpecialPlan) {
             user.currentPlans = user.currentPlans.filter(p => p.plan.toString() !== specialPlanId);
         }
 
         const existingPlanIndex = user.currentPlans.findIndex(p => p.plan.toString() === planId);
 
-        // Update or add new plan for the user
         if (existingPlanIndex !== -1) {
             user.currentPlans[existingPlanIndex].startDate = now;
             if (planId === specialPlanId) {

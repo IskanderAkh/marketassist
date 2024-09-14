@@ -34,7 +34,6 @@ export const setAnswersonReviews = async (req, res) => {
   const { apiKey, reviewIds, responses, marketName, contacts } = req.body;
 
   try {
-    // Fetch all feedbacks that need a response
     const { data: responseData } = await axios.get(`${WB_API_BASE_URL}/feedbacks`, {
       headers: { Authorization: apiKey },
       params: {
@@ -51,14 +50,12 @@ export const setAnswersonReviews = async (req, res) => {
       return res.json({ message: 'Нет отзывов для ответа' });
     }
 
-    // Initialize the file and clear existing content
     fs.writeFileSync('answers.txt', '');
     console.log(typeof contacts);
 
     for (const feedback of chosenFeedbacks) {
       let responseMessage = '';
 
-      // Select response based on rating
       switch (feedback.productValuation) {
         case 1:
           responseMessage = responses.oneStar || '';
@@ -79,7 +76,6 @@ export const setAnswersonReviews = async (req, res) => {
           responseMessage = '';
       }
 
-      // If no user response, generate one with ChatGPT
       if (!responseMessage) {
         const prompt = `Сгенерированный тобой текст сразу будет прикреплен к отзыву без изменений! Купленный товар: ${feedback.subjectName}.\n\n Юзернейм покупателя: ${feedback.userName || 'Покупатель не указан'}.\n\n Ниже приведен отзыв клиента о продукте:\n\n"${feedback.text}"\n\nСоздайте ответ на этот отзыв. Ответ должен быть вежливым и учитывать опасения клиента на основе отзыва и рейтинга продукта ${feedback.productValuation} из 5.${feedback.productValuation <= 2 ? `${marketName ? `Название магазина: ${marketName}` : ''} ${contacts ? `Укажи имеющиеся контакты магазина для связи в конце так как оно записано, ксли указан номер телефона и рядом соц сеть то это один контакт: ${contacts}` : ''}` : 'Если рейтинг больше двух, то не нужно говорит о дополнительных вопросах и упоменать обратную связь с магазином.' } Не говорить об обмене. Ответ не может быть длиннее 1000 символов, и должен быть на русском языке`;
 
@@ -94,20 +90,20 @@ export const setAnswersonReviews = async (req, res) => {
 
       fs.appendFileSync('answers.txt', `Отзыв ID: ${feedback.id}\nОтвет: ${responseMessage}\n\n`);
 
-      // try {
-      //   await axios.patch(
-      //     `${WB_API_BASE_URL}/feedbacks`,
-      //     {
-      //       id: feedback.id,
-      //       text: responseMessage,
-      //     },
-      //     { headers: { Authorization: apiKey } }
-      //   );
+      try {
+        await axios.patch(
+          `${WB_API_BASE_URL}/feedbacks`,
+          {
+            id: feedback.id,
+            text: responseMessage,
+          },
+          { headers: { Authorization: apiKey } }
+        );
 
-      //   console.log(`Ответ успешно отправлен на отзыв ID: ${feedback.id}`);
-      // } catch (err) {
-      //   console.error(`Ошибка при отправке ответа на отзыв ID: ${feedback.id}:`, err);
-      // }
+        console.log(`Ответ успешно отправлен на отзыв ID: ${feedback.id}`);
+      } catch (err) {
+        console.error(`Ошибка при отправке ответа на отзыв ID: ${feedback.id}:`, err);
+      }
     }
 
     res.json({ message: 'Ответы успешно отправлены на все отзывы и сохранены в файл' });

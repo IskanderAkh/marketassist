@@ -1,8 +1,6 @@
-// report.controller.js
 import axios from 'axios';
 import User from '../models/user.model.js';
 
-// Controller function to handle the report detail request
 export const getReportDetailByPeriod = async (req, res) => {
     try {
         const { apiKey, dateFrom, dateTo } = req.body;
@@ -34,13 +32,12 @@ export const saveBarcodes = async (req, res) => {
     }
 
     try {
-        const user = await User.findById(req.user.id); // Assuming user ID is available in req.user
+        const user = await User.findById(req.user.id); 
 
         if (user.barcodes.length + barcodes.length > user.allowedNumberOfBarcodes) {
             return res.status(403).json({ message: "You have exceeded your allowed number of barcodes" });
         }
 
-        // Add new barcodes
         user.barcodes = [...user.barcodes, ...barcodes];
 
         await user.save();

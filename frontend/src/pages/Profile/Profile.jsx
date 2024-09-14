@@ -5,21 +5,21 @@ import Container from "@/components/ui/Container";
 import { useQuery } from "@tanstack/react-query";
 import UnverifiedUser from "../../components/Profile/UnverifiedUser/UnverifiedUser";
 import LoadingPage from "../../components/LoadingPage/LoadingPage";
+import { Navigate } from 'react-router-dom';
 
 export default function Profile() {
-  const { data: authUser, isLoading } = useQuery({ queryKey: ['authUser'] });
+  const { data: authUser, isLoading, isError } = useQuery({ queryKey: ['authUser'] });
 
   if (isLoading) {
     return <LoadingPage />
   }
-
+  if (!authUser) {
+    return <Navigate to={'/auth'} />
+  }
   return (
     <section className="py-8">
       <Container>
-        {/* Conditional Rendering */}
-        {!authUser ? (
-          <UnauthorizedProfile />
-        ) : !authUser.isVerified ? (
+        {!authUser.isVerified ? (
           <UnverifiedUser authUser={authUser} />
         ) : (
           <AuthorizedProfile authUser={authUser} />
