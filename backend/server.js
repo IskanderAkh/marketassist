@@ -9,6 +9,8 @@ import reviewsRouter from './routes/reviews.routes.js'
 import reportRouter from './routes/report.routes.js'
 import plansRoutes from './routes/plans.routes.js'
 import OpenAI from 'openai';
+import path from 'path';
+
 dotenv.config();
 
 const app = express();
@@ -17,6 +19,7 @@ const WB_API_BASE_URL = 'https://feedbacks-api.wildberries.ru/api/v1';
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
+const __dirname = path.resolve();
 
 
 app.use(cors());
@@ -30,6 +33,14 @@ app.use('/api/report', reportRouter);
 app.use('/api/user', userRoutes)
 app.use('/api/plans', plansRoutes)
 
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '/frontend/dist')))
+
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'frontend', 'dist', 'index.html'))
+  })
+
+}
 
 app.listen(PORT, () => {
   console.log('Server is running on port', PORT);

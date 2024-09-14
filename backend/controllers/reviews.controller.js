@@ -50,8 +50,6 @@ export const setAnswersonReviews = async (req, res) => {
       return res.json({ message: 'Нет отзывов для ответа' });
     }
 
-    fs.writeFileSync('answers.txt', '');
-    console.log(typeof contacts);
 
     for (const feedback of chosenFeedbacks) {
       let responseMessage = '';
@@ -88,7 +86,6 @@ export const setAnswersonReviews = async (req, res) => {
         responseMessage = aiResponse.choices[0].message.content.trim();
       }
 
-      fs.appendFileSync('answers.txt', `Отзыв ID: ${feedback.id}\nОтвет: ${responseMessage}\n\n`);
 
       try {
         await axios.patch(

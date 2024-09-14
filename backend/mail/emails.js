@@ -10,11 +10,11 @@ dotenv.config()
 
 const transporter = nodemailer.createTransport({
 	host: 'mail.hosting.reg.ru',
-	port: 465, 
-	secure: true, 
+	port: 465,
+	secure: true,
 	auth: {
-		user: process.env.EMAIL_USER, 
-		pass: process.env.EMAIL_PASS, 
+		user: process.env.EMAIL_USER,
+		pass: process.env.EMAIL_PASS,
 	},
 });
 
@@ -35,7 +35,7 @@ const sendEmail = async ({ from, to, subject, html }) => {
 export const sendVerificationEmail = async (email, verificationToken) => {
 	const html = VERIFICATION_EMAIL_TEMPLATE.replace("{verificationCode}", verificationToken);
 	await sendEmail({
-		from: '"Prodavetc.ru" <info@marketassist.ru>',
+		from: `"Prodavetc.ru" <${process.env.EMAIL_USER}>`,
 		to: email,
 		subject: "Проверьте свою электронную почту",
 		html,
@@ -45,7 +45,7 @@ export const sendVerificationEmail = async (email, verificationToken) => {
 export const sendWelcomeEmail = async (email, name) => {
 	const html = WELCOMING_EMAIL_TEMPLATE;
 	await sendEmail({
-		from: '"Prodavetc.ru"  <info@marketassist.ru>',
+		from: `"Prodavetc.ru"  <${process.env.EMAIL_USER}>`,
 		to: email,
 		subject: "Добро пожаловать в Prodavetc.ru!",
 		html,
@@ -55,7 +55,7 @@ export const sendWelcomeEmail = async (email, name) => {
 export const sendPasswordResetEmail = async (email, resetURL) => {
 	const html = PASSWORD_RESET_REQUEST_TEMPLATE.replace("{resetURL}", resetURL);
 	await sendEmail({
-		from: '"Prodavetc.ru"  <info@marketassist.ru>',
+		from: `"Prodavetc.ru"  <${process.env.EMAIL_USER}>`,
 		to: email,
 		subject: "Сбросить свой пароль",
 		html,
@@ -65,7 +65,7 @@ export const sendPasswordResetEmail = async (email, resetURL) => {
 export const sendResetSuccessEmail = async (email) => {
 	const html = PASSWORD_RESET_SUCCESS_TEMPLATE;
 	await sendEmail({
-		from: '"Prodavetc.ru" <info@marketassist.ru>',
+		from: `"Prodavetc.ru" <${process.env.EMAIL_USER}>`,
 		to: email,
 		subject: "Password Reset Successful",
 		html,

@@ -143,7 +143,6 @@ export const checkReviewPlanAccess = async (req, res) => {
     try {
         const requiredPlans = ['66dfdc354c02e37851cb52e7', '66dfdcd64c02e37851cb52e9'];
         const userId = req.user._id;
-        console.log(requiredPlans);
 
         const user = await User.findById(userId);
 
@@ -158,7 +157,6 @@ export const checkReviewPlanAccess = async (req, res) => {
         const hasAccess = user.currentPlans.some(({ plan }) =>
             requiredPlans.includes(plan._id.toString())
         );
-        console.log(hasAccess);
 
         if (!hasAccess) {
             return res.status(403).json({ message: 'У вас нет доступа к этой функции. Обновите план подписки' });

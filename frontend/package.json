@@ -18,6 +18,7 @@
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.1",
     "lucide-react": "^0.429.0",
+    "marketassist": "file:..",
     "react": "^18.3.1",
     "react-datepicker": "^7.3.0",
     "react-dom": "^18.3.1",
@@ -27,6 +28,7 @@
     "react-router-dom": "^6.26.0",
     "sass": "^1.77.8",
     "tailwind-merge": "^2.5.2",
+    "wb": "file:..",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
