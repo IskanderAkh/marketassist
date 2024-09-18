@@ -47,11 +47,17 @@ const Plan = ({ plan, i, authUser, userPlan }) => {
     const calculatePrice = () => {
         if (plan.lvl === 2) {
             const extraBarcodes = barcodeCount - 100;
+            return 1000 + (extraBarcodes / 100) * 1000;
+        }
+        return plan.currentCost;
+    };
+    const calculatePrevPrice = () => {
+        if (plan.lvl === 2) {
+            const extraBarcodes = barcodeCount - 100;
             return 4000 + (extraBarcodes / 100) * 1000;
         }
         return plan.currentCost;
     };
-
     return (
         <div>
             <div className="card bg-base-100 w-96 shadow-xl h-full">
@@ -60,7 +66,7 @@ const Plan = ({ plan, i, authUser, userPlan }) => {
                     <div className='my-4'>
                         <div>
                             <p>{calculatePrice()}₽/мес.</p>
-                            <p className='line-through'>{plan.prevCost}₽/мес. <span>{-plan.planDiscount}%</span></p>
+                            <p className='line-through'>{calculatePrevPrice()}₽/мес. <span>{-plan.planDiscount}%</span></p>
                         </div>
                         {plan._id === "66dfdcd64c02e37851cb52e9" && <div>
                             {/* Specific content for this plan */}

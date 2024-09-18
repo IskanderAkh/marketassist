@@ -35,7 +35,7 @@ const sendEmail = async ({ from, to, subject, html }) => {
 export const sendVerificationEmail = async (email, verificationToken) => {
 	const html = VERIFICATION_EMAIL_TEMPLATE.replace("{verificationCode}", verificationToken);
 	await sendEmail({
-		from: `"Prodavetc.ru" <${process.env.EMAIL_USER}>`,
+		from: `"Marketassist.ru" <${process.env.EMAIL_USER}>`,
 		to: email,
 		subject: "Проверьте свою электронную почту",
 		html,
@@ -45,9 +45,9 @@ export const sendVerificationEmail = async (email, verificationToken) => {
 export const sendWelcomeEmail = async (email, name) => {
 	const html = WELCOMING_EMAIL_TEMPLATE;
 	await sendEmail({
-		from: `"Prodavetc.ru"  <${process.env.EMAIL_USER}>`,
+		from: `"Marketassist.ru"  <${process.env.EMAIL_USER}>`,
 		to: email,
-		subject: "Добро пожаловать в Prodavetc.ru!",
+		subject: "Добро пожаловать в Marketassist!",
 		html,
 	});
 };
@@ -55,7 +55,7 @@ export const sendWelcomeEmail = async (email, name) => {
 export const sendPasswordResetEmail = async (email, resetURL) => {
 	const html = PASSWORD_RESET_REQUEST_TEMPLATE.replace("{resetURL}", resetURL);
 	await sendEmail({
-		from: `"Prodavetc.ru"  <${process.env.EMAIL_USER}>`,
+		from: `"Marketassist.ru"  <${process.env.EMAIL_USER}>`,
 		to: email,
 		subject: "Сбросить свой пароль",
 		html,
@@ -65,9 +65,9 @@ export const sendPasswordResetEmail = async (email, resetURL) => {
 export const sendResetSuccessEmail = async (email) => {
 	const html = PASSWORD_RESET_SUCCESS_TEMPLATE;
 	await sendEmail({
-		from: `"Prodavetc.ru" <${process.env.EMAIL_USER}>`,
+		from: `"Marketassist.ru" <${process.env.EMAIL_USER}>`,
 		to: email,
-		subject: "Password Reset Successful",
+		subject: "Сброс пароля проведен успешно ",
 		html,
 	});
 };

@@ -27,7 +27,7 @@ const Plans = () => {
   return (
     <div className="flex flex-wrap gap-4 mt-10">
       {isLoadingUserPlan ? (
-        Array.from({ length: 2 }).map((_, i) => <Skeleton key={i} />) // Display 4 skeletons as placeholders
+        Array.from({ length: 2 }).map((_, i) => <Skeleton key={i} />) 
       ) : (
         plans?.map((plan, i) => {
           return (

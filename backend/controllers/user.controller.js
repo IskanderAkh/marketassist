@@ -98,7 +98,7 @@ export const cancelSubscription = async (req, res) => {
 
             return res.status(400).json({ message: "У вас нет активной подписки для отмены" });
         }
-
+        user.allowedNumberOfBarcodes = 0;
         user.currentPlans = [];
 
         await user.save();
