@@ -15,14 +15,23 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const WB_API_BASE_URL = 'https://feedbacks-api.wildberries.ru/api/v1';
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 const __dirname = path.resolve();
 
+const allowedOrigins = ['https://marketassist.ru', 'http://localhost:3000',];
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+}));
 
-app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
