@@ -1,9 +1,9 @@
 import e from "express";
-import { updateApiKey } from "../controllers/apiKey.controller.js";
+import { updateReviewsApiKey } from "../controllers/apiKey.controller.js";
 import { protectRoute } from "../middleware/protectRoute.js";
 
 const router = e.Router()
 
-router.put("/update-api-key", protectRoute, updateApiKey)
+router.put("/update-api-key", protectRoute, updateReviewsApiKey)
 
 export default router

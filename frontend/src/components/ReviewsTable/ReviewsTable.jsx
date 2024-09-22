@@ -6,7 +6,8 @@ import toast from "react-hot-toast";
 
 
 const ReviewsTable = ({ apiKey, responses, isError, isLoading, reviews, marketName, contacts }) => {
-  const { data: authUser } = useQuery({ queryKey: ["authUser"] })
+
+
   const [selectedReviewsIds, setselectedReviewsIds] = useState([])
   const [selectAll, setSelectAll] = useState(false);
   const queryClient = useQueryClient();
@@ -59,15 +60,12 @@ const ReviewsTable = ({ apiKey, responses, isError, isLoading, reviews, marketNa
   }
   return (
     <div>
-
-
-      {/* Ответ на выбранные отзывы */}
-
-      <div className="flex w-full items-end justify-end">
-        <button className="btn btn-primary self-end" title="Ответить на выбранные отзывы" onClick={answerOnReviews} disabled={selectedReviewsIds.length === 0 || !apiKey}>Ответить на отзывы</button>
+      <div className="flex w-full items-center justify-between my-10">
+        <div className="text-center text-xl font-bold">
+          Выберите отзывы для ответа
+        </div>
+        <button className="btn btn-primary self-end pointer-events-auto" title="Ответить на выбранные отзывы" onClick={answerOnReviews} disabled={selectedReviewsIds.length === 0 || !apiKey}>Ответить на отзывы</button>
       </div>
-
-
       <div className="overflow-x-auto">
         {isLoading && <p>Загрузка...</p>}
         {!isLoading && <table className="table">
@@ -87,7 +85,7 @@ const ReviewsTable = ({ apiKey, responses, isError, isLoading, reviews, marketNa
               <th>Отзыв</th>
               <th>Рейтинг</th>
               <th>Товар</th>
-              <th></th>
+              <th>Ответ на отзыв</th>
             </tr>
           </thead>
           <tbody>
@@ -121,6 +119,9 @@ const ReviewsTable = ({ apiKey, responses, isError, isLoading, reviews, marketNa
                   </td>
                   <td>
                     {review.subjectName}
+                  </td>
+                  <td>
+                    {review?.answer?.text ? review.answer.text : 'Нет ответа'}
                   </td>
                 </tr>
               ))

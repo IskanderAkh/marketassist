@@ -6,7 +6,7 @@ import { useExportToExcel } from './useExportToExcel';
 
 const ReportTable = ({ groupedData, handleCostChange, hasFetchedData }) => {
     const [excelData, setExcelData] = useState({});
-    const [tax, setTax] = useState(0.15);
+    const [tax, setTax] = useState(0.07);
 
     const exportToExcel = useExportToExcel(groupedData, excelData, tax);
 

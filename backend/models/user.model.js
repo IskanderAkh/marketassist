@@ -58,6 +58,7 @@ const userSchema = new mongoose.Schema({
     resetPasswordExpiresAt: Date,
     verificationToken: String,
     verificationTokenExpiresAt: Date,
+    reviewsApiKey: String,
     verificationTokenRequestedAt: { type: Date },
     currentPlans: [{
         plan: {

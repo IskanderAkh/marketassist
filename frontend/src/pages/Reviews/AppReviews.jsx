@@ -1,38 +1,46 @@
-import Container from "@/components/ui/Container";
 import React, { useState } from "react";
 import axios from "axios";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import ReviewsTable from "../../components/ReviewsTable/ReviewsTable";
-import OneStar from "../../components/RatingStars/OneStar";
+import Cookies from "js-cookie";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
+import Container from "@/components/ui/Container";
+import ReviewsTable from "../../components/ReviewsTable/ReviewsTable";
+import OneStar from "../../components/RatingStars/OneStar";
 import VerifyLink from "../../components/VerifyLink/VerifyLink";
 import LoadingPage from "../../components/LoadingPage/LoadingPage";
 
 const AppReviews = ({ authUser, authUserLoading, authUserError }) => {
-  const [apiKey, setApiKey] = useState('');
-  const [reviews, setReviews] = useState([]);
+  // Инициализация ключей
+  const [apiKey, setApiKey] = useState(Cookies.get('apiKey') || '');
+  const [currentApiKey, setCurrentApiKey] = useState(Cookies.get('apiKey') || '');
+  const [editable, setEditable] = useState(false);
   const [marketName, setMarketName] = useState('');
   const [contacts, setContacts] = useState('');
-  const { mutate: fetchReviews, isLoading, isError } = useMutation({
-    mutationKey: ['reviews'],
-    mutationFn: async () => {
+  const [isApiKeyConfirmed, setIsApiKeyConfirmed] = useState(false);
+
+  const { data: reviews, isLoading, isError, refetch } = useQuery({
+    queryKey: ['reviews', currentApiKey],
+    queryFn: async () => {
       const res = await axios.get('/api/reviews/get-reviews', {
-        headers: { Authorization: `${apiKey}` },
+        headers: { Authorization: `${currentApiKey}` },
       });
+      Cookies.set('reviews', JSON.stringify(res.data.data.feedbacks), { expires: 5 });
       return res.data.data.feedbacks;
     },
+    enabled: !!authUser?.isVerified && !!currentApiKey,
+    staleTime: 10 * 60 * 1000,
+    cacheTime: 15 * 60 * 1000,
     onSuccess: (data) => {
       if (!data.length) {
         toast.error('Отзывы без ответов не найдены!');
-        return;
       }
-      setReviews(data);
     },
     onError: () => {
-      toast.error(`Ошибка при получении отзывов! \n Перепроверьте данные.`);
+      toast.error('Ошибка при получении отзывов!');
     },
   });
+
 
   const { data: hasAccess, isLoading: isLoadingAccess, error: errorAccess, isError: isErrorAccess } = useQuery({
     queryKey: ['checkPlanAccess'],
@@ -47,10 +55,8 @@ const AppReviews = ({ authUser, authUserLoading, authUserError }) => {
     },
     enabled: !!authUser,
     retry: false
-  })
-  const handleGetReviews = () => {
-    fetchReviews();
-  }
+  });
+
   const [responses, setResponses] = useState({
     oneStar: "",
     twoStars: "",
@@ -59,39 +65,58 @@ const AppReviews = ({ authUser, authUserLoading, authUserError }) => {
     fiveStars: "",
   });
 
+  const { mutate: setApiKeyMutation } = useMutation({
+    mutationFn: async () => {
+      try {
+        const res = await axios.put('/api/apiKey/update-api-key', {
+          apiKey: currentApiKey,
+        })
+        console.log(res.data);
+        return res.data;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    onSuccess: () => {
+      toast.success('API ключ успешно изменен!');
+    },
+    onError: () => {
+      toast.error('Ошибка при изменении API ключа!');
+    },
+  })
   const handleApiKeyChange = (event) => {
-    setApiKey(event.target.value);
-  }
+    const value = event.target.value;
+    setApiKey(value);
+    setIsApiKeyConfirmed(false);
+    Cookies.set('apiKey', value, { expires: 5 });
+  };
+
+  const handleApiKeyConfirmation = () => {
+    setCurrentApiKey(apiKey);
+    setIsApiKeyConfirmed(true);
+    setEditable(false);
+    setApiKeyMutation()
+  };
+
+
   const handleInputChange = (event, rating) => {
     setResponses({ ...responses, [rating]: event.target.value });
   };
+
   if (isLoadingAccess) {
-    return <LoadingPage />
+    return <LoadingPage />;
   }
+
   return (
     <Container>
       {
         (!authUser?.isVerified && !authUserLoading && !authUserError) && <VerifyLink />
-
       }
       {
         isErrorAccess && <div role="alert" className="alert alert-error my-10">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6 shrink-0 stroke-current"
-            fill="none"
-            viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
           <span>{errorAccess.response.data.message}</span>
           <Link className='btn btn-info' to={'/profile'}>Купить план</Link>
-
         </div>
-
       }
       <div className="mt-10">
         <div className="flex">
@@ -104,27 +129,36 @@ const AppReviews = ({ authUser, authUserLoading, authUserError }) => {
                   className="input input-bordered input-info w-full max-w-48"
                   onChange={handleApiKeyChange}
                   value={apiKey}
-                  disabled={isLoading || !authUser?.isVerified || !hasAccess}
+                  disabled={isLoading || !authUser?.isVerified || !hasAccess || !editable}
                 />
                 <button
-                  className="btn btn-accent"
-                  onClick={handleGetReviews}
-                  disabled={isLoading || !authUser?.isVerified || !hasAccess}
+                  className="btn btn-secondary"
+                  onClick={() => setEditable(!editable)}
+                  disabled={isLoading || !authUser?.isVerified || !hasAccess || apiKey.length < 1}
                 >
-                  {isLoading ? 'Загрузка...' : 'Запросить'}
+                  {editable ? 'Отменить' : 'Изменить'}
+                </button>
+                <button
+                  className="btn btn-primary btn-wide"
+                  onClick={handleApiKeyConfirmation}
+                  disabled={isLoading || !authUser?.isVerified || !hasAccess || isApiKeyConfirmed}
+                >
+
+                  {isLoading ? 'Загрузка...' : 'Подтвердить API ключ'}
+
                 </button>
               </div>
-              <div className="flex items-center justify-end gap-3 flex-1 w-full">
-                <div className="w-1/2">
-                  <h2>Название магазина</h2>
-                  <input type="text" placeholder="Введите Название магазина" value={marketName} onChange={(e) => setMarketName(e.target.value)} className="border p-2 mr-2 w-full" disabled={isLoading || !authUser?.isVerified || !hasAccess}
-                  />
-                </div>
-                <div className=" w-1/2">
-                  <h2>Контакты</h2>
-                  <input type="text" placeholder="Введите контакты email или номер телефона" value={contacts} onChange={(e) => setContacts(e.target.value)} className="border p-2 mr-2 w-full" disabled={isLoading || !authUser?.isVerified || !hasAccess}
-                  />
-                </div>
+            </div>
+            <div className="flex items-center justify-end gap-3 flex-1 w-full mb-10">
+              <div className="w-1/2">
+                <h2>Название магазина</h2>
+                <input type="text" placeholder="Введите Название магазина" value={marketName} onChange={(e) => setMarketName(e.target.value)} className="border p-2 mr-2 w-full" disabled={isLoading || !authUser?.isVerified || !hasAccess}
+                />
+              </div>
+              <div className=" w-1/2">
+                <h2>Контакты</h2>
+                <input type="text" placeholder="Введите контакты email или номер телефона" value={contacts} onChange={(e) => setContacts(e.target.value)} className="border p-2 mr-2 w-full" disabled={isLoading || !authUser?.isVerified || !hasAccess}
+                />
               </div>
             </div>
             <div>
@@ -135,7 +169,7 @@ const AppReviews = ({ authUser, authUserLoading, authUserError }) => {
           </div>
           <div className="flex justify-end gap-4 flex-row-reverse">
             <div className="flex flex-col gap-2 w-full">
-              <p>Если поле "Текст отзыва" не <br /> заполнено  тогда его автоматически отвечает ИИ.</p>
+              <p>Если поле "Текст отзыва" не <br /> заполнено, тогда его автоматически отвечает ИИ.</p>
             </div>
             <div className="flex flex-col gap-2   w-full">
               <div className="w-full flex items-center">
@@ -200,9 +234,8 @@ const AppReviews = ({ authUser, authUserLoading, authUserError }) => {
               </div>
             </div>
           </div>
-
         </div>
-        <ReviewsTable responses={responses} reviews={reviews} isError={isError} isLoading={isLoading} marketName={marketName} contacts={contacts} apiKey={apiKey} />
+        <ReviewsTable responses={responses} reviews={reviews} isError={isError} isLoading={isLoading} marketName={marketName} contacts={contacts} apiKey={currentApiKey}  />
       </div>
     </Container>
   );

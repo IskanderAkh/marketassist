@@ -6,6 +6,7 @@ import connectMongoDB from './db/connectMongoDB.js';
 import authRoutes from './routes/auth.routes.js';
 import userRoutes from './routes/user.routes.js';
 import reviewsRouter from './routes/reviews.routes.js'
+import apiKeyRouter from './routes/apiKey.routes.js'
 import reportRouter from './routes/report.routes.js'
 import plansRoutes from './routes/plans.routes.js'
 import OpenAI from 'openai';
@@ -40,6 +41,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/reviews', reviewsRouter)
 app.use('/api/report', reportRouter);
 app.use('/api/user', userRoutes)
+app.use('/api/apiKey', apiKeyRouter)
 app.use('/api/plans', plansRoutes)
 
 if (process.env.NODE_ENV === 'production') {

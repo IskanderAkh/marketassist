@@ -2,8 +2,10 @@ import Container from "@/components/ui/Container";
 import { useEffect } from "react";
 import "./HomeDescription.scss";
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 
 export default function HomeDescription() {
+  const { data: authUser, isLoading } = useQuery({ queryKey: ["authUser"] })
   useEffect(() => {
     const interBubble = document.querySelector(".interactive");
     let curX = 0;
@@ -46,12 +48,9 @@ export default function HomeDescription() {
                 </h2>
 
                 <div className="flex items-center gap-4">
-                  <Link to="/calculator" className="btn btn-primary text-white">
+                  <Link to={authUser ? `/product-cost` : `/auth`} className="btn btn-primary text-white btn-wide">
                     Попробовать
                   </Link>
-                  <a className="btn btn-wide btn-white" title="В разработке  In development">
-                    Аналитика
-                  </a>
                 </div>
               </div>
               <div></div>

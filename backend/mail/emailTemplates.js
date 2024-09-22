@@ -9,10 +9,10 @@ export const VERIFICATION_EMAIL_TEMPLATE = `
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
   <h2 style="text-align: center; color: #6a1b9a;">Проверка электронной почты</h2>
   <p>Здравсвуйте,</p>
-  <p>Спасибо за регистрацию! Пожалуйста, проверьте свою электронную почту, используя код ниже:</p>
+  <p>Пожалуйста, пройдите верификацию аккаунта в личном кабинете,используя код ниже::</p>
   <p style="text-align: center; font-size: 24px; font-weight: bold; color: #6a1b9a;">{verificationCode}</p>
   <p>Этот код истекает через 24 часа по соображениям безопасности.Если вы не зарегистрировались для этой учетной записи, пожалуйста, игнорируйте это сообщение.</p>
-  <p>С наилучшими пожеланиями,<br>Команда Prodavetc</p>
+  <p>С наилучшими пожеланиями,<br>Команда marketassist</p>
   <footer style="margin-top: 20px; font-size: 0.8em; text-align: center; color: #888;">Это автоматическое сообщение, пожалуйста, не отвечайте на это электронное письмо.</footer>
 </body>
 </html>
@@ -36,7 +36,7 @@ export const PASSWORD_RESET_SUCCESS_TEMPLATE = `
     <li>Используйте сильный, уникальный пароль</li>
     <li>Не используйте один и тот же пароль для нескольких учетных записей</li>
   </ul>
-  <p>С наилучшими пожеланиями,<br>Команда Prodavetc</p>
+  <p>С наилучшими пожеланиями,<br>Команда marketassist</p>
   <footer style="margin-top: 20px; font-size: 0.8em; text-align: center; color: #888;">Это автоматизированное сообщение, пожалуйста, не отвечайте на это письмо.</footer>
 </body>
 </html>
@@ -48,18 +48,18 @@ export const WELCOMING_EMAIL_TEMPLATE = `
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Добро пожаловать в Prodavetc</title>
+  <title>Добро пожаловать в marketassist</title>
 </head>
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
   <div style="background: linear-gradient(to right, #4CAF50, #45a049); padding: 20px; text-align: center;">
-    <h1 style="color: white; margin: 0;">Добро пожаловать в Prodavetc!</h1>
+    <h1 style="color: white; margin: 0;">Добро пожаловать в marketassist!</h1>
   </div>
   <div style="background-color: #f9f9f9; padding: 20px; border-radius: 0 0 5px 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
     <p>Привет,</p>
-    <p>Спасибо, что зарегистрировались в Prodavetc! Мы рады приветствовать вас в нашем сообществе.</p>
+    <p>Спасибо, что зарегистрировались в marketassist! Мы рады приветствовать вас в нашем сообществе.</p>
     <p>Ваш аккаунт был успешно создан. Теперь вы можете воспользоваться всеми функциями нашего сервиса.</p>
     <p>Если у вас возникнут вопросы или потребуется помощь, не стесняйтесь обращаться в нашу службу поддержки.</p>
-    <p>С наилучшими пожеланиями,<br>Команда Prodavetc</p>
+    <p>С наилучшими пожеланиями,<br>Команда marketassist</p>
   </div>
   <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em;">
     <p>Это автоматическое сообщение. Пожалуйста, не отвечайте на него.</p>
@@ -85,7 +85,7 @@ export const PASSWORD_RESET_REQUEST_TEMPLATE = `
     <a href="{resetURL}" style="display: inline-block; padding: 10px 20px; background-color: #d32f2f; color: #fff; text-decoration: none; border-radius: 4px;">Сбросить пароль</a>
   </p>
   <p>This link will expire in 1 hour for security reasons.</p>
-  <p>С наилучшими пожеланиями,<br>Команда Prodavetc</p>
+  <p>С наилучшими пожеланиями,<br>Команда marketassist</p>
   <footer style="margin-top: 20px; font-size: 0.8em; text-align: center; color: #888;">Это автоматическое сообщение, пожалуйста, не отвечайте на это электронное письмо.</footer>
 </body>
 </html>

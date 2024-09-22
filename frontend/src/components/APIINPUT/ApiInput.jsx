@@ -14,7 +14,7 @@ const ApiInput = ({ apiKey, setApiKey, handleFetchData, authUser, hasAccess }) =
             />
             <button onClick={handleFetchData} className="btn btn-outline btn-info" disabled={!authUser?.isVerified || !hasAccess}
             >
-                Загрузить данные
+                Подтвердить API ключ
             </button>
         </div>
     );

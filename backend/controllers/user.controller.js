@@ -17,6 +17,7 @@ export const getUserBarcodes = async (req, res) => {
 };
 
 
+
 export const changeUserInformation = async (req, res) => {
     try {
         const { firstName, lastName, innOrOgrnip, phoneNumber, email, companyName, currentPassword, newPassword, bankAccount, bic } = req.body;
