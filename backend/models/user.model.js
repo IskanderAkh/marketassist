@@ -50,10 +50,47 @@ const userSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    userErrors: [
+        {
+            message: {
+                type: String,
+                required: true,
+            },
+            createdAt: {
+                type: Date,
+                default: Date.now,
+            },
+            visible: {
+                type: Boolean,
+                default: true,
+            }
+        }
+    ],
+    responses: {
+        oneStar: { type: String, default: '' },
+        twoStars: { type: String, default: '' },
+        threeStars: { type: String, default: '' },
+        fourStars: { type: String, default: '' },
+        fiveStars: { type: String, default: '' }
+    },
     isVerified: {
         type: Boolean,
         default: false,
     },
+    resetPasswordToken: {
+        type: String,
+        required: false,
+    },
+    resetPasswordExpire: {
+        type: Date,
+        required: false,
+    },
+    responseOnReviewsEnabled: {
+        type: Boolean,
+        default: false,
+    },
+    marketName: { type: String, default: '' },
+    marketContacts: { type: String, default: '' },
     resetPasswordToken: String,
     resetPasswordExpiresAt: Date,
     verificationToken: String,

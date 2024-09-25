@@ -21,23 +21,27 @@ export const VERIFICATION_EMAIL_TEMPLATE = `
 
 export const PASSWORD_RESET_SUCCESS_TEMPLATE = `
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Сброс пароля успешно</title>
+  <title>Успешный сброс пароля</title>
 </head>
-<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-  <h2 style="text-align: center; color: #1e88e5;">Password Reset Confirmation</h2>
-  <p>Здравсвуйте,</p>
-  <p>Ваш пароль был успешно сброшен. Если вы не запросили об этом, пожалуйста, немедленно свяжитесь с поддержкой.</p>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f7f7f7;">
+  <h2 style="text-align: center; color: #1e88e5;">Подтверждение сброса пароля</h2>
+  <p>Здравствуйте,</p>
+  <p>Ваш пароль был успешно сброшен. Если вы не запрашивали изменение пароля, пожалуйста, немедленно свяжитесь с нашей службой поддержки.</p>
   <p>Для обеспечения безопасности мы рекомендуем вам:</p>
   <ul style="padding-left: 20px;">
-    <li>Используйте сильный, уникальный пароль</li>
-    <li>Не используйте один и тот же пароль для нескольких учетных записей</li>
+    <li>Использовать сложный, уникальный пароль</li>
+    <li>Не использовать один и тот же пароль для нескольких учетных записей</li>
+    <li>Регулярно менять пароль для повышения безопасности</li>
   </ul>
-  <p>С наилучшими пожеланиями,<br>Команда marketassist</p>
-  <footer style="margin-top: 20px; font-size: 0.8em; text-align: center; color: #888;">Это автоматизированное сообщение, пожалуйста, не отвечайте на это письмо.</footer>
+  <p>С наилучшими пожеланиями,<br>Команда Marketassist</p>
+  <footer style="margin-top: 20px; font-size: 0.8em; text-align: center; color: #888;">
+    Это автоматизированное сообщение, пожалуйста, не отвечайте на это письмо.<br>
+    Если у вас есть вопросы, свяжитесь с нами по адресу <a href="mailto:support@marketassist.ru" style="color: #1e88e5;">support@marketassist.ru</a>.
+  </footer>
 </body>
 </html>
 `;
@@ -84,7 +88,7 @@ export const PASSWORD_RESET_REQUEST_TEMPLATE = `
   <p style="text-align: center;">
     <a href="{resetURL}" style="display: inline-block; padding: 10px 20px; background-color: #d32f2f; color: #fff; text-decoration: none; border-radius: 4px;">Сбросить пароль</a>
   </p>
-  <p>This link will expire in 1 hour for security reasons.</p>
+  <p>Эта ссылка истекает через 1 час по соображениям безопасности.</p>
   <p>С наилучшими пожеланиями,<br>Команда marketassist</p>
   <footer style="margin-top: 20px; font-size: 0.8em; text-align: center; color: #888;">Это автоматическое сообщение, пожалуйста, не отвечайте на это электронное письмо.</footer>
 </body>

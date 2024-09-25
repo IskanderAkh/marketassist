@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Cookies from "js-cookie";
@@ -9,15 +9,25 @@ import ReviewsTable from "../../components/ReviewsTable/ReviewsTable";
 import OneStar from "../../components/RatingStars/OneStar";
 import VerifyLink from "../../components/VerifyLink/VerifyLink";
 import LoadingPage from "../../components/LoadingPage/LoadingPage";
+import EditMarketDetailsModal from "../../components/EditMarketDetails/EditMarketDetailsModal";
+import EditReviewResponsesModal from "../../components/EditReviewResponses/EditReviewResponsesModal";
 
 const AppReviews = ({ authUser, authUserLoading, authUserError }) => {
-  // Инициализация ключей
-  const [apiKey, setApiKey] = useState(Cookies.get('apiKey') || '');
-  const [currentApiKey, setCurrentApiKey] = useState(Cookies.get('apiKey') || '');
+
+  const [apiKey, setApiKey] = useState(Cookies.get('apiKey') || authUser?.reviewsApiKey || '');
+  const currentApiKey = Cookies.get('apiKey') || ''
   const [editable, setEditable] = useState(false);
-  const [marketName, setMarketName] = useState('');
-  const [contacts, setContacts] = useState('');
-  const [isApiKeyConfirmed, setIsApiKeyConfirmed] = useState(false);
+  const [marketName, setMarketName] = useState(authUser?.marketName || '');
+  const [contacts, setContacts] = useState(authUser?.marketContacts || '');
+
+  // Responses state for storing review responses
+  const [responses, setResponses] = useState({
+    oneStar: '',
+    twoStars: '',
+    threeStars: '',
+    fourStars: '',
+    fiveStars: '',
+  });
 
   const { data: reviews, isLoading, isError, refetch } = useQuery({
     queryKey: ['reviews', currentApiKey],
@@ -57,50 +67,51 @@ const AppReviews = ({ authUser, authUserLoading, authUserError }) => {
     retry: false
   });
 
-  const [responses, setResponses] = useState({
-    oneStar: "",
-    twoStars: "",
-    threeStars: "",
-    fourStars: "",
-    fiveStars: "",
-  });
-
-  const { mutate: setApiKeyMutation } = useMutation({
-    mutationFn: async () => {
-      try {
-        const res = await axios.put('/api/apiKey/update-api-key', {
-          apiKey: currentApiKey,
-        })
-        console.log(res.data);
-        return res.data;
-      } catch (error) {
-        console.log(error);
-      }
+  const mutation = useMutation({
+    mutationFn: async (updatedResponses) => {
+      const res = await axios.post('/api/reviews/update-responses', {
+        userId: authUser._id,
+        responses: updatedResponses
+      });
+      return res.data;
     },
     onSuccess: () => {
-      toast.success('API ключ успешно изменен!');
+      toast.success("Responses updated successfully");
+      refetch();
     },
     onError: () => {
-      toast.error('Ошибка при изменении API ключа!');
-    },
-  })
+      toast.error("Failed to update responses");
+    }
+  });
+
+  useEffect(() => {
+    if (authUser && authUser.responses) {
+      setResponses({
+        oneStar: authUser.responses.oneStar || '',
+        twoStars: authUser.responses.twoStars || '',
+        threeStars: authUser.responses.threeStars || '',
+        fourStars: authUser.responses.fourStars || '',
+        fiveStars: authUser.responses.fiveStars || '',
+      });
+    }
+  }, [authUser]);
+  
+  
+
+
+  const handleInputClick = async (value) => {
+    try {
+      await navigator.clipboard.writeText(value);
+      toast.success('Copied to clipboard!');
+    } catch (err) {
+      toast.error('Failed to copy!');
+    }
+  };
+
   const handleApiKeyChange = (event) => {
     const value = event.target.value;
     setApiKey(value);
-    setIsApiKeyConfirmed(false);
     Cookies.set('apiKey', value, { expires: 5 });
-  };
-
-  const handleApiKeyConfirmation = () => {
-    setCurrentApiKey(apiKey);
-    setIsApiKeyConfirmed(true);
-    setEditable(false);
-    setApiKeyMutation()
-  };
-
-
-  const handleInputChange = (event, rating) => {
-    setResponses({ ...responses, [rating]: event.target.value });
   };
 
   if (isLoadingAccess) {
@@ -131,111 +142,54 @@ const AppReviews = ({ authUser, authUserLoading, authUserError }) => {
                   value={apiKey}
                   disabled={isLoading || !authUser?.isVerified || !hasAccess || !editable}
                 />
-                <button
-                  className="btn btn-secondary"
-                  onClick={() => setEditable(!editable)}
-                  disabled={isLoading || !authUser?.isVerified || !hasAccess || apiKey.length < 1}
-                >
-                  {editable ? 'Отменить' : 'Изменить'}
+                <button className="btn btn-secondary" onClick={() => document.getElementById('edit-details-modal').click()}>
+                  Изменить данные
                 </button>
-                <button
-                  className="btn btn-primary btn-wide"
-                  onClick={handleApiKeyConfirmation}
-                  disabled={isLoading || !authUser?.isVerified || !hasAccess || isApiKeyConfirmed}
-                >
 
-                  {isLoading ? 'Загрузка...' : 'Подтвердить API ключ'}
+                <EditMarketDetailsModal authUser={authUser} refetchUserData={refetch} />
 
-                </button>
               </div>
             </div>
             <div className="flex items-center justify-end gap-3 flex-1 w-full mb-10">
               <div className="w-1/2">
-                <h2>Название магазина</h2>
-                <input type="text" placeholder="Введите Название магазина" value={marketName} onChange={(e) => setMarketName(e.target.value)} className="border p-2 mr-2 w-full" disabled={isLoading || !authUser?.isVerified || !hasAccess}
-                />
+                <h2>Название магазина:</h2>
+                <strong>{authUser?.marketName}</strong>
               </div>
               <div className=" w-1/2">
                 <h2>Контакты</h2>
-                <input type="text" placeholder="Введите контакты email или номер телефона" value={contacts} onChange={(e) => setContacts(e.target.value)} className="border p-2 mr-2 w-full" disabled={isLoading || !authUser?.isVerified || !hasAccess}
-                />
+                <strong>{authUser?.marketContacts}</strong>
               </div>
-            </div>
-            <div>
-              <p>Создайте новый токен</p>
-              <p>Не ставьте галочку "Только на чтение"</p>
-              <p>Добавьте методы: "Контент, <br /> Статистика, Аналитика, Вопросы и отзывы "</p>
             </div>
           </div>
           <div className="flex justify-end gap-4 flex-row-reverse">
             <div className="flex flex-col gap-2 w-full">
               <p>Если поле "Текст отзыва" не <br /> заполнено, тогда его автоматически отвечает ИИ.</p>
             </div>
-            <div className="flex flex-col gap-2   w-full">
-              <div className="w-full flex items-center">
-                <div className="h-full flex items-center justify-center">
-                  1<OneStar />
+            <div className="flex flex-col gap-2 w-full">
+              {Object.entries(responses)?.map(([key, value], index) => (
+                <div className="w-full flex items-center" key={index}>
+                  <div className="h-full flex items-center justify-center">
+                    {index + 1} <OneStar />
+                  </div>
+                  <input
+                    type="text"
+                    className="border p-2 mr-2 w-full"
+                    value={value} // Use the value from the responses object
+                    onClick={() => handleInputClick(value)} // Copy the value to clipboard
+                    readOnly
+                    disabled
+                  />
                 </div>
-                <input
-                  type="text"
-                  className="border p-2 mr-2 w-full"
-                  placeholder="Текст отзыва"
-                  value={responses.oneStar}
-                  onChange={(e) => handleInputChange(e, "oneStar")}
-                />
-              </div>
-              <div className="w-full flex items-center">
-                <div className="h-full flex items-center justify-center">
-                  2<OneStar />
-                </div>
-                <input
-                  type="text"
-                  className="border p-2 mr-2 w-full"
-                  placeholder="Текст отзыва"
-                  value={responses.twoStars}
-                  onChange={(e) => handleInputChange(e, "twoStars")}
-                />
-              </div>
-              <div className="w-full flex items-center">
-                <div className="h-full flex items-center justify-center">
-                  3<OneStar />
-                </div>
-                <input
-                  type="text"
-                  className="border p-2 mr-2 w-full"
-                  placeholder="Текст отзыва"
-                  value={responses.threeStars}
-                  onChange={(e) => handleInputChange(e, "threeStars")}
-                />
-              </div>
-              <div className="w-full flex items-center">
-                <div className="h-full flex items-center justify-center">
-                  4<OneStar />
-                </div>
-                <input
-                  type="text"
-                  className="border p-2 mr-2 w-full"
-                  placeholder="Текст отзыва"
-                  value={responses.fourStars}
-                  onChange={(e) => handleInputChange(e, "fourStars")}
-                />
-              </div>
-              <div className="w-full flex items-center">
-                <div className="h-full flex items-center justify-center">
-                  5<OneStar />
-                </div>
-                <input
-                  type="text"
-                  className="border p-2 mr-2 w-full"
-                  placeholder="Текст отзыва"
-                  value={responses.fiveStars}
-                  onChange={(e) => handleInputChange(e, "fiveStars")}
-                />
-              </div>
+              ))}
+              <button className="btn btn-primary" onClick={() => document.getElementById('edit-responses-modal').click()}>
+                Редактировать мануальные ответы
+              </button>
+              <EditReviewResponsesModal responses={responses} setResponses={setResponses} refetchReviews={refetch} />
+
             </div>
           </div>
         </div>
-        <ReviewsTable responses={responses} reviews={reviews} isError={isError} isLoading={isLoading} marketName={marketName} contacts={contacts} apiKey={currentApiKey}  />
+        <ReviewsTable authUser={authUser} responses={responses} reviews={reviews} isError={isError} isLoading={isLoading} marketName={marketName} contacts={contacts} apiKey={currentApiKey} />
       </div>
     </Container>
   );

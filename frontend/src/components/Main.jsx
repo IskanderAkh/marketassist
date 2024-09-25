@@ -10,6 +10,7 @@ import Calculator from '../pages/Calculator/Calculator'
 import Contact from '../pages/Contact/Contact'
 import ProductCost from '../pages/ProductCost/ProductCost'
 import { useQuery } from '@tanstack/react-query'
+import ForgotPass from '../pages/ForgotPass/ForgotPass'
 
 const Main = () => {
     const { data: authUser, isLoading: authUserLoading, isError: authUserError } = useQuery({ queryKey: ['authUser'] })
@@ -25,6 +26,7 @@ const Main = () => {
                 <Route path='/app-reviews' element={<AppReviews authUser={authUser} authUserLoading={authUserLoading} authUserError={authUserError} />} />
                 <Route path='/profile' element={<Profile />} />
                 <Route path='/contact' element={<Contact />} />
+                <Route path='/forgot-password' element={<ForgotPass />} />
                 <Route path='/product-cost' element={<ProductCost authUser={authUser} authUserLoading={authUserLoading} authUserError={authUserError} />} />
                 <Route path='*' element={<Home />} />
             </Routes>

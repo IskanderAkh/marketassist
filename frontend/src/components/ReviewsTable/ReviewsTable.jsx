@@ -5,12 +5,13 @@ import RatingStars from "../RatingStars/RatingStars";
 import toast from "react-hot-toast";
 
 
-const ReviewsTable = ({ apiKey, responses, isError, isLoading, reviews, marketName, contacts }) => {
+const ReviewsTable = ({ apiKey, responses, isError, isLoading, reviews, marketName, contacts, authUser }) => {
 
 
   const [selectedReviewsIds, setselectedReviewsIds] = useState([])
   const [selectAll, setSelectAll] = useState(false);
   const queryClient = useQueryClient();
+  const [responseOnReviewsEnabled, setResponseOnReviewsEnabled] = useState(authUser?.responseOnReviewsEnabled || false);
 
   const handleSelectAll = (event) => {
     const checked = event.target.checked;
@@ -22,6 +23,18 @@ const ReviewsTable = ({ apiKey, responses, isError, isLoading, reviews, marketNa
       setselectedReviewsIds([]);
     }
   }
+  const toggleAutoResponses = async () => {
+    try {
+      const response = await axios.post('/api/reviews/toggle-auto-responses', {
+        userId: authUser._id,
+        enable: !responseOnReviewsEnabled,
+      });
+      setResponseOnReviewsEnabled(!responseOnReviewsEnabled);
+      toast.success(response.data.message);
+    } catch (error) {
+      toast.error("Error toggling auto responses");
+    }
+  };
 
   const handleRowSelect = (event, productId) => {
     const checked = event.target.checked;
@@ -64,23 +77,19 @@ const ReviewsTable = ({ apiKey, responses, isError, isLoading, reviews, marketNa
         <div className="text-center text-xl font-bold">
           Выберите отзывы для ответа
         </div>
-        <button className="btn btn-primary self-end pointer-events-auto" title="Ответить на выбранные отзывы" onClick={answerOnReviews} disabled={selectedReviewsIds.length === 0 || !apiKey}>Ответить на отзывы</button>
+        <button
+          className={`btn ${responseOnReviewsEnabled ? 'btn-success' : 'btn-primary'}`}
+          onClick={toggleAutoResponses}
+        >
+          {responseOnReviewsEnabled ? 'Отключить автоответы' : 'Включить автоответы'}
+        </button>
       </div>
       <div className="overflow-x-auto">
         {isLoading && <p>Загрузка...</p>}
         {!isLoading && <table className="table">
           <thead>
             <tr>
-              <th>
-                <label>
-                  <input
-                    type="checkbox"
-                    className="checkbox"
-                    checked={selectAll}
-                    onChange={handleSelectAll}
-                  />
-                </label>
-              </th>
+              <th> </th>
               <th>Имя</th>
               <th>Отзыв</th>
               <th>Рейтинг</th>
@@ -93,20 +102,13 @@ const ReviewsTable = ({ apiKey, responses, isError, isLoading, reviews, marketNa
               reviews.map((review, i) => (
                 <tr key={i}>
                   <th>
-                    <label>
-                      <input
-                        type="checkbox"
-                        className="checkbox"
-                        checked={selectedReviewsIds.includes(review.id)}
-                        onChange={(e) => handleRowSelect(e, review.id)}
-                      />
-                    </label>
+                    {i + 1}
                   </th>
                   <td>
                     <div className="flex items-center gap-3">
 
                       <div>
-                        <div className="font-bold">{review.userName || 'Покупатель'}</div>
+                        <div className="font-medium">{review.userName || 'Покупатель'}</div>
 
                       </div>
                     </div>
@@ -121,7 +123,7 @@ const ReviewsTable = ({ apiKey, responses, isError, isLoading, reviews, marketNa
                     {review.subjectName}
                   </td>
                   <td>
-                    {review?.answer?.text ? review.answer.text : 'Нет ответа'}
+                    {review?.answer?.text ? review.answer.text : 'Отвечено без текста'}
                   </td>
                 </tr>
               ))

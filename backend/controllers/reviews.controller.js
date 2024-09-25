@@ -1,4 +1,3 @@
-import fs from 'fs';
 import axios from 'axios';
 import OpenAI from 'openai';
 import dotenv from 'dotenv';
@@ -32,11 +31,31 @@ export const getReviews = async (req, res) => {
   }
 };
 
+export const toggleAutoResponses = async (req, res) => {
+  const { userId, enable } = req.body;
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    user.responseOnReviewsEnabled = enable;
+    await user.save();
+
+    res.json({ message: `Auto responses ${enable ? 'enabled' : 'disabled'} successfully` });
+  } catch (error) {
+    console.error('Error toggling auto responses:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
 
 
 const generateResponse = async (feedback, responses, marketName = null, contacts = null) => {
   let responseMessage = '';
 
+  
   switch (feedback.productValuation) {
     case 1:
       responseMessage = responses.oneStar || '';
@@ -67,18 +86,18 @@ const generateResponse = async (feedback, responses, marketName = null, contacts
     });
 
     responseMessage = aiResponse.choices[0].message.content.trim();
+   
 
-    // Закомментировано: отправка ответа на Wildberries API
-    // try {
-    //   await axios.patch(
-    //     `${WB_API_BASE_URL}/feedbacks`,
-    //     { id: feedback.id, text: responseMessage },
-    //     { headers: { Authorization: apiKey } }
-    //   );
-    //   console.log(`Ответ успешно отправлен на отзыв ID: ${feedback.id}`);
-    // } catch (err) {
-    //   console.error(`Ошибка при отправке ответа на отзыв ID: ${feedback.id}:`, err);
-    // }
+    try {
+      await axios.patch(
+        `${WB_API_BASE_URL}/feedbacks`,
+        { id: feedback.id, text: responseMessage },
+        { headers: { Authorization: apiKey } }
+      );
+      console.log(`Ответ успешно отправлен на отзыв ID: ${feedback.id}`);
+    } catch (err) {
+      console.error(`Ошибка при отправке ответа на отзыв ID: ${feedback.id}:`, err);
+    }
   }
 
   return responseMessage;
@@ -107,17 +126,16 @@ export const setAnswersonReviews = async (req, res) => {
     for (const feedback of chosenFeedbacks) {
       const responseMessage = await generateResponse(feedback, responses, marketName, contacts);
 
-      // Закомментировано: отправка ответа на Wildberries API
-      // try {
-      //   await axios.patch(
-      //     `${WB_API_BASE_URL}/feedbacks`,
-      //     { id: feedback.id, text: responseMessage },
-      //     { headers: { Authorization: apiKey } }
-      //   );
-      //   console.log(`Ответ успешно отправлен на отзыв ID: ${feedback.id}`);
-      // } catch (err) {
-      //   console.error(`Ошибка при отправке ответа на отзыв ID: ${feedback.id}:`, err);
-      // }
+      try {
+        await axios.patch(
+          `${WB_API_BASE_URL}/feedbacks`,
+          { id: feedback.id, text: responseMessage },
+          { headers: { Authorization: apiKey } }
+        );
+        console.log(`Ответ успешно отправлен на отзыв ID: ${feedback.id}`);
+      } catch (err) {
+        console.error(`Ошибка при отправке ответа на отзыв ID: ${feedback.id}:`, err);
+      }
     }
 
     res.json({ message: 'Ответы успешно отправлены на все отзывы и сохранены в файл' });
@@ -127,37 +145,83 @@ export const setAnswersonReviews = async (req, res) => {
   }
 };
 
+export const updateResponses = async (req, res) => {
+  const { responses } = req.body;
+  const userId = req.user._id;
+  try {
+    const user = await User.findById(userId)
+    if (!user) {
+      return res.status(404).json({ error: "Пользователь не найден" })
+    }
+
+    user.responses = {
+      oneStar: (responses.oneStar === undefined) ? user.responses.oneStar : responses.oneStar,
+      twoStars: (responses.twoStars === undefined) ? user.responses.twoStars : responses.twoStars,
+      threeStars: (responses.threeStars === undefined) ? user.responses.threeStars : responses.threeStars,
+      fourStars: (responses.fourStars === undefined) ? user.responses.fourStars : responses.fourStars,
+      fiveStars: (responses.fiveStars === undefined) ? user.responses.fiveStars : responses.fiveStars
+    };
+
+    await user.save();
+    res.json({ message: 'Ответы успешно обновлены' });
+  } catch (error) {
+    console.error('Error updating responses:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
+
 cron.schedule('*/10 * * * *', async () => {
   try {
-    const users = await User.find().select('reviewsApiKey');
+    const users = await User.find({ responseOnReviewsEnabled: true }).select('reviewsApiKey marketName marketContacts userErrors responses');
 
     for (const user of users) {
       if (!user.reviewsApiKey) {
         continue;
       }
-      const { data: responseData } = await axios.get(`${WB_API_BASE_URL}/feedbacks`, {
-        headers: { Authorization: user.reviewsApiKey },
-        params: {
-          isAnswered: true,
-          take: 5000,
-          skip: 0,
-        },
-      });
 
-      const allFeedbacks = responseData.data.feedbacks.filter(feedback => !feedback.isAnswered);
+      try {
+        const { data: responseData } = await axios.get(`${WB_API_BASE_URL}/feedbacks`, {
+          headers: { Authorization: user.reviewsApiKey },
+          params: {
+            isAnswered: false,
+            take: 5000,
+            skip: 0,
+          },
+        });
 
-      if (allFeedbacks.length === 0) {
-        return;
-      }
+        const allFeedbacks = responseData.data.feedbacks.filter(feedback => !feedback.isAnswered);
 
-      const responses = {};
+        if (allFeedbacks.length === 0) {
+          if (user.userErrors.length > 0) {
+            user.userErrors = [];
+            await user.save();
+          }
+          continue;
+        }
 
-      for (const feedback of allFeedbacks) {
-        await generateResponse(feedback, responses, user?.marketName, user?.marketContacts);
+        const responses = user.responses;
+        
+        for (const feedback of allFeedbacks) {
+          await generateResponse(feedback, responses, user.marketName, user.marketContacts);
+        }
+
+        if (user.userErrors.length > 0) {
+
+          user.userErrors = [];
+          await user.save();
+        }
+      } catch (userError) {
+        console.error(`Ошибка при получении отзывов для пользователя! ${user._id}:`, userError.message);
+
+        if (!user.userErrors.some(err => err.message === userError.message)) {
+          user.userErrors.push({ message: `Ошибка при получении отзывов! ${userError.message}. Проверьте правильность ключа API` });
+          await user.save();
+        }
       }
     }
-    console.log('Все отзывы успешно обработаны');
+    console.log('Отзывы успешно обработаны');
   } catch (err) {
     console.error('Ошибка при обработке отзывов:', err);
   }
 });
+

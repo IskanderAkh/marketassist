@@ -33,10 +33,10 @@ const Header = () => {
 
           <div className="flex gap-14 header-links">
             <Link to="/" className={`${location.pathname === "/" ? "active" : ""}`}>Главная</Link>
-            <Link target="_blank" to={authUser ? `/product-cost` : '/auth'} className={`${location.pathname === "/product-cost" ? "active" : ""}`}>Себестоимость</Link>
-            <Link target="_blank" to={authUser ? "/app-calculator" : "/auth"} className={`${location.pathname === "/app-calculator" || location.pathname === "/calculator" ? "active" : ""}`}>Калькулятор прибыли</Link>
-            <Link target="_blank" to={authUser ? "/app-reviews" : "/auth"} className={`${location.pathname === "/app-reviews" || location.pathname === "/reviews" ? "active" : ""}`}>Управление Отзывами</Link>
-            <Link target="_blank" to="/contact" className={`${location.pathname === "/contact" ? "active" : ""}`}>Контакты</Link>
+            <Link to={authUser ? `/product-cost` : '/auth'} className={`${location.pathname === "/product-cost" ? "active" : ""}`}>Себестоимость</Link>
+            <Link to={authUser ? "/app-calculator" : "/auth"} className={`${location.pathname === "/app-calculator" || location.pathname === "/calculator" ? "active" : ""}`}>Калькулятор прибыли</Link>
+            <Link to={authUser ? "/app-reviews" : "/auth"} className={`${location.pathname === "/app-reviews" || location.pathname === "/reviews" ? "active" : ""}`}>Управление Отзывами</Link>
+            <Link to="/contact" className={`${location.pathname === "/contact" ? "active" : ""}`}>Контакты</Link>
           </div>
 
           <Link to="/profile">

@@ -1,5 +1,5 @@
 import { generateTokenAndSetCookie } from "../lib/utils/generateToken.js"
-import { sendVerificationEmail, sendWelcomeEmail } from "../mail/emails.js";
+import { sendPasswordResetEmail, sendVerificationEmail, sendWelcomeEmail } from "../mail/emails.js";
 import User from "../models/user.model.js"
 import bcrypt from "bcryptjs"
 import crypto from 'crypto';
@@ -144,7 +144,7 @@ export const verifyEmail = async (req, res) => {
         await user.save();
 
         await sendWelcomeEmail(user.email, user.name);
-
+         
         res.status(200).json({
             success: true,
             message: "Электронная почта проверена успешно",
@@ -221,6 +221,63 @@ export const logout = async (req, res) => {
         res.status(500).json({ error: "Internal server error in Logout" })
     }
 }
+export const resetPassword = async (req, res) => {
+    try {
+        const { email } = req.body;
+
+
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ error: "Пользователь не найден" });
+        }
+
+        const resetToken = crypto.randomBytes(32).toString("hex");
+
+        const resetTokenExpire = Date.now() + 3600000;
+
+        user.resetPasswordToken = resetToken;
+        user.resetPasswordExpire = resetTokenExpire;
+        await user.save();
+
+        const resetUrl = `${req.protocol}://${req.get("host")}/password-reset/${resetToken}`;
+
+        await sendPasswordResetEmail(user.email, resetUrl);
+
+        res.status(200).json({ message: "Ссылка для сброса пароля была отправлена на вашу почту." });
+
+    } catch (error) {
+        console.error("Error in resetPassword:", error);
+        res.status(500).json({ error: "Внутренняя ошибка сервера в сбросе пароля" });
+    }
+};
+export const resetPasswordToken = async (req, res) => {
+    const { token } = req.params;
+    const { newPassword } = req.body;
+
+    try {
+        const user = await User.findOne({
+            resetPasswordToken: token,
+            resetPasswordExpire: { $gt: Date.now() },
+        });
+
+        if (!user) {
+            return res.status(400).json({ error: "Неверный или истекший токен сброса пароля" });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(newPassword, salt);
+
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpire = undefined;
+
+        await user.save();
+
+        res.status(200).json({ message: "Пароль был успешно изменен." });
+    } catch (error) {
+        console.error("Error in resetPasswordToken:", error);
+        res.status(500).json({ error: "Внутренняя ошибка сервера в сбросе пароля" });
+    }
+};
 
 export const getUser = async (req, res) => {
     try {

@@ -172,7 +172,7 @@ export const checkReviewPlanAccess = async (req, res) => {
 
 export const addOrUpdatePlanForUser = async (req, res) => {
     try {
-        const { planId, subscriptionDurationInDays, barcodes } = req.body; 
+        const { planId, subscriptionDurationInDays, barcodes } = req.body;
         const userId = req.user._id;
         const user = await User.findById(userId);
         const plan = await Plan.findById(planId);
@@ -230,7 +230,20 @@ export const addOrUpdatePlanForUser = async (req, res) => {
 };
 
 
-
+export const updateMarketDetails = async (req, res) => {
+    try {
+        const { userId, marketName, marketContacts, reviewsApiKey } = req.body;
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            { marketName, marketContacts, reviewsApiKey },
+            { new: true }
+        );
+        res.status(200).json({ success: true, data: updatedUser });
+    } catch (error) {
+        console.error('Ошибка обновления деталей:', error);
+        res.status(500).json({ success: false, message: 'Не удалось обновить подробности' });
+    }
+}
 
 export const getUserPlan = async (req, res) => {
     try {
@@ -245,3 +258,31 @@ export const getUserPlan = async (req, res) => {
         return res.status(500).json({ error: "Ошибка подгрузки плана пользователя" });
     }
 }
+
+export const updateErrorVisibility = async (req, res) => {
+    const { userId, errorId } = req.params;
+    console.log(userId, '///',errorId);
+    
+    const { visible } = req.body; // Expecting { visible: false }
+  
+    try {
+      const user = await User.findById(userId);
+  
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      // Find the error and update its visibility
+      const error = user.userErrors.id(errorId);
+      if (error) {
+        error.visible = visible; // Set visibility to false
+        await user.save();
+        return res.status(200).json({ message: 'Error visibility updated' });
+      } else {
+        return res.status(404).json({ message: 'Error not found' });
+      }
+    } catch (error) {
+      console.error("Error updating error visibility:", error);
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+  }
