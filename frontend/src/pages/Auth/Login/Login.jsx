@@ -80,7 +80,7 @@ const Login = () => {
           <span className='border-b border-gray-300'></span>
         </div>
 
-        <button className="submit-button bg-black text-white w-full py-4 mt-16">{isPending ? "Loading..." : "Sign in"}</button>
+        <button className="submit-button bg-black text-white w-full py-4 mt-16">{isPending ? "Входим..." : "Войти"}</button>
         <div href="/forgot-password" className="forgot-password text-center">
           <Link to="/forgot-password">
             Забыли свой пароль?

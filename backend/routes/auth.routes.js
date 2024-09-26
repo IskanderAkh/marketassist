@@ -13,4 +13,5 @@ router.post("/request-new-verification-code", protectRoute, requestNewVerificati
 router.post("/cancel-registration", protectRoute, cancelRegistration)
 router.post("/forgot-password", resetPassword); 
 router.post("/password-reset/:token", resetPasswordToken); 
+
 export default router

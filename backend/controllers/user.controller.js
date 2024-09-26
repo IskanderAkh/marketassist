@@ -139,7 +139,25 @@ export const checkCalcPlanAccess = async (req, res) => {
         return res.status(500).json({ message: 'Ошибка сервера при проверке доступа к плану' });
     }
 };
-
+export const updateCalcApiKey = async (req, res) => {
+    try {
+        const { apiKey } = req.body;
+        const userId = req.user._id;
+        const calcApiKey = apiKey
+        if(!apiKey){
+            return res.status(404).json({ message: "Api ключ не должен быть пустым" });
+        }
+        const user = await User.findOneAndUpdate(userId, {calcApiKey})
+        if (!user) {
+            return res.status(404).json({ message: "Пользователь не найден" });
+        }
+        
+        res.status(200).json({ success: true, data: user });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: 'Ошибка сервера при обновлении api ключа' });
+    }
+}
 export const checkReviewPlanAccess = async (req, res) => {
     try {
         const requiredPlans = ['66dfdc354c02e37851cb52e7', '66dfdcd64c02e37851cb52e9'];
@@ -232,7 +250,7 @@ export const addOrUpdatePlanForUser = async (req, res) => {
 
 export const updateMarketDetails = async (req, res) => {
     try {
-        const { userId, marketName, marketContacts, reviewsApiKey } = req.body;
+        const { userId, marketName, marketContacts, reviewsApiKey, } = req.body;
         const updatedUser = await User.findByIdAndUpdate(
             userId,
             { marketName, marketContacts, reviewsApiKey },
@@ -261,28 +279,28 @@ export const getUserPlan = async (req, res) => {
 
 export const updateErrorVisibility = async (req, res) => {
     const { userId, errorId } = req.params;
-    console.log(userId, '///',errorId);
-    
+    console.log(userId, '///', errorId);
+
     const { visible } = req.body; // Expecting { visible: false }
-  
+
     try {
-      const user = await User.findById(userId);
-  
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-  
-      // Find the error and update its visibility
-      const error = user.userErrors.id(errorId);
-      if (error) {
-        error.visible = visible; // Set visibility to false
-        await user.save();
-        return res.status(200).json({ message: 'Error visibility updated' });
-      } else {
-        return res.status(404).json({ message: 'Error not found' });
-      }
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Find the error and update its visibility
+        const error = user.userErrors.id(errorId);
+        if (error) {
+            error.visible = visible; // Set visibility to false
+            await user.save();
+            return res.status(200).json({ message: 'Error visibility updated' });
+        } else {
+            return res.status(404).json({ message: 'Error not found' });
+        }
     } catch (error) {
-      console.error("Error updating error visibility:", error);
-      return res.status(500).json({ message: 'Internal server error' });
+        console.error("Error updating error visibility:", error);
+        return res.status(500).json({ message: 'Internal server error' });
     }
-  }
+}

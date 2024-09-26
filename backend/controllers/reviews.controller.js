@@ -13,8 +13,7 @@ const openai = new OpenAI({
 
 export const getReviews = async (req, res) => {
   try {
-    const apiKey = req.headers.authorization;
-
+    const apiKey = req.user.reviewsApiKey;
     const { data } = await axios.get(`${WB_API_BASE_URL}/feedbacks`, {
       headers: { Authorization: apiKey },
       params: {
@@ -24,7 +23,12 @@ export const getReviews = async (req, res) => {
       },
     });
 
-    res.json(data);
+    const feedbacks = data.data.feedbacks
+      ? data.data.feedbacks.filter(feedback => feedback.text || (feedback.answer && feedback.answer.text))
+      : [];
+    res.json(feedbacks);
+
+
   } catch (err) {
     console.error('Ошибка при получении отзывов:', err);
     res.status(500).json({ error: 'Ошибка при получении отзывов' });
@@ -52,10 +56,10 @@ export const toggleAutoResponses = async (req, res) => {
 };
 
 
-const generateResponse = async (feedback, responses, marketName = null, contacts = null) => {
+const generateResponse = async (feedback, responses, marketName = null, contacts = null, apiKey) => {
   let responseMessage = '';
 
-  
+
   switch (feedback.productValuation) {
     case 1:
       responseMessage = responses.oneStar || '';
@@ -86,7 +90,7 @@ const generateResponse = async (feedback, responses, marketName = null, contacts
     });
 
     responseMessage = aiResponse.choices[0].message.content.trim();
-   
+
 
     try {
       await axios.patch(
@@ -137,7 +141,7 @@ export const setAnswersonReviews = async (req, res) => {
         console.error(`Ошибка при отправке ответа на отзыв ID: ${feedback.id}:`, err);
       }
     }
-
+    allFeedbacks = [];
     res.json({ message: 'Ответы успешно отправлены на все отзывы и сохранены в файл' });
   } catch (err) {
     console.error('Ошибка при обработке отзывов:', err);
@@ -200,9 +204,9 @@ cron.schedule('*/10 * * * *', async () => {
         }
 
         const responses = user.responses;
-        
+
         for (const feedback of allFeedbacks) {
-          await generateResponse(feedback, responses, user.marketName, user.marketContacts);
+          await generateResponse(feedback, responses, user.marketName, user.marketContacts, user.reviewsApiKey);
         }
 
         if (user.userErrors.length > 0) {

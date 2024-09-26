@@ -13,9 +13,11 @@ import EditMarketDetailsModal from "../../components/EditMarketDetails/EditMarke
 import EditReviewResponsesModal from "../../components/EditReviewResponses/EditReviewResponsesModal";
 
 const AppReviews = ({ authUser, authUserLoading, authUserError }) => {
-
+  if (authUserLoading) {
+    console.log('Loading');
+    return <LoadingPage />;
+  }
   const [apiKey, setApiKey] = useState(Cookies.get('apiKey') || authUser?.reviewsApiKey || '');
-  const currentApiKey = Cookies.get('apiKey') || ''
   const [editable, setEditable] = useState(false);
   const [marketName, setMarketName] = useState(authUser?.marketName || '');
   const [contacts, setContacts] = useState(authUser?.marketContacts || '');
@@ -30,15 +32,14 @@ const AppReviews = ({ authUser, authUserLoading, authUserError }) => {
   });
 
   const { data: reviews, isLoading, isError, refetch } = useQuery({
-    queryKey: ['reviews', currentApiKey],
+    queryKey: ['reviews', apiKey],
     queryFn: async () => {
       const res = await axios.get('/api/reviews/get-reviews', {
-        headers: { Authorization: `${currentApiKey}` },
+        headers: { Authorization: `${apiKey}` },
       });
-      Cookies.set('reviews', JSON.stringify(res.data.data.feedbacks), { expires: 5 });
-      return res.data.data.feedbacks;
+      return res.data;
     },
-    enabled: !!authUser?.isVerified && !!currentApiKey,
+    enabled: !!authUser?.isVerified && !!apiKey,
     staleTime: 10 * 60 * 1000,
     cacheTime: 15 * 60 * 1000,
     onSuccess: (data) => {
@@ -67,22 +68,6 @@ const AppReviews = ({ authUser, authUserLoading, authUserError }) => {
     retry: false
   });
 
-  const mutation = useMutation({
-    mutationFn: async (updatedResponses) => {
-      const res = await axios.post('/api/reviews/update-responses', {
-        userId: authUser._id,
-        responses: updatedResponses
-      });
-      return res.data;
-    },
-    onSuccess: () => {
-      toast.success("Responses updated successfully");
-      refetch();
-    },
-    onError: () => {
-      toast.error("Failed to update responses");
-    }
-  });
 
   useEffect(() => {
     if (authUser && authUser.responses) {
@@ -95,8 +80,8 @@ const AppReviews = ({ authUser, authUserLoading, authUserError }) => {
       });
     }
   }, [authUser]);
-  
-  
+
+
 
 
   const handleInputClick = async (value) => {
@@ -189,7 +174,7 @@ const AppReviews = ({ authUser, authUserLoading, authUserError }) => {
             </div>
           </div>
         </div>
-        <ReviewsTable authUser={authUser} responses={responses} reviews={reviews} isError={isError} isLoading={isLoading} marketName={marketName} contacts={contacts} apiKey={currentApiKey} />
+        <ReviewsTable authUser={authUser} responses={responses} reviews={reviews} isError={isError} isLoading={isLoading} marketName={marketName} contacts={contacts} apiKey={apiKey} />
       </div>
     </Container>
   );

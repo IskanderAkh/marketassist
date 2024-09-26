@@ -33,7 +33,8 @@
     "sass": "^1.77.8",
     "tailwind-merge": "^2.5.2",
     "wb": "file:..",
-    "xlsx": "^0.18.5"
+    "xlsx": "^0.18.5",
+    "zustand": "^5.0.0-rc.2"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",

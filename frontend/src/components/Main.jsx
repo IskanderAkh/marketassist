@@ -1,5 +1,5 @@
 import React from 'react'
-import { Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import Auth from '../pages/Auth/Auth'
 import Profile from '../pages/Profile/Profile'
 import AppCalculator from '../pages/Calculator/AppCalculator'
@@ -10,11 +10,19 @@ import Calculator from '../pages/Calculator/Calculator'
 import Contact from '../pages/Contact/Contact'
 import ProductCost from '../pages/ProductCost/ProductCost'
 import { useQuery } from '@tanstack/react-query'
-import ForgotPass from '../pages/ForgotPass/ForgotPass'
+import ForgotPass from '../pages/Pass/ForgotPass'
+import ResetPass from '../pages/Pass/ResetPass'
 
 const Main = () => {
     const { data: authUser, isLoading: authUserLoading, isError: authUserError } = useQuery({ queryKey: ['authUser'] })
     
+    const RedirectAuthenticatedUser = ({ children }) => {
+        if (authUser) {
+            return <Navigate to='/' replace />;
+        }
+        return children;
+    };
+
     return (
         <div className='flex-[1_0_auto]'>
             <Routes>
@@ -26,7 +34,8 @@ const Main = () => {
                 <Route path='/app-reviews' element={<AppReviews authUser={authUser} authUserLoading={authUserLoading} authUserError={authUserError} />} />
                 <Route path='/profile' element={<Profile />} />
                 <Route path='/contact' element={<Contact />} />
-                <Route path='/forgot-password' element={<ForgotPass />} />
+                <Route path='/forgot-password' element={<RedirectAuthenticatedUser><ForgotPass /></RedirectAuthenticatedUser>} />
+                <Route path='/password-reset/:token' element={<RedirectAuthenticatedUser><ResetPass /></RedirectAuthenticatedUser>} />
                 <Route path='/product-cost' element={<ProductCost authUser={authUser} authUserLoading={authUserLoading} authUserError={authUserError} />} />
                 <Route path='*' element={<Home />} />
             </Routes>

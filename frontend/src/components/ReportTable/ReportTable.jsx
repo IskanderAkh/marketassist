@@ -29,7 +29,7 @@ const ReportTable = ({ groupedData, handleCostChange, hasFetchedData }) => {
                     Пожалуйста, сначала загрузите данные с API.
                 </div>
             )}
-
+             <br/>
             <FileUploader
                 setExcelData={setExcelData}
                 handleCostChange={handleCostChange}

@@ -144,7 +144,7 @@ export const verifyEmail = async (req, res) => {
         await user.save();
 
         await sendWelcomeEmail(user.email, user.name);
-         
+
         res.status(200).json({
             success: true,
             message: "Электронная почта проверена успешно",
@@ -239,7 +239,10 @@ export const resetPassword = async (req, res) => {
         user.resetPasswordExpire = resetTokenExpire;
         await user.save();
 
-        const resetUrl = `${req.protocol}://${req.get("host")}/password-reset/${resetToken}`;
+        const resetUrl =
+            process.env.NODE_ENV === "production"
+                ? `https://yourdomain.com/password-reset/${resetToken}` // Use domain in production
+                : `${req.protocol}://localhost:3000/password-reset/${resetToken}`; // Use host and port in development
 
         await sendPasswordResetEmail(user.email, resetUrl);
 
@@ -263,7 +266,13 @@ export const resetPasswordToken = async (req, res) => {
         if (!user) {
             return res.status(400).json({ error: "Неверный или истекший токен сброса пароля" });
         }
-
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$/;
+        let passwordResult = passwordRegex.test(newPassword);
+        if (!passwordResult) {
+            return res.status(400).json({
+                error: 'Пароль должен содержать не менее 6 символов, включая заглавные и строчные буквы, цифры и специальные символы.'
+            });
+        }
         const salt = await bcrypt.genSalt(10);
         user.password = await bcrypt.hash(newPassword, salt);
 

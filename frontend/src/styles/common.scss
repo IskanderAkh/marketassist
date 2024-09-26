@@ -10,6 +10,9 @@ header {
     /* Легкое размытие для читабельности */
     backdrop-filter: blur(10px);
 }
-
+*{
+    font-family: 'Roboto'
+}
+@import './fonts.scss';
 @import './header.scss';
 

@@ -44,9 +44,8 @@ const Auth = () => {
   return (
     <>
       {isError && (
-        <div>
+        <div className="mb-20">
           <h1 className="title text-center text-2xl mt-10">Войдите в аккаунт что-бы пользоваться функциями сайта</h1>
-          <h1 className="title text-center text-3xl mt-10">Вход</h1>
           <div className="auth-choice mx-auto mt-14 flex h-16 max-w-lg p-1">
             <button
               className={`auth-choice-btn flex-1`}

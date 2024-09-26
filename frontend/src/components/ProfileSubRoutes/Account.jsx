@@ -81,7 +81,7 @@ const Account = ({ authUser }) => {
       <div className='flex min-h-96 gap-5'>
         <div className='w-5/6 flex items-start justify-between gap-3 mt-20'>
           <div className='w-full flex flex-col justify-between h-full'>
-            <label className="input input-bordered flex items-center gap-2">
+            <label className="input input-bordered flex items-center gap-2 text-start">
               ИНН/ОГРНИП
               <input
                 type="text"
@@ -93,7 +93,7 @@ const Account = ({ authUser }) => {
                 onChange={handleInputChange} />
             </label>
 
-            <label className="input input-bordered flex items-center gap-2">
+            <label className="input input-bordered flex items-center gap-2 text-start">
               Полное наименование
               <input
                 value={formData.companyName || ''}
@@ -105,7 +105,7 @@ const Account = ({ authUser }) => {
                 disabled={authUser.companyName}
                 onChange={handleInputChange} />
             </label>
-            <label className="input input-bordered flex items-center gap-2">
+            <label className="input input-bordered flex items-center gap-2 text-start">
               Расчетный счет
               <input
                 value={formData.bankAccount || ''}
@@ -115,7 +115,7 @@ const Account = ({ authUser }) => {
                 placeholder={formData.bankAccount ? formData.bankAccount : 'Ввести'}
                 disabled={authUser.bankAccount} onChange={handleInputChange} />
             </label>
-            <label className="input input-bordered flex items-center gap-2">
+            <label className="input input-bordered flex items-center gap-2 text-start">
               БИК
               <input
                 value={formData.bic || ''}
@@ -128,12 +128,12 @@ const Account = ({ authUser }) => {
             </label>
           </div>
           <div className='w-full flex flex-col justify-between h-full'>
-            <label className="input input-bordered flex items-center gap-2">
+            <label className="input input-bordered flex items-center gap-2 text-start">
               Email
               <input type="text" className="grow" placeholder={formData.email} disabled={formData.email} />
             </label>
 
-            <label className="input input-bordered flex items-center gap-2">
+            <label className="input input-bordered flex items-center gap-2 text-start">
               Номер телефона
               <input type="text" className="grow" placeholder={formData.phoneNumber} disabled={formData.phoneNumber} />
             </label>

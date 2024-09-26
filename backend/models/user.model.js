@@ -96,6 +96,7 @@ const userSchema = new mongoose.Schema({
     verificationToken: String,
     verificationTokenExpiresAt: Date,
     reviewsApiKey: String,
+    calcApiKey: String,
     verificationTokenRequestedAt: { type: Date },
     currentPlans: [{
         plan: {

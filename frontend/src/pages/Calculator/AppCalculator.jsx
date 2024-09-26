@@ -8,7 +8,7 @@ const AppCalculator = () => {
   return (
     <Container>
       <div>
-        <ReportDetailByPeriod authUser={authUser} authUserLoading={authUserLoading} authUserError={authUserError} />
+        <ReportDetailByPeriod authUser={authUser} authUserLoading={authUserLoading} authUserError={authUserError} calcApiKey={authUser?.calcApiKey} />
       </div>
     </Container>
   );

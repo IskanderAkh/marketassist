@@ -1,28 +1,15 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import React, { useState } from "react";
 import RatingStars from "../RatingStars/RatingStars";
 import toast from "react-hot-toast";
 
 
-const ReviewsTable = ({ apiKey, responses, isError, isLoading, reviews, marketName, contacts, authUser }) => {
+const ReviewsTable = ({ isError, isLoading, reviews, authUser }) => {
 
-
-  const [selectedReviewsIds, setselectedReviewsIds] = useState([])
-  const [selectAll, setSelectAll] = useState(false);
   const queryClient = useQueryClient();
   const [responseOnReviewsEnabled, setResponseOnReviewsEnabled] = useState(authUser?.responseOnReviewsEnabled || false);
 
-  const handleSelectAll = (event) => {
-    const checked = event.target.checked;
-    setSelectAll(checked);
-    if (checked) {
-      const allProductIds = reviews.map((review) => review.id);
-      setselectedReviewsIds(allProductIds);
-    } else {
-      setselectedReviewsIds([]);
-    }
-  }
   const toggleAutoResponses = async () => {
     try {
       const response = await axios.post('/api/reviews/toggle-auto-responses', {
@@ -36,46 +23,12 @@ const ReviewsTable = ({ apiKey, responses, isError, isLoading, reviews, marketNa
     }
   };
 
-  const handleRowSelect = (event, productId) => {
-    const checked = event.target.checked;
-    if (checked) {
-      setselectedReviewsIds((prev) => [...prev, productId]);
-    } else {
-      setselectedReviewsIds((prev) => prev.filter((id) => id !== productId));
-    }
-  }
-  const { mutate: setAnswers, isPending, isError: error } = useMutation({
-    mutationFn: async () => {
-      try {
-        const res = await axios.patch('/api/reviews/respond-to-all-reviews', {
-          apiKey,
-          reviewIds: selectedReviewsIds,
-          responses,
-          marketName,
-          contacts,
-        })
-        console.log(res.data);
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    onSuccess: () => {
-      toast.success('Ответы на отзывы отправлены')
-      queryClient.invalidateQueries({ queryKey: ['reviews'] })
-    }
-  })
-  const answerOnReviews = () => {
-    if (!marketName || !contacts) {
-      toast.error("Ввведите название магазина и контакты!")
-      return;
-    }
-    setAnswers()
-  }
+
   return (
     <div>
       <div className="flex w-full items-center justify-between my-10">
         <div className="text-center text-xl font-bold">
-          Выберите отзывы для ответа
+          Отзывы клиентов
         </div>
         <button
           className={`btn ${responseOnReviewsEnabled ? 'btn-success' : 'btn-primary'}`}
