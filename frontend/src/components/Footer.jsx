@@ -4,7 +4,7 @@ import Container from "@/components/ui/Container";
 const Footer = () => {
   return (
 
-    <footer className="footer bg-neutral text-neutral-content items-center p-4">
+    <footer className="footer bg-neutral text-neutral-content items-center p-4 mt-20">
       <aside className="grid-flow-col items-center">
         <svg
           width="36"

@@ -1,13 +1,13 @@
-import { useState, useEffect } from 'react';
-import { useMutation } from '@tanstack/react-query';
+import { useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
 const ApiInput = ({ authUser, hasAccess }) => {
-    const [apiKey, setApiKey] = useState(authUser?.calcApiKey || ''); // Initialize from authUser
-    const [initialApiKey, setInitialApiKey] = useState(apiKey); // To track the original API key
+    const [apiKey, setApiKey] = useState(authUser?.calcApiKey || '');
+    const [initialApiKey, setInitialApiKey] = useState(apiKey);
+    const queryClient = useQueryClient()
 
-    // React Query mutation to update the API key
     const { mutate: updateApiKey } = useMutation({
         mutationFn: async () => {
             const res = await axios.put('/api/user/update-calc-api-key', {
@@ -20,24 +20,23 @@ const ApiInput = ({ authUser, hasAccess }) => {
             setInitialApiKey(apiKey);
             const modal = document.getElementById("api-key-modal");
             if (modal) modal.checked = false;
+            queryClient.invalidateQueries(['authUser', 'reviews'])
         },
         onError: () => {
             toast.error('Не удалось обновить API ключ');
         },
     });
 
-    // Reset API key to initial value
     const resetApiKey = () => setApiKey(initialApiKey);
 
     return (
         <>
 
-            
+
             <button className="btn btn-secondary btn-wide" onClick={() => document.getElementById('api-key-modal').click()}>
                 Изменить API ключ
             </button>
 
-            {/* The Modal for editing API key */}
             <input type="checkbox" id="api-key-modal" className="modal-toggle" />
             <div className="modal">
                 <div className="modal-box">
@@ -59,7 +58,7 @@ const ApiInput = ({ authUser, hasAccess }) => {
                         <label
                             htmlFor="api-key-modal"
                             className="btn"
-                            onClick={resetApiKey} // Reset to initial key
+                            onClick={resetApiKey}
                         >
                             Отменить
                         </label>

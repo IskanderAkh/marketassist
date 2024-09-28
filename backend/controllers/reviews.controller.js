@@ -174,7 +174,7 @@ export const updateResponses = async (req, res) => {
   }
 }
 
-cron.schedule('*/10 * * * *', async () => {
+cron.schedule('*/20 * * * *', async () => {
   try {
     const users = await User.find({ responseOnReviewsEnabled: true }).select('reviewsApiKey marketName marketContacts userErrors responses');
 
@@ -185,10 +185,13 @@ cron.schedule('*/10 * * * *', async () => {
 
       try {
         const { data: responseData } = await axios.get(`${WB_API_BASE_URL}/feedbacks`, {
-          headers: { Authorization: user.reviewsApiKey },
+          headers: { 
+            Authorization: user.reviewsApiKey,
+            'Content-Type': 'application/json'
+           },
           params: {
             isAnswered: false,
-            take: 5000,
+            take: 200,
             skip: 0,
           },
         });
@@ -210,17 +213,11 @@ cron.schedule('*/10 * * * *', async () => {
         }
 
         if (user.userErrors.length > 0) {
-
           user.userErrors = [];
           await user.save();
         }
       } catch (userError) {
-        console.error(`Ошибка при получении отзывов для пользователя! ${user._id}:`, userError.message);
-
-        if (!user.userErrors.some(err => err.message === userError.message)) {
-          user.userErrors.push({ message: `Ошибка при получении отзывов! ${userError.message}. Проверьте правильность ключа API` });
-          await user.save();
-        }
+        console.error(`Ошибка при получении отзывов для пользователя! ${user._id}:`, userError.response.data);
       }
     }
     console.log('Отзывы успешно обработаны');

@@ -15,7 +15,6 @@ export const getReportDetailByPeriod = async (req, res) => {
                 dateTo,
             }
         });
-
         const data = response.data;
         res.json(data);
     } catch (error) {
@@ -27,18 +26,31 @@ export const getReportDetailByPeriod = async (req, res) => {
 export const saveBarcodes = async (req, res) => {
     const { barcodes } = req.body;
 
+    console.log('Received barcodes:', barcodes); 
+
     if (!barcodes || barcodes.length === 0) {
         return res.status(400).json({ message: "Barcodes are required" });
     }
+    for (const item of barcodes) {
+        if (!item.barcode || !item.costPrice || !item.sa_name) {
+            return res.status(400).json({ message: "Each barcode must include barcode, costPrice, and sa_name" });
+        }
+    }
 
     try {
-        const user = await User.findById(req.user.id); 
+        const user = await User.findById(req.user.id);
 
         if (user.barcodes.length + barcodes.length > user.allowedNumberOfBarcodes) {
             return res.status(403).json({ message: "You have exceeded your allowed number of barcodes" });
         }
 
-        user.barcodes = [...user.barcodes, ...barcodes];
+        const updatedBarcodes = barcodes.map(item => ({
+            barcode: item.barcode,
+            costPrice: item.costPrice,
+            sa_name: item.sa_name
+        }));
+
+        user.barcodes = [...user.barcodes, ...updatedBarcodes];
 
         await user.save();
 

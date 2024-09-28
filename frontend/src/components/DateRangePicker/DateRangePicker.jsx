@@ -8,8 +8,19 @@ const DateRangePicker = ({ dateRange, setDateRange, authUser, hasAccess }) => {
 
     const handleDateChange = (dates) => {
         const [start, end] = dates;
-        setDateRange(dates);
+    
+        if (start) {
+            start.setHours(0, 0, 0, 0); 
+        }
+        if (end) {
+            end.setHours(23, 59, 59, 999); 
+        }
+        const startUTC = start ? new Date(Date.UTC(start.getFullYear(), start.getMonth(), start.getDate())) : null;
+        const endUTC = end ? new Date(Date.UTC(end.getFullYear(), end.getMonth(), end.getDate())) : null;
+    
+        setDateRange([startUTC, endUTC]);
     };
+    
 
     return (
         <div className='flex items-center border pr-2 max-w-60 w-full'>

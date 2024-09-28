@@ -5,9 +5,9 @@ import * as XLSX from 'xlsx';
 
 const useFetchData = (apiKey, fetchData, dateFrom, dateTo) => {
     const url = '/api/report/report-detail';
-    const barcodesUrl = '/api/user/barcodes'; 
+    const barcodesUrl = '/api/user/barcodes';
 
-    const{data: allowedBarcodes, isLoading: isLoadingBarcodes} = useQuery({
+    const { data: allowedBarcodes, isLoading: isLoadingBarcodes } = useQuery({
         queryKey: ['barcodes'],
         queryFn: async () => {
             const res = await axios.get(barcodesUrl);
@@ -38,42 +38,81 @@ const useFetchData = (apiKey, fetchData, dateFrom, dateTo) => {
 
     useEffect(() => {
         if (data && allowedBarcodes) {
-            const grouped = data.reduce((acc, item) => {
+            const barcodeMapping = {};
+            
+            allowedBarcodes.forEach(barcodeItem => {
+                if (barcodeItem.sa_name) {
+                    barcodeMapping[barcodeItem.sa_name] = barcodeItem.barcode;
+                }
+            });
+    
+            const combinedGroupedData = {};
+    
+            data.forEach(item => {
                 const barcode = item.barcode;
-                const allowedBarcode = allowedBarcodes.find(b => b.barcode === barcode);
-
-                if (allowedBarcode) {
-                    if (!acc[barcode]) {
-                        acc[barcode] = {
+                const saName = item.sa_name;
+               
+                if (barcode) {
+                    if (!combinedGroupedData[barcode]) {
+                        combinedGroupedData[barcode] = {
                             barcode,
                             totalPrice: 0,
-                            productCost: allowedBarcode.costPrice || 0, // Set initial costPrice from allowed barcodes
+                            productCost: allowedBarcodes.find(b => b.barcode === barcode)?.costPrice || 0,
                             quantity: 0,
                             logisticsCost: 0,
                             checkingAccount: 0,
-                            nm_id: 0,
+                            nm_id: item.nm_id,
                         };
                     }
-
+    
                     if (item.supplier_oper_name === "Логистика") {
-                        acc[barcode].logisticsCost += Math.abs(Number(item.delivery_rub));
+                        combinedGroupedData[barcode].logisticsCost += Math.abs(Number(item.delivery_rub));
                     } else if (item.supplier_oper_name === "Продажа") {
-                        acc[barcode].totalPrice += Number(item.retail_amount);
-                        acc[barcode].quantity += Number(item.quantity);
-                        acc[barcode].checkingAccount =
-                            acc[barcode].totalPrice -
-                            acc[barcode].logisticsCost -
-                            acc[barcode].totalPrice * 0.07 -
-                            acc[barcode].productCost * acc[barcode].quantity;
-                        acc[barcode].nm_id = item.nm_id;
+                        combinedGroupedData[barcode].totalPrice += Number(item.retail_amount);
+                        combinedGroupedData[barcode].quantity += Number(item.quantity);
+                        combinedGroupedData[barcode].checkingAccount =
+                            combinedGroupedData[barcode].totalPrice -
+                            combinedGroupedData[barcode].logisticsCost -
+                            combinedGroupedData[barcode].totalPrice * 0.07 -
+                            combinedGroupedData[barcode].productCost * combinedGroupedData[barcode].quantity;
+                    }
+                } 
+                else if (saName && barcodeMapping[saName]) {
+                    
+                    const generatedBarcode = barcodeMapping[saName]; 
+    
+                    if (!combinedGroupedData[generatedBarcode]) {
+                        combinedGroupedData[generatedBarcode] = {
+                            barcode: generatedBarcode,
+                            totalPrice: 0,
+                            productCost: allowedBarcodes.find(b => b.barcode === generatedBarcode)?.costPrice || 0,
+                            quantity: 0,
+                            logisticsCost: 0,
+                            checkingAccount: 0,
+                            nm_id: item.nm_id,
+                        };
+                    }
+                        if (item.supplier_oper_name === "Логистика") {
+                        combinedGroupedData[generatedBarcode].logisticsCost += Math.abs(Number(item.delivery_rub));
+                    } else if (item.supplier_oper_name === "Продажа") {
+                        combinedGroupedData[generatedBarcode].totalPrice += Number(item.retail_amount);
+                        combinedGroupedData[generatedBarcode].quantity += Number(item.quantity);
+                        combinedGroupedData[generatedBarcode].checkingAccount =
+                            combinedGroupedData[generatedBarcode].totalPrice -
+                            combinedGroupedData[generatedBarcode].logisticsCost -
+                            combinedGroupedData[generatedBarcode].totalPrice * 0.07 -
+                            combinedGroupedData[generatedBarcode].productCost * combinedGroupedData[generatedBarcode].quantity;
                     }
                 }
-                return acc;
-            }, {});
-
-            setGroupedData(Object.values(grouped));
+            });
+    
+            setGroupedData(Object.values(combinedGroupedData));
         }
     }, [data, allowedBarcodes]);
+    
+    
+
+
 
     const handleCostChange = (barcode, cost) => {
         setGroupedData(prevData =>

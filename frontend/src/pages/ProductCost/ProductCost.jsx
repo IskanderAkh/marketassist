@@ -8,8 +8,7 @@ import VerifyLink from '../../components/VerifyLink/VerifyLink';
 
 const ProductCost = ({ authUser, authUserLoading, authUserError }) => {
     const queryClient = useQueryClient();
-    // const { data: authUser } = useQuery({ queryKey: ["authUser"] });
-    const [barcodes, setBarcodes] = useState([{ barcode: '', costPrice: '' }]);
+    const [barcodes, setBarcodes] = useState([{ barcode: '', costPrice: '', sa_name: '' }]);
     const [isSubmitted, setIsSubmitted] = useState(false);
 
     const { data: existingBarcodes, isLoading } = useQuery({
@@ -44,7 +43,7 @@ const ProductCost = ({ authUser, authUserLoading, authUserError }) => {
 
     const maxBarcodes = authUser?.allowedNumberOfBarcodes || 0;
     const savedBarcodesCount = existingBarcodes?.length || 0;
-    const newBarcodesCount = barcodes.filter(item => item.barcode && item.costPrice).length;
+    const newBarcodesCount = barcodes.filter(item => item.barcode && item.costPrice && item.sa_name).length;
     const remainingSlots = maxBarcodes - (savedBarcodesCount + newBarcodesCount);
 
     const handleInputChange = (index, e) => {
@@ -56,7 +55,6 @@ const ProductCost = ({ authUser, authUserLoading, authUserError }) => {
 
     const handleAddRow = (e) => {
         e.preventDefault();
-
         const numRowsToAdd = e.shiftKey ? 10 : 1;
 
         if (barcodes.length + numRowsToAdd > remainingSlots) {
@@ -64,7 +62,7 @@ const ProductCost = ({ authUser, authUserLoading, authUserError }) => {
             return;
         }
 
-        const newRows = Array(numRowsToAdd).fill({ barcode: '', costPrice: '' });
+        const newRows = Array(numRowsToAdd).fill({ barcode: '', costPrice: '', sa_name: '' });
         setBarcodes([...barcodes, ...newRows]);
     };
 
@@ -78,15 +76,16 @@ const ProductCost = ({ authUser, authUserLoading, authUserError }) => {
         saveBarcodes(barcodes);
     };
 
-    if (isLoading) return <Container>
-        <div className='flex items-center justify-center'>
-            <button className="btn ">
-                <span className="loading loading-spinner"></span>
-                Загрузка данных...
-            </button>
-        </div>
-    </Container>
-
+    if (isLoading) return (
+        <Container>
+            <div className='flex items-center justify-center'>
+                <button className="btn ">
+                    <span className="loading loading-spinner"></span>
+                    Загрузка данных...
+                </button>
+            </div>
+        </Container>
+    );
 
     return (
         <Container>
@@ -106,21 +105,20 @@ const ProductCost = ({ authUser, authUserLoading, authUserError }) => {
                                 <th>Число баркода</th>
                                 <th>Баркод</th>
                                 <th>Стоимость (в руб.)</th>
+                                <th>SA Name</th>
                                 <th>Действие</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {/* Existing Barcodes */}
                             {existingBarcodes?.map((item, index) => (
                                 <tr key={item._id} className='bg-gray-200 '>
                                     <td>{index + 1}</td>
                                     <td>{item.barcode}</td>
                                     <td>{item.costPrice} руб.</td>
+                                    <td>{item.sa_name}</td>
                                     <td>-</td>
                                 </tr>
                             ))}
-
-                            {/* New Barcodes */}
                             {barcodes.map((item, index) => {
                                 const isDisabled = existingBarcodes?.some(savedItem => savedItem.barcode === item.barcode);
                                 const startingIndex = savedBarcodesCount + index + 1;
@@ -135,7 +133,6 @@ const ProductCost = ({ authUser, authUserLoading, authUserError }) => {
                                                 value={item.barcode}
                                                 className='outline-none border w-full h-full p-2'
                                                 onChange={(e) => handleInputChange(index, e)}
-                                                disabled={isDisabled || isSubmitted || !authUser?.isVerified}
                                                 required
                                             />
                                         </td>
@@ -147,7 +144,17 @@ const ProductCost = ({ authUser, authUserLoading, authUserError }) => {
                                                 className='outline-none border w-full h-full p-2'
                                                 value={item.costPrice}
                                                 onChange={(e) => handleInputChange(index, e)}
-                                                disabled={isDisabled || isSubmitted || !authUser?.isVerified}
+                                                required
+                                            />
+                                        </td>
+                                        <td>
+                                            <input
+                                                type="text"
+                                                name="sa_name"
+                                                placeholder='Введите SA Name'
+                                                className='outline-none border w-full h-full p-2'
+                                                value={item.sa_name}
+                                                onChange={(e) => handleInputChange(index, e)}
                                                 required
                                             />
                                         </td>
@@ -155,8 +162,7 @@ const ProductCost = ({ authUser, authUserLoading, authUserError }) => {
                                             <button
                                                 type="button"
                                                 className="btn btn-outline btn-error"
-                                                onClick={() => handleRemoveRow(index)}
-                                                disabled={isSubmitted || !authUser?.isVerified}>
+                                                onClick={() => handleRemoveRow(index)}>
                                                 Удалить
                                             </button>
                                         </td>
@@ -171,11 +177,11 @@ const ProductCost = ({ authUser, authUserLoading, authUserError }) => {
                         type="button"
                         className='btn btn-primary'
                         onClick={handleAddRow}
-                        disabled={isPending || barcodes.length >= remainingSlots || isSubmitted || !authUser?.isVerified}>
+                        disabled={isPending || barcodes.length >= remainingSlots || isSubmitted}>
                         Добавить строку
                     </button>
                     <button className='btn btn-info btn-wide'
-                        type="submit" disabled={isPending || isSubmitted || !authUser?.isVerified}>Сохранить</button>
+                        type="submit" disabled={isPending || isSubmitted}>Сохранить</button>
                 </div>
                 {isError &&
                     <div role="alert" className="alert alert-error">

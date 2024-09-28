@@ -32,7 +32,8 @@ const userSchema = new mongoose.Schema({
     },
     barcodes: [{
         barcode: String,
-        costPrice: Number
+        costPrice: Number,
+        sa_name: String 
     }],
     companyName: {
         type: String,

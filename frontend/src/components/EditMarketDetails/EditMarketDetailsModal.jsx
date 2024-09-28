@@ -7,7 +7,7 @@ const EditMarketDetailsModal = ({ authUser, refetchUserData }) => {
     const [initialMarketName, setInitialMarketName] = useState(authUser?.marketName || '');
     const [initialContacts, setInitialContacts] = useState(authUser?.marketContacts || '');
     const [initialReviewsApiKey, setInitialReviewsApiKey] = useState(authUser?.reviewsApiKey || '');
-   
+
     const [marketName, setMarketName] = useState(initialMarketName);
     const [contacts, setContacts] = useState(initialContacts);
     const [reviewsApiKey, setReviewsApiKey] = useState(initialReviewsApiKey);
@@ -82,7 +82,11 @@ const EditMarketDetailsModal = ({ authUser, refetchUserData }) => {
                         value={reviewsApiKey}
                         onChange={(e) => setReviewsApiKey(e.target.value)}
                     />
-
+                    <div className='border border-black p-2'>
+                        <p>Создайте новый токен</p>
+                        <p>Не ставьте галочку "Только на чтение"</p>
+                        <p>Добавьте методы: "Контент, <br /> Статистика, Аналитика, Вопросы и отзывы "</p>
+                    </div>
                     <div className="modal-action">
                         <label
                             htmlFor="edit-details-modal"
