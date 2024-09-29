@@ -4,7 +4,7 @@ import User from '../models/user.model.js';
 export const getReportDetailByPeriod = async (req, res) => {
     try {
         const { apiKey, dateFrom, dateTo } = req.body;
-
+        
         const response = await axios.get('https://statistics-api.wildberries.ru/api/v5/supplier/reportDetailByPeriod', {
             headers: {
                 'Authorization': apiKey,
@@ -15,6 +15,7 @@ export const getReportDetailByPeriod = async (req, res) => {
                 dateTo,
             }
         });
+        
         const data = response.data;
         res.json(data);
     } catch (error) {
@@ -26,7 +27,6 @@ export const getReportDetailByPeriod = async (req, res) => {
 export const saveBarcodes = async (req, res) => {
     const { barcodes } = req.body;
 
-    console.log('Received barcodes:', barcodes); 
 
     if (!barcodes || barcodes.length === 0) {
         return res.status(400).json({ message: "Barcodes are required" });
@@ -78,3 +78,29 @@ export const getExistingBarcodes = async (req, res) => {
         res.status(500).json({ message: "Server error", error });
     }
 }
+
+
+export const updateBarcodeCost = async (req, res) => {
+    const { barcode } = req.params;
+    const { costPrice } = req.body;
+
+    if (!barcode || !costPrice) {
+        return res.status(400).json({ message: "Barcode and costPrice are required" });
+    }
+
+    try {
+        const user = await User.findById(req.user.id);
+
+        const barcodeIndex = user.barcodes.findIndex(item => item.barcode === barcode);
+        if (barcodeIndex === -1) {
+            return res.status(404).json({ message: "Barcode not found" });
+        }
+
+        user.barcodes[barcodeIndex].costPrice = costPrice;
+        await user.save();
+
+        res.status(200).json({ message: "Cost price updated successfully" });
+    } catch (error) {
+        res.status(500).json({ message: "Server error" });
+    }
+};

@@ -4,41 +4,33 @@ import FileUploader from './FileUploader';
 import TaxToggle from './TaxToggle';
 import { useExportToExcel } from './useExportToExcel';
 
-const ReportTable = ({ groupedData, handleCostChange, hasFetchedData }) => {
+const ReportTable = ({ groupedData, handleCostChange, logisticsCount }) => {
     const [excelData, setExcelData] = useState({});
     const [tax, setTax] = useState(0.07);
 
-    const exportToExcel = useExportToExcel(groupedData, excelData, tax);
+    const exportToExcel = useExportToExcel(groupedData, excelData, tax,);
 
     const calculateTotalFinalResult = () => {
         return groupedData
             .reduce((total, item) => {
                 const finalResult = item.totalPrice
-                    - (excelData[item.barcode] !== undefined ? excelData[item.barcode] : item.productCost) * item.quantity
+                    - item.productCost * item.quantity
                     - (item.totalPrice * tax)
-                    - item.logisticsCost;
+                    - item.logisticsCost
+                    - item.compensation;
                 return total + finalResult;
             }, 0);
     };
 
     return (
         <div>
-            <TaxToggle tax={tax} setTax={setTax} />
-            {!groupedData.length && (
-                <div className="mb-4 text-red-500">
-                    Пожалуйста, сначала загрузите данные с API.
-                </div>
-            )}
-             <br/>
-            <FileUploader
-                setExcelData={setExcelData}
-                handleCostChange={handleCostChange}
-                groupedData={groupedData}
-            />
 
-            <div className='w-full flex items-center justify-end'>
-                <button onClick={exportToExcel} className="btn btn-primary mb-4" disabled={!groupedData.length}>
-                    Сохранить таблицу в Excel
+           
+
+            <div className='w-full flex items-center justify-between mb-10'>
+                <TaxToggle tax={tax} setTax={setTax} />
+                <button onClick={exportToExcel} className="btn btn-primary mb-4 btn-wide btn-outline" disabled={!groupedData.length}>
+                    Вывести таблицу в Excel
                 </button>
             </div>
 
@@ -51,6 +43,7 @@ const ReportTable = ({ groupedData, handleCostChange, hasFetchedData }) => {
                             <th>Себестоимость</th>
                             <th>Налог ({(tax * 100).toFixed(0)}%)</th>
                             <th>Логистика</th>
+                            <th>Возмещение/Возврат</th>
                             <th>Конечный итог</th>
                         </tr>
                     </thead>
@@ -62,12 +55,13 @@ const ReportTable = ({ groupedData, handleCostChange, hasFetchedData }) => {
                                 tax={tax}
                                 excelData={excelData}
                                 handleCostChange={handleCostChange}
+                                logisticsCount={logisticsCount}
                             />
                         ))}
                     </tbody>
                     <tfoot>
                         <tr>
-                            <th colSpan="5" className="text-right text-black font-semibold text-lg">Итог:</th>
+                            <th colSpan="6" className="text-right text-black font-semibold text-lg">Итог:</th>
                             <th className='text-black font-bold text-lg'>₽ {calculateTotalFinalResult().toFixed(2)}</th>
                         </tr>
                     </tfoot>

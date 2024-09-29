@@ -17,10 +17,10 @@ const ApiInput = ({ authUser, hasAccess }) => {
         },
         onSuccess: () => {
             toast.success('API ключ обновлен успешно!');
+            queryClient.invalidateQueries(['authUser', 'sold'])
             setInitialApiKey(apiKey);
             const modal = document.getElementById("api-key-modal");
             if (modal) modal.checked = false;
-            queryClient.invalidateQueries(['authUser', 'reviews'])
         },
         onError: () => {
             toast.error('Не удалось обновить API ключ');
@@ -33,7 +33,7 @@ const ApiInput = ({ authUser, hasAccess }) => {
         <>
 
 
-            <button className="btn btn-secondary btn-wide" onClick={() => document.getElementById('api-key-modal').click()}>
+            <button className="btn btn-warning btn-wide  text-black" onClick={() => document.getElementById('api-key-modal').click()}>
                 Изменить API ключ
             </button>
 

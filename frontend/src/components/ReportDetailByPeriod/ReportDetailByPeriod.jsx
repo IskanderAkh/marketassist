@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ApiInput from '../APIINPUT/ApiInput';
 import ReportTable from '../ReportTable/ReportTable';
 import useFetchData from '../../hooks/useFetchData';
@@ -10,7 +10,15 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
-const ReportDetailByPeriod = ({ authUser, authUserLoading, authUserError, calcApiKey }) => {
+const ReportDetailByPeriod = () => {
+    const { data: authUser, isLoading: authUserLoading, isError: authUserError } = useQuery({ queryKey: ['authUser'] })
+
+    const [apiKey, setApiKey] = useState('');
+    useEffect(() => {
+        if (authUser && authUser.calcApiKey) {
+            setApiKey(authUser.calcApiKey);
+        }
+    }, [authUser]);
     const requiredPlans = ['66dfdcd64c02e37851cb52e9'];
 
     const { data: hasAccess, isLoading: isLoadingAccess, error: errorAccess, isError: isErrorAccess } = useQuery({
@@ -28,19 +36,19 @@ const ReportDetailByPeriod = ({ authUser, authUserLoading, authUserError, calcAp
         retry: false
     });
 
-    const [apiKey, setApiKey] = useState(calcApiKey);
+
+
     const [dateRange, setDateRange] = useState([null, null]);
     const [fetchData, setFetchData] = useState(false);
     const [startDate, endDate] = dateRange;
-    const { isLoading, groupedData, handleCostChange } = useFetchData(apiKey, fetchData, startDate, endDate);
-
+    const { isLoading, groupedData, handleCostChange, logisticsCount, getData } = useFetchData(apiKey, fetchData, startDate, endDate);
+    
     const handleFetchData = () => {
-        if(dateRange.some(date => !date))
-        {
+        if (dateRange.some(date => !date)) {
             toast.error('Выберите дату')
             return;
         }
-        setFetchData(true);
+        getData()
     };
 
     if (isLoadingAccess) {
@@ -71,14 +79,17 @@ const ReportDetailByPeriod = ({ authUser, authUserLoading, authUserError, calcAp
 
             }
             <div className='flex mb-10 gap-4 flex-col mt-10 items-start'>
-                <DateRangePicker dateRange={dateRange} setDateRange={setDateRange} authUser={authUser} hasAccess={hasAccess} />
-                <ApiInput apiKey={apiKey} setApiKey={setApiKey}  authUser={authUser} hasAccess={hasAccess} />
-                <div className='flex items-center'>
-                    <button className='btn btn-primary btn-outline btn-wide' onClick={handleFetchData} disabled={!hasAccess}>Получить отчет</button>
+                <div className='flex gap-4 w-full justify-between'>
+                    <DateRangePicker dateRange={dateRange} setDateRange={setDateRange} authUser={authUser} hasAccess={hasAccess} />
+                    <ApiInput apiKey={apiKey} setApiKey={setApiKey} authUser={authUser} hasAccess={hasAccess} />
+                </div>
+                <div className='flex items-center justify-end w-full'>
+            
+                    <button className='btn btn-secondary  btn-wide' onClick={handleFetchData} disabled={!hasAccess}>Получить отчет</button>
                 </div>
             </div>
             {isLoading && <div>Загрузка....</div>}
-            {!isLoading && <ReportTable groupedData={groupedData} handleCostChange={handleCostChange} />
+            {!isLoading && <ReportTable groupedData={groupedData} handleCostChange={handleCostChange} logisticsCount={logisticsCount} />
             }
         </div>
     );

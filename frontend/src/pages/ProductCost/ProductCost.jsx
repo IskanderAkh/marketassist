@@ -10,6 +10,8 @@ const ProductCost = ({ authUser, authUserLoading, authUserError }) => {
     const queryClient = useQueryClient();
     const [barcodes, setBarcodes] = useState([{ barcode: '', costPrice: '', sa_name: '' }]);
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const [editRowIndex, setEditRowIndex] = useState(null);
+    const [editedBarcodes, setEditedBarcodes] = useState({});
 
     const { data: existingBarcodes, isLoading } = useQuery({
         queryKey: ['existingBarcodes'],
@@ -22,29 +24,37 @@ const ProductCost = ({ authUser, authUserLoading, authUserError }) => {
 
     const { mutate: saveBarcodes, isPending, isError } = useMutation({
         mutationFn: async (newBarcodes) => {
-            try {
-                const res = await axios.post('/api/report/save-barcodes', { barcodes: newBarcodes });
-                return res.data;
-            } catch (error) {
-                console.error(error);
-                throw error;
-            }
+            const res = await axios.post('/api/report/save-barcodes', { barcodes: newBarcodes });
+            return res.data;
         },
         onSuccess: (data) => {
             setIsSubmitted(true);
-            toast.success('Штрих -коды успешно сохранились');
+            toast.success('Штрих-коды успешно сохранились');
             queryClient.invalidateQueries({ queryKey: ['existingBarcodes'] });
             window.location.reload();
         },
         onError: () => {
-            toast.error('Не удалось сохранить штрих -коды');
+            toast.error('Не удалось сохранить штрих-коды');
         }
     });
-
     const maxBarcodes = authUser?.allowedNumberOfBarcodes || 0;
     const savedBarcodesCount = existingBarcodes?.length || 0;
     const newBarcodesCount = barcodes.filter(item => item.barcode && item.costPrice && item.sa_name).length;
     const remainingSlots = maxBarcodes - (savedBarcodesCount + newBarcodesCount);
+
+    const { mutate: updateBarcodeCost, isError: updateError } = useMutation({
+        mutationFn: async (barcodeData) => {
+            await axios.put(`/api/report/update-barcode-cost/${barcodeData.barcode}`, { costPrice: barcodeData.costPrice });
+        },
+        onSuccess: () => {
+            toast.success('Стоимость успешно обновлена');
+            queryClient.invalidateQueries({ queryKey: ['existingBarcodes'] });
+            setEditRowIndex(null);  // Reset the edit state
+        },
+        onError: () => {
+            toast.error('Не удалось обновить стоимость');
+        }
+    });
 
     const handleInputChange = (index, e) => {
         const { name, value } = e.target;
@@ -53,33 +63,42 @@ const ProductCost = ({ authUser, authUserLoading, authUserError }) => {
         setBarcodes(newBarcodes);
     };
 
+    const handleExistingBarcodeChange = (index, e) => {
+        const { name, value } = e.target;
+        const newEditedBarcodes = { ...editedBarcodes, [index]: { ...existingBarcodes[index], [name]: value } };
+        setEditedBarcodes(newEditedBarcodes);
+    };
+
     const handleAddRow = (e) => {
         e.preventDefault();
         const numRowsToAdd = e.shiftKey ? 10 : 1;
-
-        if (barcodes.length + numRowsToAdd > remainingSlots) {
-            toast.error(`You can only add up to ${remainingSlots} more barcodes.`);
-            return;
-        }
-
         const newRows = Array(numRowsToAdd).fill({ barcode: '', costPrice: '', sa_name: '' });
         setBarcodes([...barcodes, ...newRows]);
     };
+
 
     const handleRemoveRow = (index) => {
         const newBarcodes = barcodes.filter((_, i) => i !== index);
         setBarcodes(newBarcodes);
     };
 
+    const handleEditClick = (index) => {
+        setEditRowIndex(index);
+        setEditedBarcodes({ ...editedBarcodes, [index]: { ...existingBarcodes[index] } });
+    };
+
+    const handleSaveEdit = (index) => {
+        const updatedBarcode = editedBarcodes[index];
+        updateBarcodeCost(updatedBarcode);
+    };
     const handleSubmit = (e) => {
         e.preventDefault();
         saveBarcodes(barcodes);
     };
-
     if (isLoading) return (
         <Container>
             <div className='flex items-center justify-center'>
-                <button className="btn ">
+                <button className="btn">
                     <span className="loading loading-spinner"></span>
                     Загрузка данных...
                 </button>
@@ -94,8 +113,8 @@ const ProductCost = ({ authUser, authUserLoading, authUserError }) => {
             }
             <form onSubmit={handleSubmit}>
                 <div className="mb-4">
-                    <p>Сохранено баркодов: {savedBarcodesCount}</p>
-                    <p>Свободных ячеек: {remainingSlots}</p>
+                    <p>Сохранено баркодов: {existingBarcodes?.length || 0}</p>
+                    <p>Осталось свободных ячеек: {remainingSlots}</p>
                 </div>
                 <div className="mb-4">
                     <h3 className="font-bold">Баркоды:</h3>
@@ -104,71 +123,95 @@ const ProductCost = ({ authUser, authUserLoading, authUserError }) => {
                             <tr className='font-bold text-black text-base'>
                                 <th>Число баркода</th>
                                 <th>Баркод</th>
-                                <th>Стоимость (в руб.)</th>
+                                <th>Себестоимость (в руб.)</th>
                                 <th>SA Name</th>
                                 <th>Действие</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody className=''>
                             {existingBarcodes?.map((item, index) => (
-                                <tr key={item._id} className='bg-gray-200 '>
+                                <tr key={item._id} className=''>
                                     <td>{index + 1}</td>
                                     <td>{item.barcode}</td>
-                                    <td>{item.costPrice} руб.</td>
-                                    <td>{item.sa_name}</td>
-                                    <td>-</td>
-                                </tr>
-                            ))}
-                            {barcodes.map((item, index) => {
-                                const isDisabled = existingBarcodes?.some(savedItem => savedItem.barcode === item.barcode);
-                                const startingIndex = savedBarcodesCount + index + 1;
-                                return (
-                                    <tr key={index}>
-                                        <td>{startingIndex}</td>
-                                        <td>
-                                            <input
-                                                type="text"
-                                                name="barcode"
-                                                placeholder='Введите баркод'
-                                                value={item.barcode}
-                                                className='outline-none border w-full h-full p-2'
-                                                onChange={(e) => handleInputChange(index, e)}
-                                                required
-                                            />
-                                        </td>
-                                        <td>
+                                    <td>
+                                        {editRowIndex === index ? (
                                             <input
                                                 type="number"
                                                 name="costPrice"
-                                                placeholder='Введите стоимость'
+                                                value={editedBarcodes[index]?.costPrice || item.costPrice}
+                                                onChange={(e) => handleExistingBarcodeChange(index, e)}
                                                 className='outline-none border w-full h-full p-2'
-                                                value={item.costPrice}
-                                                onChange={(e) => handleInputChange(index, e)}
-                                                required
                                             />
-                                        </td>
-                                        <td>
-                                            <input
-                                                type="text"
-                                                name="sa_name"
-                                                placeholder='Введите SA Name'
-                                                className='outline-none border w-full h-full p-2'
-                                                value={item.sa_name}
-                                                onChange={(e) => handleInputChange(index, e)}
-                                                required
-                                            />
-                                        </td>
-                                        <td>
+                                        ) : (
+                                            `${item.costPrice} руб.`
+                                        )}
+                                    </td>
+                                    <td>{item.sa_name}</td>
+                                    <td>
+                                        {editRowIndex === index ? (
                                             <button
                                                 type="button"
-                                                className="btn btn-outline btn-error"
-                                                onClick={() => handleRemoveRow(index)}>
-                                                Удалить
+                                                className="btn btn-success"
+                                                onClick={() => handleSaveEdit(index)}>
+                                                Сохранить
                                             </button>
-                                        </td>
-                                    </tr>
-                                );
-                            })}
+                                        ) : (
+                                            <button
+                                                type="button"
+                                                className="btn btn-warning"
+                                                onClick={() => handleEditClick(index)}>
+                                                Изменить
+                                            </button>
+                                        )}
+                                    </td>
+                                </tr>
+                            ))}
+                            {barcodes.map((item, index) => (
+                                <tr key={index} className=''>
+                                    <td>{existingBarcodes?.length + index + 1}</td>
+                                    <td>
+                                        <input
+                                            type="text"
+                                            name="barcode"
+                                            placeholder='Введите баркод'
+                                            value={item.barcode}
+                                            onChange={(e) => handleInputChange(index, e)}
+                                            className='outline-none border w-full h-full p-2'
+                                            required
+                                        />
+                                    </td>
+                                    <td>
+                                        <input
+                                            type="number"
+                                            name="costPrice"
+                                            placeholder='Введите стоимость'
+                                            value={item.costPrice}
+                                            onChange={(e) => handleInputChange(index, e)}
+                                            className='outline-none border w-full h-full p-2'
+                                            required
+                                        />
+                                    </td>
+                                    <td>
+                                        <input
+                                            type="text"
+                                            name="sa_name"
+                                            placeholder='Введите SA Name (Артикул продовца)'
+                                            value={item.sa_name}
+                                            onChange={(e) => handleInputChange(index, e)}
+                                            className='outline-none border w-full h-full p-2'
+                                            required
+                                        />
+                                    </td>
+                                    <td>
+                                        <button
+                                            type="button"
+                                            className="btn btn-outline btn-error"
+                                            onClick={() => handleRemoveRow(index)}>
+                                            Удалить
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
                         </tbody>
                     </table>
                 </div>

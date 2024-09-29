@@ -1,9 +1,12 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import * as XLSX from 'xlsx';
 
 const useFetchData = (apiKey, fetchData, dateFrom, dateTo) => {
+    const [data, setData] = useState([])
+    const [filteredItems, setFilteredItems] = useState([]);
+    const [logisticsCount, setLogisticsCount] = useState(0);
     const url = '/api/report/report-detail';
     const barcodesUrl = '/api/user/barcodes';
 
@@ -15,16 +18,18 @@ const useFetchData = (apiKey, fetchData, dateFrom, dateTo) => {
         }
     })
 
-    const { data, isLoading } = useQuery({
-        queryKey: ['sold', apiKey, fetchData, dateFrom, dateTo],
-        queryFn: async () => {
-            if (!fetchData || !apiKey || !dateFrom || !dateTo) return [];
+    const { mutate: getData, isLoading } = useMutation({
+        mutationKey: ['sold', apiKey, fetchData, dateFrom, dateTo],
+        mutationFn: async () => {
+
+            if (!apiKey || !dateFrom || !dateTo) return [];
             try {
                 const res = await axios.post(url, {
                     apiKey,
                     dateFrom,
                     dateTo,
                 });
+                setData(res.data);
                 return res.data;
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -32,6 +37,7 @@ const useFetchData = (apiKey, fetchData, dateFrom, dateTo) => {
             }
         },
         enabled: fetchData && !!apiKey && !!dateFrom && !!dateTo,
+        cacheTime: 0
     });
 
     const [groupedData, setGroupedData] = useState([]);
@@ -39,20 +45,23 @@ const useFetchData = (apiKey, fetchData, dateFrom, dateTo) => {
     useEffect(() => {
         if (data && allowedBarcodes) {
             const barcodeMapping = {};
-            
+
             allowedBarcodes.forEach(barcodeItem => {
                 if (barcodeItem.sa_name) {
                     barcodeMapping[barcodeItem.sa_name] = barcodeItem.barcode;
                 }
             });
-    
+
+            const allowedBarcodesSet = new Set(allowedBarcodes.map(item => item.barcode));
             const combinedGroupedData = {};
-    
+            const filtered = [];
+            let logisticsSum = 0;
+
             data.forEach(item => {
                 const barcode = item.barcode;
                 const saName = item.sa_name;
-               
-                if (barcode) {
+                
+                if (barcode && allowedBarcodesSet.has(barcode)) {
                     if (!combinedGroupedData[barcode]) {
                         combinedGroupedData[barcode] = {
                             barcode,
@@ -60,11 +69,12 @@ const useFetchData = (apiKey, fetchData, dateFrom, dateTo) => {
                             productCost: allowedBarcodes.find(b => b.barcode === barcode)?.costPrice || 0,
                             quantity: 0,
                             logisticsCost: 0,
+                            compensation: 0,
                             checkingAccount: 0,
                             nm_id: item.nm_id,
                         };
                     }
-    
+
                     if (item.supplier_oper_name === "Логистика") {
                         combinedGroupedData[barcode].logisticsCost += Math.abs(Number(item.delivery_rub));
                     } else if (item.supplier_oper_name === "Продажа") {
@@ -76,41 +86,59 @@ const useFetchData = (apiKey, fetchData, dateFrom, dateTo) => {
                             combinedGroupedData[barcode].totalPrice * 0.07 -
                             combinedGroupedData[barcode].productCost * combinedGroupedData[barcode].quantity;
                     }
-                } 
-                else if (saName && barcodeMapping[saName]) {
-                    
-                    const generatedBarcode = barcodeMapping[saName]; 
-    
-                    if (!combinedGroupedData[generatedBarcode]) {
-                        combinedGroupedData[generatedBarcode] = {
-                            barcode: generatedBarcode,
-                            totalPrice: 0,
-                            productCost: allowedBarcodes.find(b => b.barcode === generatedBarcode)?.costPrice || 0,
-                            quantity: 0,
-                            logisticsCost: 0,
-                            checkingAccount: 0,
-                            nm_id: item.nm_id,
-                        };
+                    else if (item.supplier_oper_name.includes("Возмещение издержек по перевозке") ||
+                        item.supplier_oper_name.includes("по складским операциям с товаром")) {
+                        combinedGroupedData[barcode].compensation += Math.abs(Number(item.rebill_logistic_cost));
                     }
-                        if (item.supplier_oper_name === "Логистика") {
-                        combinedGroupedData[generatedBarcode].logisticsCost += Math.abs(Number(item.delivery_rub));
-                    } else if (item.supplier_oper_name === "Продажа") {
-                        combinedGroupedData[generatedBarcode].totalPrice += Number(item.retail_amount);
-                        combinedGroupedData[generatedBarcode].quantity += Number(item.quantity);
-                        combinedGroupedData[generatedBarcode].checkingAccount =
-                            combinedGroupedData[generatedBarcode].totalPrice -
-                            combinedGroupedData[generatedBarcode].logisticsCost -
-                            combinedGroupedData[generatedBarcode].totalPrice * 0.07 -
-                            combinedGroupedData[generatedBarcode].productCost * combinedGroupedData[generatedBarcode].quantity;
+                    else if (item.supplier_oper_name.includes("Возврат")) {
+                        combinedGroupedData[barcode].compensation += Math.abs(Number(item.ppvz_for_pay));
                     }
                 }
+                else if (saName && barcodeMapping[saName]) {
+                    const generatedBarcode = barcodeMapping[saName];
+
+                    if (allowedBarcodesSet.has(generatedBarcode)) {
+                        if (!combinedGroupedData[generatedBarcode]) {
+                            combinedGroupedData[generatedBarcode] = {
+                                barcode: generatedBarcode,
+                                totalPrice: 0,
+                                productCost: allowedBarcodes.find(b => b.barcode === generatedBarcode)?.costPrice || 0,
+                                quantity: 0,
+                                logisticsCost: 0,
+                                checkingAccount: 0,
+                                nm_id: item.nm_id,
+                            };
+                        }
+
+                        if (item.supplier_oper_name === "Логистика") {
+                            combinedGroupedData[generatedBarcode].logisticsCost += Math.abs(Number(item.delivery_rub));
+                        } else if (item.supplier_oper_name === "Продажа") {
+                            combinedGroupedData[generatedBarcode].totalPrice += Number(item.retail_amount);
+                            combinedGroupedData[generatedBarcode].quantity += Number(item.quantity);
+                            combinedGroupedData[generatedBarcode].checkingAccount =
+                                combinedGroupedData[generatedBarcode].totalPrice -
+                                combinedGroupedData[generatedBarcode].logisticsCost -
+                                combinedGroupedData[generatedBarcode].totalPrice * 0.07 -
+                                combinedGroupedData[generatedBarcode].productCost * combinedGroupedData[generatedBarcode].quantity;
+                        }
+                        else if (item.supplier_oper_name.includes("Возмещение издержек по перевозке") ||
+                            item.supplier_oper_name.includes("по складским операциям с товаром")) {
+                            combinedGroupedData[generatedBarcode].compensation += Math.abs(Number(item.rebill_logistic_cost));
+                        }
+                        else if (item.supplier_oper_name.includes("Возврат")) {
+                            combinedGroupedData[barcode].compensation += Math.abs(Number(item.ppvz_for_pay));
+                        }
+                    }
+                    combinedGroupedData[generatedBarcode].quantity + 1
+                }
             });
-    
             setGroupedData(Object.values(combinedGroupedData));
+
         }
     }, [data, allowedBarcodes]);
-    
-    
+
+
+
 
 
 
@@ -169,7 +197,7 @@ const useFetchData = (apiKey, fetchData, dateFrom, dateTo) => {
         reader.readAsArrayBuffer(file);
     };
 
-    return { data, isLoading, groupedData, handleCostChange, handleFileUpload };
+    return { data, isLoading, groupedData, handleCostChange, handleFileUpload, getData };
 };
 
 export default useFetchData;
