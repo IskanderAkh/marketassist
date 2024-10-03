@@ -67,7 +67,7 @@ const ReviewsTable = ({ isError, isLoading, reviews, authUser }) => {
                     </div>
                   </td>
                   <td className="max-w-52">
-                    {review.text}
+                    {review.text ? review.text : review.pros}
                   </td>
                   <td>
                     <RatingStars rating={review.productValuation} />

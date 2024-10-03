@@ -22,16 +22,7 @@ const openai = new OpenAI({
 const __dirname = path.resolve();
 
 const allowedOrigins = ['https://marketassist.ru', 'http://localhost:3000', 'http://marketassist.ru'];
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,
-}));
+app.use(cors());
 
 app.use(express.json());
 app.use(cookieParser());

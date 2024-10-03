@@ -14,20 +14,24 @@ const openai = new OpenAI({
 export const getReviews = async (req, res) => {
   try {
     const apiKey = req.user.reviewsApiKey;
-    const { data } = await axios.get(`${WB_API_BASE_URL}/feedbacks`, {
+    const response = await axios.get(`${WB_API_BASE_URL}/feedbacks`, {
       headers: { Authorization: apiKey },
       params: {
         isAnswered: true,
-        take: 5000,
+        take: 200,
         skip: 0,
       },
     });
 
-    const feedbacks = data.data.feedbacks
-      ? data.data.feedbacks.filter(feedback => feedback.text || (feedback.answer && feedback.answer.text))
+   if (!response || !response.data || !response.data.data) {
+      console.error('Invalid response structure:', response);
+      return res.status(500).json({ error: 'Invalid response from Wildberries API' });
+    }
+
+    const feedbacks = response.data.data.feedbacks
+      ? response.data.data.feedbacks.filter(feedback => feedback.text || (feedback.answer && feedback.answer.text) || feedback.pros )
       : [];
     res.json(feedbacks);
-
 
   } catch (err) {
     console.error('Ошибка при получении отзывов:', err);
@@ -59,52 +63,69 @@ export const toggleAutoResponses = async (req, res) => {
 const generateResponse = async (feedback, responses, marketName = null, contacts = null, apiKey) => {
   let responseMessage = '';
 
-
-  switch (feedback.productValuation) {
-    case 1:
-      responseMessage = responses.oneStar || '';
-      break;
-    case 2:
-      responseMessage = responses.twoStars || '';
-      break;
-    case 3:
-      responseMessage = responses.threeStars || '';
-      break;
-    case 4:
-      responseMessage = responses.fourStars || '';
-      break;
-    case 5:
-      responseMessage = responses.fiveStars || '';
-      break;
-    default:
-      responseMessage = '';
-  }
-
-  if (!responseMessage) {
-    const prompt = `Сгенерированный тобой текст сразу будет прикреплен к отзыву без изменений! Купленный товар: ${feedback.subjectName}.\n\nЮзернейм покупателя: ${feedback.userName || 'Покупатель не указан'}.\n\nНиже приведен отзыв клиента о продукте:\n\n"${feedback.text}"\n\nСоздайте ответ на этот отзыв. Ответ должен учитывать рейтинг продукта ${feedback.productValuation} из 5. ${feedback.productValuation <= 2 ? `${marketName ? ` Название магазина: ${marketName}.` : ''} ${contacts ? ` Укажи контакты для связи: ${contacts}.` : ''}` : ''}`;
-
-    const aiResponse = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
-      messages: [{ role: 'user', content: prompt }],
-      max_tokens: 1000,
-    });
-
-    responseMessage = aiResponse.choices[0].message.content.trim();
-
-
-    try {
-      await axios.patch(
-        `${WB_API_BASE_URL}/feedbacks`,
-        { id: feedback.id, text: responseMessage },
-        { headers: { Authorization: apiKey } }
-      );
-      console.log(`Ответ успешно отправлен на отзыв ID: ${feedback.id}`);
-    } catch (err) {
-      console.error(`Ошибка при отправке ответа на отзыв ID: ${feedback.id}:`, err);
+  try {
+    switch (feedback.productValuation) {
+      case 1:
+        responseMessage = responses.oneStar || '';
+        break;
+      case 2:
+        responseMessage = responses.twoStars || '';
+        break;
+      case 3:
+        responseMessage = responses.threeStars || '';
+        break;
+      case 4:
+        responseMessage = responses.fourStars || '';
+        break;
+      case 5:
+        responseMessage = responses.fiveStars || '';
+        break;
+      default:
+        responseMessage = '';
     }
-  }
 
-  return responseMessage;
+    if (!responseMessage) {
+      const prompt = `Сгенерированный тобой текст сразу будет прикреплен к отзыву без изменений! Купленный товар: ${feedback.subjectName}.\n\nЮзернейм покупателя: ${feedback.userName || 'Покупатель не указан'}.\n\nНиже приведен отзыв клиента о продукте:\n\n"${
+        feedback.text 
+          ? feedback.text 
+          : `${feedback.pros ? 'Плюсы: ' + feedback.pros : ''} ${feedback.cons ? 'Минусы: ' + feedback.cons : ''}`
+      }"\n\nСоздайте ответ на этот отзыв. Ответ должен учитывать рейтинг продукта ${feedback.productValuation} из 5. ${
+        feedback.productValuation <= 5 
+          ? `${marketName ? ` Название магазина: ${marketName}.` : ''} ${contacts ? ` Укажи контакты для связи: ${contacts}.` : ''}` 
+          : ''
+      }`;
+
+      try {
+        const aiResponse = await openai.chat.completions.create({
+          model: 'gpt-3.5-turbo',
+          messages: [{ role: 'user', content: prompt }],
+          max_tokens: 1000,
+        });
+
+        responseMessage = aiResponse.choices[0].message.content.trim();
+        console.log(responseMessage);
+      } catch (aiError) {
+        console.error('Ошибка при генерации ответа с помощью OpenAI:', aiError);
+        throw aiError; 
+      }
+
+      try {
+        await axios.patch(
+          `${WB_API_BASE_URL}/feedbacks`,
+          { id: feedback.id, text: responseMessage },
+          { headers: { Authorization: apiKey } }
+        );
+        console.log(`Ответ успешно отправлен на отзыв ID: ${feedback.id}`);
+      } catch (apiError) {
+        console.error(`Ошибка при отправке ответа на отзыв ID: ${feedback.id}:`, apiError);
+      }
+    }
+
+    return responseMessage;
+  } catch (error) {
+    console.error('Ошибка в generateResponse:', error);
+    throw error; 
+  }
 };
 
 export const setAnswersonReviews = async (req, res) => {
@@ -185,10 +206,10 @@ cron.schedule('*/20 * * * *', async () => {
 
       try {
         const { data: responseData } = await axios.get(`${WB_API_BASE_URL}/feedbacks`, {
-          headers: { 
+          headers: {
             Authorization: user.reviewsApiKey,
-            'Content-Type': 'application/json'
-           },
+            'Content-Type': 'application/json',
+          },
           params: {
             isAnswered: false,
             take: 200,
@@ -196,33 +217,27 @@ cron.schedule('*/20 * * * *', async () => {
           },
         });
 
-        const allFeedbacks = responseData.data.feedbacks.filter(feedback => !feedback.isAnswered);
+        const feedbacks = responseData.data.feedbacks;
+        console.log(`Обработка отзывов для пользователя _id: ${user._id}`);
 
-        if (allFeedbacks.length === 0) {
-          if (user.userErrors.length > 0) {
-            user.userErrors = [];
-            await user.save();
+        for (const feedback of feedbacks) {
+          try {
+            await generateResponse(feedback, user.responses, user.marketName, user.marketContacts, user.reviewsApiKey);
+            console.log(`Ответ сгенерирован для отзыва _id: ${feedback.id}, пользователя: ${user._id}`);
+          } catch (responseError) {
+            console.error(`Ошибка при генерации ответа для отзыва _id: ${feedback.id}:`, responseError);
           }
-          continue;
         }
 
-        const responses = user.responses;
-
-        for (const feedback of allFeedbacks) {
-          await generateResponse(feedback, responses, user.marketName, user.marketContacts, user.reviewsApiKey);
-        }
-
-        if (user.userErrors.length > 0) {
-          user.userErrors = [];
-          await user.save();
-        }
       } catch (userError) {
-        console.error(`Ошибка при получении отзывов для пользователя! ${user._id}:`, userError.response.data);
+        console.error(`Ошибка при получении отзывов для пользователя _id: ${user._id}:`, userError.response?.data || userError);
       }
     }
+
     console.log('Отзывы успешно обработаны');
   } catch (err) {
     console.error('Ошибка при обработке отзывов:', err);
   }
 });
+
 

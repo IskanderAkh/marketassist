@@ -15,12 +15,21 @@ const DateRangePicker = ({ dateRange, setDateRange, authUser, hasAccess }) => {
         if (end) {
             end.setHours(23, 59, 59, 999);
         }
+
         const startUTC = start ? new Date(Date.UTC(start.getFullYear(), start.getMonth(), start.getDate())) : null;
-        const endUTC = end ? new Date(Date.UTC(end.getFullYear(), end.getMonth(), end.getDate())) : null;
+        let endUTC = end ? new Date(Date.UTC(end.getFullYear(), end.getMonth(), end.getDate())) : null;
+
+        if (startUTC && endUTC) {
+            const oneMonthLater = new Date(startUTC);
+            oneMonthLater.setMonth(oneMonthLater.getMonth() + 1);
+
+            if (endUTC > oneMonthLater) {
+                endUTC = new Date(oneMonthLater.setHours(23, 59, 59, 999)); 
+            }
+        }
 
         setDateRange([startUTC, endUTC]);
     };
-
 
     return (
         <div className='indicator'>
@@ -31,16 +40,15 @@ const DateRangePicker = ({ dateRange, setDateRange, authUser, hasAccess }) => {
                     endDate={endDate}
                     onChange={handleDateChange}
                     dateFormat="yyyy/MM/dd"
-                    className="py-2 pl-2 outline-none cursor-pointer "
+                    className="py-2 pl-2 outline-none cursor-pointer"
                     placeholderText="Выберите период"
                     locale={ru}
                     disabled={!authUser?.isVerified || !hasAccess}
                 />
                 <img src="/calendar.svg" alt="" />
             </div>
-            {!dateRange.every(date => date) && < span className="indicator-item badge badge-warning">Заполните!</span>}
-
-        </div >
+            {!dateRange.every(date => date) && <span className="indicator-item badge badge-warning">Заполните!</span>}
+        </div>
     );
 };
 

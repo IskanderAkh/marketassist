@@ -75,10 +75,10 @@ const EditMarketDetailsModal = ({ authUser, refetchUserData }) => {
                         onChange={(e) => setContacts(e.target.value)}
                     />
 
-                    <input
+                    <textarea
                         type="text"
                         placeholder="API-ключ для отзывов"
-                        className="input input-bordered w-full my-4"
+                        className="textarea textarea-bordered w-full my-4"
                         value={reviewsApiKey}
                         onChange={(e) => setReviewsApiKey(e.target.value)}
                     />

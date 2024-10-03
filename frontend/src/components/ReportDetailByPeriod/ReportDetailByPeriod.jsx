@@ -11,14 +11,17 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 
 const ReportDetailByPeriod = () => {
-    const { data: authUser, isLoading: authUserLoading, isError: authUserError } = useQuery({ queryKey: ['authUser'] })
+    const { data: authUser, isLoading: authUserLoading, isError: authUserError } = useQuery({ queryKey: ['authUser'] });
 
     const [apiKey, setApiKey] = useState('');
+    const [isButtonDisabled, setIsButtonDisabled] = useState(false); // Button disable state
+
     useEffect(() => {
         if (authUser && authUser.calcApiKey) {
             setApiKey(authUser.calcApiKey);
         }
     }, [authUser]);
+
     const requiredPlans = ['66dfdcd64c02e37851cb52e9'];
 
     const { data: hasAccess, isLoading: isLoadingAccess, error: errorAccess, isError: isErrorAccess } = useQuery({
@@ -36,23 +39,26 @@ const ReportDetailByPeriod = () => {
         retry: false
     });
 
-
-
     const [dateRange, setDateRange] = useState([null, null]);
-    const [fetchData, setFetchData] = useState(false);
     const [startDate, endDate] = dateRange;
-    const { isLoading, groupedData, handleCostChange, logisticsCount, getData } = useFetchData(apiKey, fetchData, startDate, endDate);
-    
+    const { isLoading, groupedData, handleCostChange, logisticsCount, getData, recalculationOfPaidAcceptance, storage, retention } = useFetchData(apiKey, startDate, endDate);
+
     const handleFetchData = () => {
         if (dateRange.some(date => !date)) {
-            toast.error('Выберите дату')
+            toast.error('Выберите дату');
             return;
         }
-        getData()
+
+        getData();
+
+        setIsButtonDisabled(true);
+        setTimeout(() => {
+            setIsButtonDisabled(false);
+        }, 60000);
     };
 
     if (isLoadingAccess) {
-        return <LoadingPage />
+        return <LoadingPage />;
     }
 
     return (
@@ -76,7 +82,6 @@ const ReportDetailByPeriod = () => {
                     <span>{errorAccess.response.data.message}</span>
                     <Link className='btn btn-info' to={'/profile'}>Купить план</Link>
                 </div>
-
             }
             <div className='flex mb-10 gap-4 flex-col mt-10 items-start'>
                 <div className='flex gap-4 w-full justify-between'>
@@ -84,13 +89,16 @@ const ReportDetailByPeriod = () => {
                     <ApiInput apiKey={apiKey} setApiKey={setApiKey} authUser={authUser} hasAccess={hasAccess} />
                 </div>
                 <div className='flex items-center justify-end w-full'>
-            
-                    <button className='btn btn-secondary  btn-wide' onClick={handleFetchData} disabled={!hasAccess}>Получить отчет</button>
+                    <button className='btn btn-secondary btn-wide' onClick={handleFetchData} disabled={!hasAccess || isButtonDisabled}>
+                        {isButtonDisabled ? 'Подождите...' : 'Получить отчет'}
+                    </button>
                 </div>
             </div>
-            {isLoading && <div>Загрузка....</div>}
-            {!isLoading && <ReportTable groupedData={groupedData} handleCostChange={handleCostChange} logisticsCount={logisticsCount} />
-            }
+            {isLoading && <LoadingPage />}
+            {!isLoading && <ReportTable groupedData={groupedData} handleCostChange={handleCostChange} logisticsCount={logisticsCount} recalculationOfPaidAcceptance={recalculationOfPaidAcceptance}
+                storage={storage}
+                retention={retention}
+            />}
         </div>
     );
 };

@@ -45,14 +45,15 @@ const ApiInput = ({ authUser, hasAccess }) => {
                         <h1>Создайте API ключ</h1>
                         <p>Добавьте метод: <strong>Статистика</strong> </p>
                     </div>
-                    <input
+                    <textarea
                         type="text"
                         placeholder="Введите новый API ключ"
-                        className="input input-bordered w-full my-4"
+                        className="textarea textarea-bordered w-full my-4"
                         value={apiKey}
                         onChange={(e) => setApiKey(e.target.value)}
                         disabled={!authUser?.isVerified || !hasAccess}
-                    />
+                    >
+                    </textarea>
 
                     <div className="modal-action">
                         <label
