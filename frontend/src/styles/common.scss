@@ -10,9 +10,20 @@ header {
     /* Легкое размытие для читабельности */
     backdrop-filter: blur(10px);
 }
-*{
+
+* {
     font-family: 'Roboto'
 }
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
 @import './fonts.scss';
 @import './header.scss';
-

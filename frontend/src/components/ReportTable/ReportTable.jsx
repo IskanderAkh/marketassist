@@ -9,7 +9,7 @@ const ReportTable = ({ groupedData, handleCostChange, logisticsCount, recalculat
     const [columnType, setColumnType] = useState('Баркод'); // Holds the selected column type
     const [kkk, setKkk] = useState('Компенсация ущерба')
     const exportToExcel = useExportToExcel(groupedData, excelData, tax);
-
+    const [operationalCosts, setOperationalCosts] = useState(0)
     const calculateTotalFinalResult = () => {
         return groupedData.reduce((total, item) => {
             const finalResult = item.totalPrice
@@ -19,12 +19,14 @@ const ReportTable = ({ groupedData, handleCostChange, logisticsCount, recalculat
                 - item.compensation
                 + item.compensationForDamages
                 + item.acquiringAdjustments
-                + item.salesAdjustment;            
+                + item.salesAdjustment;
 
             return total + finalResult;
         }, 0);
     };
-
+    const handleOperationalCostsChange = (event) => {
+        setOperationalCosts(event.target.value);
+    }
     const handleColumnChange = (event) => {
         setColumnType(event.target.value);
     };
@@ -42,7 +44,7 @@ const ReportTable = ({ groupedData, handleCostChange, logisticsCount, recalculat
             </div>
 
             <div id="table-container" className="overflow-x-auto border p-4">
-                <table className="table table-xs">
+                <table className="table table-sm">
                     <thead>
                         <tr className='font-bold text-black text-base'>
                             <th  >
@@ -85,10 +87,22 @@ const ReportTable = ({ groupedData, handleCostChange, logisticsCount, recalculat
                         ))}
                     </tbody>
                     <tfoot>
-                        <tr>
-                            <th colSpan="6"></th>
-                            <th className='text-right text-black font-bold text-lg pr-5'>Итог:</th>
-                            <th className='text-black font-bold text-lg'> ₽ {calculateTotalFinalResult().toFixed(2)}</th>
+                        <tr className='my-10'>
+                            <th colSpan="5"></th>
+                            <th className='font-semibold text-base flex gap-0.5 items-center'>
+                                <label className='border px-3 py-1 flex gap-1'>
+                                    <span className='text-black'>₽</span>
+                                    <input
+                                        type="number"
+                                        value={operationalCosts}
+                                        disabled={groupedData.length == 0}
+                                        onChange={handleOperationalCostsChange}
+                                        placeholder="Операционные расходы"
+                                        className="operationalCosts-input outline-none text-sm" />
+                                </label>
+                            </th>
+                            <th className='text-black font-bold text-lg pr-5'>Итог:</th>
+                            <th className='text-black font-bold text-lg'> ₽ {(calculateTotalFinalResult() - operationalCosts).toFixed(2)}</th>
                         </tr>
                         <tr className='border-t border-black'>
                             <th colSpan="2" className='font-bold text-black text-base'>Итог с учетом следующих данных</th>
@@ -96,7 +110,7 @@ const ReportTable = ({ groupedData, handleCostChange, logisticsCount, recalculat
                             <th className='font-semibold text-base'>Хранение: <br /> <span className='text-black'>₽ {retention}</span></th>
                             <th className='font-semibold text-base'>Удержание: <br /><span className='text-black'> ₽ {storage} </span></th>
                             <th className='font-semibold text-base'>Пересчет платной приемки: <br /> <span className='text-black'>₽ {recalculationOfPaidAcceptance.toFixed(2)}</span> </th>
-                            <th className='text-right text-black font-bold text-lg pr-5'>Итог:</th>
+                            <th className='text-black font-bold text-lg pr-5'>Итог:</th>
 
                             <th className='font-bold text-lg'>₽ {(calculateTotalFinalResult() - recalculationOfPaidAcceptance - retention - storage).toFixed(2)}</th>
                         </tr>
