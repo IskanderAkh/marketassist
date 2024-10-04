@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Link, Navigate, useLocation } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from 'react-hot-toast';
-
+import eyeOpen from "../../../assets/eyeOpen.svg"
+import eyeClose from "../../../assets/eyeClose.svg"
 const Login = () => {
   const [isSignIn, setIsSignIn] = useState(true);
   const location = useLocation()
@@ -10,7 +11,7 @@ const Login = () => {
     email: "",
     password: "",
   });
-
+  const [visible, setVisible] = useState(false)
   const queryClient = useQueryClient();
 
   const { mutate: loginMutation, isPending, isError, error, } = useMutation({
@@ -47,7 +48,10 @@ const Login = () => {
       toast.error("Проверьте правильность введенных данных")
     }
   });
-
+  const handleShowPass = (e) => {
+    e.preventDefault()
+    setVisible(!visible)
+  }
   const handleSubmit = (e) => {
     e.preventDefault();
     loginMutation(formData);
@@ -70,13 +74,16 @@ const Login = () => {
             onChange={handleInputChange}
             value={formData.email} />
           <span className='border-b border-gray-300 '></span>
-          <input
-            type="password"
-            name='password'
-            placeholder="Пароль"
-            className="form-container-input mt-10 bg-transparent"
-            onChange={handleInputChange}
-            value={formData.password} />
+          <div className='flex items-end'>
+            <input
+              type={visible ? "text" : "password"}
+              name='password'
+              placeholder="Пароль"
+              className="form-container-input mt-10 bg-transparent"
+              onChange={handleInputChange}
+              value={formData.password} />
+            <button className='w-5' onClick={e => handleShowPass(e)}>{visible ? <img src={eyeOpen} alt="" /> : <img src={eyeClose} alt="" />}</button>
+          </div>
           <span className='border-b border-gray-300'></span>
         </div>
 

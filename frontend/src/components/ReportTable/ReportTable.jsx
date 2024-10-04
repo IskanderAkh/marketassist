@@ -6,7 +6,8 @@ import { useExportToExcel } from './useExportToExcel';
 const ReportTable = ({ groupedData, handleCostChange, logisticsCount, recalculationOfPaidAcceptance, storage, retention }) => {
     const [excelData, setExcelData] = useState({});
     const [tax, setTax] = useState(0.07);
-    const [columnType, setColumnType] = useState('Баркод'); // Holds the selected column type
+    const [columnType, setColumnType] = useState('Баркод');
+    const [showPenalty, setShowPenalty] = useState('Возмещение/Возврат')
     const [kkk, setKkk] = useState('Компенсация ущерба')
     const exportToExcel = useExportToExcel(groupedData, excelData, tax);
     const [operationalCosts, setOperationalCosts] = useState(0)
@@ -24,6 +25,9 @@ const ReportTable = ({ groupedData, handleCostChange, logisticsCount, recalculat
             return total + finalResult;
         }, 0);
     };
+    const handlePenaltyChange = (event) => {
+        setShowPenalty(event.target.value)
+    }
     const handleOperationalCostsChange = (event) => {
         setOperationalCosts(event.target.value);
     }
@@ -59,7 +63,16 @@ const ReportTable = ({ groupedData, handleCostChange, logisticsCount, recalculat
                             <th>Себестоимость</th>
                             <th>Налог ({(tax * 100).toFixed(0)}%)</th>
                             <th>Логистика</th>
-                            <th>Возмещение/Возврат</th>
+
+                            <th className=''>
+                                <label>
+                                    <select value={showPenalty} onChange={handlePenaltyChange} className="select select-bordered">
+                                        <option value="Возмещение/Возврат">Возмещение/Возврат</option>
+                                        <option value="Штрафы">Штрафы</option>
+                                    </select>
+
+                                </label>
+                            </th>
                             <th>
                                 <label>
                                     <select value={kkk} onChange={handleKkkColumnChange} className="select select-bordered">
@@ -83,13 +96,24 @@ const ReportTable = ({ groupedData, handleCostChange, logisticsCount, recalculat
                                 logisticsCount={logisticsCount}
                                 columnType={columnType}
                                 kkk={kkk}
+                                showPenalty={showPenalty}
                             />
                         ))}
                     </tbody>
                     <tfoot>
                         <tr className='my-10'>
-                            <th colSpan="5"></th>
-                            <th className='font-semibold text-base flex gap-0.5 items-center'>
+                            <th colSpan="6"></th>
+
+                            <th className='text-black font-bold text-lg pr-5'>Итог:</th>
+                            <th className='text-black font-bold text-lg'> ₽ {calculateTotalFinalResult().toFixed(2)}</th>
+                        </tr>
+                        <tr className='border-t border-black'>
+                            <th colSpan="2" className='font-bold text-black text-base'>Итог с учетом следующих данных</th>
+                            <th className='font-semibold text-base'>Хранение: <br /> <span className='text-black'>₽ {storage.toFixed(2)}</span></th>
+                            <th className='font-semibold text-base'>Удержание: <br /><span className='text-black'> ₽ {retention.toFixed(2)} </span></th>
+                            <th colSpan="2" className='font-semibold text-base'>Пересчет платной приемки: <br /> <span className='text-black'>₽ {recalculationOfPaidAcceptance.toFixed(2)}</span> </th>
+                            <th className='font-semibold text-base flex flex-col gap-0.5 items-start'>
+                                <p>Операционные расходы</p>
                                 <label className='border px-3 py-1 flex gap-1'>
                                     <span className='text-black'>₽</span>
                                     <input
@@ -97,22 +121,11 @@ const ReportTable = ({ groupedData, handleCostChange, logisticsCount, recalculat
                                         value={operationalCosts}
                                         disabled={groupedData.length == 0}
                                         onChange={handleOperationalCostsChange}
-                                        placeholder="Операционные расходы"
                                         className="operationalCosts-input outline-none text-sm" />
                                 </label>
                             </th>
-                            <th className='text-black font-bold text-lg pr-5'>Итог:</th>
-                            <th className='text-black font-bold text-lg'> ₽ {(calculateTotalFinalResult() - operationalCosts).toFixed(2)}</th>
-                        </tr>
-                        <tr className='border-t border-black'>
-                            <th colSpan="2" className='font-bold text-black text-base'>Итог с учетом следующих данных</th>
-                            <th colSpan="1"></th>
-                            <th className='font-semibold text-base'>Хранение: <br /> <span className='text-black'>₽ {retention}</span></th>
-                            <th className='font-semibold text-base'>Удержание: <br /><span className='text-black'> ₽ {storage} </span></th>
-                            <th className='font-semibold text-base'>Пересчет платной приемки: <br /> <span className='text-black'>₽ {recalculationOfPaidAcceptance.toFixed(2)}</span> </th>
-                            <th className='text-black font-bold text-lg pr-5'>Итог:</th>
-
-                            <th className='font-bold text-lg'>₽ {(calculateTotalFinalResult() - recalculationOfPaidAcceptance - retention - storage).toFixed(2)}</th>
+                            {/* <th className='text-black font-bold text-lg pr-5'></th> */}
+                            <th className='font-bold text-lg'> Итог: ₽ {(calculateTotalFinalResult() - recalculationOfPaidAcceptance - retention - storage - operationalCosts).toFixed(2)}</th>
                         </tr>
                     </tfoot>
                 </table>

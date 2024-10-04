@@ -1,12 +1,13 @@
 import React from 'react';
 
-const TableRow = ({ item, tax, excelData, logisticsCount, columnType, kkk }) => {
+const TableRow = ({ item, tax, excelData, logisticsCount, columnType, kkk, showPenalty }) => {
 
     const finalResult = item.totalPrice
         - (excelData[item.barcode] !== undefined ? excelData[item.barcode] : item.productCost) * item.quantity
         - (item.totalPrice * tax)
         - item.logisticsCost
         - item.compensation
+        - item.penalty
         + item.compensationForDamages
         + item.acquiringAdjustments
         + item.salesAdjustment
@@ -21,6 +22,14 @@ const TableRow = ({ item, tax, excelData, logisticsCount, columnType, kkk }) => 
                 return item.barcode;
         }
     };
+    const getPenaltyOrCompensation = () => {
+        switch (showPenalty) {
+            case 'Возмещение/Возврат':
+                return item.compensation
+            case 'Штрафы':
+                return item.penalty
+        }
+    }
     const getKkkRowValue = () => {
         switch (kkk) {
             case 'Компенсация ущерба':
@@ -49,8 +58,8 @@ const TableRow = ({ item, tax, excelData, logisticsCount, columnType, kkk }) => 
             {/* <td></td> */}
             <td>₽ {(item.totalPrice * tax).toFixed(2)}</td>
             <td>{logisticsCount}   ₽ {item.logisticsCost.toFixed(2)}</td>
-            <td>₽ {item.compensation.toFixed(2)}</td>
-            <td>₽ {getKkkRowValue()}</td>
+            <td>₽ {getPenaltyOrCompensation().toFixed(2)}</td>
+            <td>₽ {getKkkRowValue().toFixed(2)}</td>
             <td>₽ {finalResult.toFixed(2)}</td>
         </tr>
     ) : null;

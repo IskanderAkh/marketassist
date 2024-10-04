@@ -61,6 +61,7 @@ const initializeBarcodeData = (barcode, saName, allowedBarcodes, item) => {
         acquiringAdjustments: 0,
         salesAdjustment: 0,
         compensationForDamages: 0,
+        penalty: 0,
         nm_id: item.nm_id,
     };
 };
@@ -80,7 +81,7 @@ const updateBarcodeDataByOperation = (item, barcodeData) => {
                 barcodeData.productCost * barcodeData.quantity;
             break;
         default:
-            if (item.supplier_oper_name.includes("Возмещение издержек по перевозке") || 
+            if (item.supplier_oper_name.includes("Возмещение издержек по перевозке") ||
                 item.supplier_oper_name.includes("по складским операциям с товаром")) {
                 barcodeData.compensation += Math.abs(Number(item.rebill_logistic_cost));
             } else if (item.supplier_oper_name.includes("Возврат")) {
@@ -91,11 +92,13 @@ const updateBarcodeDataByOperation = (item, barcodeData) => {
                 barcodeData.salesAdjustment += Number(item.ppvz_for_pay);
             } else if (item.supplier_oper_name.includes("Корректировка эквайринга")) {
                 barcodeData.acquiringAdjustments += Number(item.ppvz_for_pay);
+            } else if (item.supplier_oper_name.includes("Штраф") || item.supplier_oper_name.includes("Штрафы и доплаты")) {
+                barcodeData.penalty += Number(item.penalty);
             }
     }
+
 };
 
-// Основная функция обработки данных отчёта
 const processReportData = (data, allowedBarcodes) => {
     const barcodeMapping = createBarcodeMapping(allowedBarcodes);
     const allowedBarcodesSet = new Set(allowedBarcodes.map(item => item.barcode));
@@ -116,7 +119,7 @@ const processReportData = (data, allowedBarcodes) => {
             return;
         }
 
-        if (item.supplier_oper_name.includes("Удержание")) {
+        if (item.supplier_oper_name.includes("Удержание") || item.supplier_oper_name.includes("Удержания")) {
             retention += Number(item.deduction) || 0;
             return;
         }
