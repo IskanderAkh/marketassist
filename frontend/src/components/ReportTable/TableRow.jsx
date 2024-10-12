@@ -2,7 +2,7 @@ import React from 'react';
 
 const TableRow = ({ item, tax, excelData, logisticsCount, columnType, kkk, showPenalty }) => {
 
-    const finalResult = item.totalPrice
+    const finalResult = item.transferGoodsToSeller
         - (excelData[item.barcode] !== undefined ? excelData[item.barcode] : item.productCost) * item.quantity
         - (item.totalPrice * tax)
         - item.logisticsCost
@@ -47,7 +47,7 @@ const TableRow = ({ item, tax, excelData, logisticsCount, columnType, kkk, showP
             <td className='font-bold'>
                 <span className='badge badge-outline'>{getFirstRowValue()}</span>
             </td>
-            <td >₽ {item.totalPrice.toFixed(2)}</td>
+            <td >₽ {item.transferGoodsToSeller.toFixed(2)}</td>
             <td >
                 <div className='flex gap-2 items-center h-full'>
                     <p>{excelData[item.barcode] !== undefined ? excelData[item.barcode] : item.productCost}</p>

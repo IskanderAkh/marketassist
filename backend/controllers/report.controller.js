@@ -23,11 +23,8 @@ export const getReportDetailByPeriod = async (req, res) => {
             timeout: 5000
 
         });
-
         const data = response.data;
-
         const calculatedData = processReportData(data, allowedBarcodes);
-
         res.json(calculatedData);
     } catch (error) {
         console.error('Error in getReportDetailByPeriod:', error);
@@ -35,7 +32,6 @@ export const getReportDetailByPeriod = async (req, res) => {
     }
 };
 
-// Вспомогательная функция: создание маппинга штрихкодов
 const createBarcodeMapping = (allowedBarcodes) => {
     const barcodeMapping = {};
     allowedBarcodes.forEach(barcodeItem => {
@@ -46,13 +42,13 @@ const createBarcodeMapping = (allowedBarcodes) => {
     return barcodeMapping;
 };
 
-// Вспомогательная функция: инициализация данных по штрихкоду
 const initializeBarcodeData = (barcode, saName, allowedBarcodes, item) => {
     const productCost = allowedBarcodes.find(b => b.barcode === barcode)?.costPrice || 0;
     return {
         barcode,
         saName,
         totalPrice: 0,
+        transferGoodsToSeller:0,
         productCost,
         quantity: 0,
         logisticsCost: 0,
@@ -66,7 +62,6 @@ const initializeBarcodeData = (barcode, saName, allowedBarcodes, item) => {
     };
 };
 
-// Вспомогательная функция: обновление данных по операции
 const updateBarcodeDataByOperation = (item, barcodeData) => {
     switch (item.supplier_oper_name) {
         case "Логистика":
@@ -74,11 +69,8 @@ const updateBarcodeDataByOperation = (item, barcodeData) => {
             break;
         case "Продажа":
             barcodeData.totalPrice += Number(item.retail_amount);
+            barcodeData.transferGoodsToSeller += Number(item.ppvz_for_pay);
             barcodeData.quantity += Number(item.quantity);
-            barcodeData.checkingAccount = barcodeData.totalPrice -
-                barcodeData.logisticsCost -
-                barcodeData.totalPrice * 0.07 -
-                barcodeData.productCost * barcodeData.quantity;
             break;
         default:
             if (item.supplier_oper_name.includes("Возмещение издержек по перевозке") ||
@@ -121,6 +113,7 @@ const processReportData = (data, allowedBarcodes) => {
 
         if (item.supplier_oper_name.includes("Удержание") || item.supplier_oper_name.includes("Удержания")) {
             retention += Number(item.deduction) || 0;
+            console.log(item);
             return;
         }
 

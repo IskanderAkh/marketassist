@@ -13,7 +13,7 @@ const ReportTable = ({ groupedData, handleCostChange, logisticsCount, recalculat
     const [operationalCosts, setOperationalCosts] = useState(0)
     const calculateTotalFinalResult = () => {
         return groupedData.reduce((total, item) => {
-            const finalResult = item.totalPrice
+            const finalResult = item.transferGoodsToSeller
                 - item.productCost * item.quantity
                 - (item.totalPrice * tax)
                 - item.logisticsCost
@@ -59,7 +59,7 @@ const ReportTable = ({ groupedData, handleCostChange, logisticsCount, recalculat
                                     </select>
                                 </label>
                             </th>
-                            <th>Wildberries реализовал</th>
+                            <th>К перечислению Продавцу</th>
                             <th>Себестоимость</th>
                             <th>Налог ({(tax * 100).toFixed(0)}%)</th>
                             <th>Логистика</th>

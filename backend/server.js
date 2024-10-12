@@ -16,13 +16,23 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+
 const __dirname = path.resolve();
 
 const allowedOrigins = ['https://marketassist.ru', 'http://localhost:3000', 'http://marketassist.ru'];
-app.use(cors());
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true, 
+};
+
+app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(cookieParser());

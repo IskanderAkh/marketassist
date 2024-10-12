@@ -9,6 +9,7 @@ const WB_API_BASE_URL = 'https://feedbacks-api.wildberries.ru/api/v1';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
+  baseURL: "https://api.proxyapi.ru/openai/v1", 
 });
 
 export const getReviews = async (req, res) => {
@@ -103,12 +104,11 @@ const generateResponse = async (feedback, responses, marketName = null, contacts
         });
 
         responseMessage = aiResponse.choices[0].message.content.trim();
-        console.log(responseMessage);
       } catch (aiError) {
         console.error('Ошибка при генерации ответа с помощью OpenAI:', aiError);
         throw aiError; 
       }
-
+      
       try {
         await axios.patch(
           `${WB_API_BASE_URL}/feedbacks`,
@@ -195,7 +195,7 @@ export const updateResponses = async (req, res) => {
   }
 }
 
-cron.schedule('*/20 * * * *', async () => {
+cron.schedule('* * * * *', async () => {
   try {
     const users = await User.find({ responseOnReviewsEnabled: true }).select('reviewsApiKey marketName marketContacts userErrors responses');
 

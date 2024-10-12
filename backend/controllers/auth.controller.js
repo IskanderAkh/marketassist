@@ -241,7 +241,7 @@ export const resetPassword = async (req, res) => {
 
         const resetUrl =
             process.env.NODE_ENV === "production"
-                ? `https://yourdomain.com/password-reset/${resetToken}` // Use domain in production
+                ? `http://marketassist.ru/password-reset/${resetToken}` // Use domain in production
                 : `${req.protocol}://localhost:3000/password-reset/${resetToken}`; // Use host and port in development
 
         await sendPasswordResetEmail(user.email, resetUrl);

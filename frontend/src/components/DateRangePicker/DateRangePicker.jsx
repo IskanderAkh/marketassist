@@ -31,6 +31,8 @@ const DateRangePicker = ({ dateRange, setDateRange, authUser, hasAccess }) => {
         setDateRange([startUTC, endUTC]);
     };
 
+    const maxEndDate = startDate ? new Date(new Date(startDate).setMonth(startDate.getMonth() + 6)) : null;
+
     return (
         <div className='indicator'>
             <div className='flex items-center border pr-2 max-w-60 w-full'>
@@ -44,6 +46,7 @@ const DateRangePicker = ({ dateRange, setDateRange, authUser, hasAccess }) => {
                     placeholderText="Выберите период"
                     locale={ru}
                     disabled={!authUser?.isVerified || !hasAccess}
+                    maxDate={maxEndDate} // Limit the maximum end date to 6 months after the start date
                 />
                 <img src="/calendar.svg" alt="" />
             </div>
