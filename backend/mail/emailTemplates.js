@@ -94,3 +94,85 @@ export const PASSWORD_RESET_REQUEST_TEMPLATE = `
 </body>
 </html>
 `;
+
+export const FOUND_WAREHOUSE = `
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лимит найден!</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border: 1px solid #dddddd;
+            border-radius: 5px;
+        }
+        .header {
+            text-align: center;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 0;
+            border-radius: 5px 5px 0 0;
+        }
+        .content {
+            margin: 20px 0;
+        }
+        .content h2 {
+            color: #333333;
+        }
+        .content p {
+            color: #555555;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .footer {
+            text-align: center;
+            color: #777777;
+            font-size: 12px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <h1>Лимит найден!</h1>
+        </div>
+        <div class="content">
+            <h2>Уважаемый пользователь,</h2>
+            <p>
+                Мы рады сообщить , что по вашим параметрам найден лимит на приемку FBO.
+            </p>
+            <p><strong>Детали:</strong></p>
+            <ul>
+                <li>Склад: <strong>{warehouseName}</strong></li>
+                <li>Тип коробки: <strong>{boxType}</strong></li>
+                <li>Дата: <strong>{date}</strong></li>
+                <li>Коэффициент: <strong>{acceptanceRate}</strong></li>
+            </ul>          
+        </div>
+        <div class="footer">
+            <p>© 2024 Ваша компания. Все права защищены.</p>
+            <p>Если вы больше не хотите получать такие уведомления, пожалуйста, <a href="https://your-website.com/unsubscribe">отпишитесь здесь</a>.</p>
+        </div>
+    </div>
+</body>
+</html>
+`

@@ -1,4 +1,11 @@
 import mongoose from "mongoose";
+const filterSchema = new mongoose.Schema({
+    boxTypeName: String,
+    coefficient: Number,
+    date: Date,
+    warehouseID: Number,
+    warehouseName: String,
+});
 
 const userSchema = new mongoose.Schema({
     firstName: {
@@ -33,7 +40,7 @@ const userSchema = new mongoose.Schema({
     barcodes: [{
         barcode: String,
         costPrice: Number,
-        sa_name: String 
+        sa_name: String
     }],
     companyName: {
         type: String,
@@ -90,15 +97,32 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
-    marketName: { type: String, default: '' },
-    marketContacts: { type: String, default: '' },
-    resetPasswordToken: String,
-    resetPasswordExpiresAt: Date,
-    verificationToken: String,
-    verificationTokenExpiresAt: Date,
-    reviewsApiKey: String,
-    calcApiKey: String,
-    verificationTokenRequestedAt: { type: Date },
+    marketName: {
+        type: String,
+        default: ''
+    },
+    marketContacts: {
+        type: String,
+        default: ''
+    },
+    verificationToken: {
+        type: String,
+    },
+    verificationTokenExpiresAt: {
+        type: Date,
+    },
+    whApiKey: {
+        type: String,
+    },
+    reviewsApiKey: {
+        type: String,
+    },
+    calcApiKey: {
+        type: String,
+    },
+    verificationTokenRequestedAt: {
+        type: Date
+    },
     currentPlans: [{
         plan: {
             type: mongoose.Schema.Types.ObjectId,
@@ -116,11 +140,22 @@ const userSchema = new mongoose.Schema({
         },
         subscribtionLvl: Number,
         name: String,
+    }],
+    autoSearch: {
+        type: Boolean,
+        default: false
+    },
+    filters: {
+        sliderValues: [Number],
+        dateRange: [Date],
+        warehouseId: String,
+    },
+    whsearchEnabled: {
+        type: Boolean,
+        default: false,  
+    },
+}, { timestamps: true });
 
-    }]
-}, { timestamps: true })
+const User = mongoose.model("User", userSchema);
 
-
-const User = mongoose.model("User", userSchema)
-
-export default User
+export default User;

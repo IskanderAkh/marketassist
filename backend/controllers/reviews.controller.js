@@ -195,49 +195,49 @@ export const updateResponses = async (req, res) => {
   }
 }
 
-cron.schedule('* * * * *', async () => {
-  try {
-    const users = await User.find({ responseOnReviewsEnabled: true }).select('reviewsApiKey marketName marketContacts userErrors responses');
+// cron.schedule('*/20 * * * *', async () => {
+//   try {
+//     const users = await User.find({ responseOnReviewsEnabled: true }).select('reviewsApiKey marketName marketContacts userErrors responses');
 
-    for (const user of users) {
-      if (!user.reviewsApiKey) {
-        continue;
-      }
+//     for (const user of users) {
+//       if (!user.reviewsApiKey) {
+//         continue;
+//       }
 
-      try {
-        const { data: responseData } = await axios.get(`${WB_API_BASE_URL}/feedbacks`, {
-          headers: {
-            Authorization: user.reviewsApiKey,
-            'Content-Type': 'application/json',
-          },
-          params: {
-            isAnswered: false,
-            take: 200,
-            skip: 0,
-          },
-        });
+//       try {
+//         const { data: responseData } = await axios.get(`${WB_API_BASE_URL}/feedbacks`, {
+//           headers: {
+//             Authorization: user.reviewsApiKey,
+//             'Content-Type': 'application/json',
+//           },
+//           params: {
+//             isAnswered: false,
+//             take: 200,
+//             skip: 0,
+//           },
+//         });
 
-        const feedbacks = responseData.data.feedbacks;
-        console.log(`Обработка отзывов для пользователя _id: ${user._id}`);
+//         const feedbacks = responseData.data.feedbacks;
+//         console.log(`Обработка отзывов для пользователя _id: ${user._id}`);
 
-        for (const feedback of feedbacks) {
-          try {
-            await generateResponse(feedback, user.responses, user.marketName, user.marketContacts, user.reviewsApiKey);
-            console.log(`Ответ сгенерирован для отзыва _id: ${feedback.id}, пользователя: ${user._id}`);
-          } catch (responseError) {
-            console.error(`Ошибка при генерации ответа для отзыва _id: ${feedback.id}:`, responseError);
-          }
-        }
+//         for (const feedback of feedbacks) {
+//           try {
+//             await generateResponse(feedback, user.responses, user.marketName, user.marketContacts, user.reviewsApiKey);
+//             console.log(`Ответ сгенерирован для отзыва _id: ${feedback.id}, пользователя: ${user._id}`);
+//           } catch (responseError) {
+//             console.error(`Ошибка при генерации ответа для отзыва _id: ${feedback.id}:`, responseError);
+//           }
+//         }
 
-      } catch (userError) {
-        console.error(`Ошибка при получении отзывов для пользователя _id: ${user._id}:`, userError.response?.data || userError);
-      }
-    }
+//       } catch (userError) {
+//         console.error(`Ошибка при получении отзывов для пользователя _id: ${user._id}:`, userError.response?.data || userError);
+//       }
+//     }
 
-    console.log('Отзывы успешно обработаны');
-  } catch (err) {
-    console.error('Ошибка при обработке отзывов:', err);
-  }
-});
+//     console.log('Отзывы успешно обработаны');
+//   } catch (err) {
+//     console.error('Ошибка при обработке отзывов:', err);
+//   }
+// });
 
 

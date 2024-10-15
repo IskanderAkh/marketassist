@@ -1,6 +1,6 @@
 import express from 'express';
 import { protectRoute } from '../middleware/protectRoute.js';
-import { addOrUpdatePlanForUser, cancelSubscription, changeUserInformation, getUserBarcodes, getUserPlan, checkCalcPlanAccess, checkReviewPlanAccess, updateMarketDetails, updateErrorVisibility, updateCalcApiKey } from '../controllers/user.controller.js';
+import { addOrUpdatePlanForUser, cancelSubscription, changeUserInformation, getUserBarcodes, getUserPlan, checkCalcPlanAccess, checkReviewPlanAccess, updateMarketDetails, updateErrorVisibility, updateCalcApiKey, updateWHApiKey } from '../controllers/user.controller.js';
 
 
 const router = express.Router()
@@ -15,5 +15,6 @@ router.post('/checkReviewPlanAccess', protectRoute, checkReviewPlanAccess);
 router.put('/update-market-details', protectRoute, updateMarketDetails)
 router.put('/:userId/errors/:errorId', protectRoute, updateErrorVisibility);
 router.put('/update-calc-api-key', protectRoute, updateCalcApiKey)
+router.put('/update-wh-api-key', protectRoute, updateWHApiKey)
 
 export default router

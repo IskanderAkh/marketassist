@@ -36,6 +36,7 @@ const Header = () => {
             <Link to={authUser ? `/product-cost` : '/auth'} className={`${location.pathname === "/product-cost" ? "active" : ""}`}>Себестоимость</Link>
             <Link to={authUser ? "/app-calculator" : "/auth"} className={`${location.pathname === "/app-calculator" || location.pathname === "/calculator" ? "active" : ""}`}>Калькулятор прибыли</Link>
             <Link to={authUser ? "/app-reviews" : "/auth"} className={`${location.pathname === "/app-reviews" || location.pathname === "/reviews" ? "active" : ""}`}>Управление Отзывами</Link>
+            <Link to="/warehouses" className={`${location.pathname === "/warehouses" ? "active" : ""}`}>Приёмка</Link>
             <Link to="/contact" className={`${location.pathname === "/contact" ? "active" : ""}`}>Контакты</Link>
           </div>
 

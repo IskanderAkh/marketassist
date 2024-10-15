@@ -3,21 +3,27 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
-const ApiInput = ({ authUser, hasAccess }) => {
-    const [apiKey, setApiKey] = useState(authUser?.calcApiKey || '');
+const ApiInput = ({ authUser, hasAccess, page }) => {
+    // Determine the initial API key based on the page
+    const initialApiKeyValue = page === 'wh' ? authUser?.whApiKey || '' : authUser?.calcApiKey || '';
+    const [apiKey, setApiKey] = useState(initialApiKeyValue);
     const [initialApiKey, setInitialApiKey] = useState(apiKey);
-    const queryClient = useQueryClient()
+    const queryClient = useQueryClient();
+
+    // Determine the API endpoint and method based on the page
+    const apiEndpoint = page === 'wh' ? '/api/user/update-wh-api-key' : '/api/user/update-calc-api-key';
+    const methodName = page === 'wh' ? 'Поставки' : 'Статистика';
 
     const { mutate: updateApiKey } = useMutation({
         mutationFn: async () => {
-            const res = await axios.put('/api/user/update-calc-api-key', {
+            const res = await axios.put(apiEndpoint, {
                 apiKey,
             });
             return res.data;
         },
         onSuccess: () => {
             toast.success('API ключ обновлен успешно!');
-            queryClient.invalidateQueries(['authUser', 'sold'])
+            queryClient.invalidateQueries(['authUser', 'sold']);
             setInitialApiKey(apiKey);
             const modal = document.getElementById("api-key-modal");
             if (modal) modal.checked = false;
@@ -31,9 +37,7 @@ const ApiInput = ({ authUser, hasAccess }) => {
 
     return (
         <>
-
-
-            <button className="btn btn-warning btn-wide  text-black" onClick={() => document.getElementById('api-key-modal').click()}>
+            <button className="btn btn-warning btn-wide text-black" onClick={() => document.getElementById('api-key-modal').click()}>
                 Изменить API ключ
             </button>
 
@@ -41,9 +45,9 @@ const ApiInput = ({ authUser, hasAccess }) => {
             <div className="modal">
                 <div className="modal-box">
                     <h3 className="font-bold text-lg">Редактировать API ключ</h3>
-                    <div className='mt-5 p-2 border border-black '>
+                    <div className='mt-5 p-2 border border-black'>
                         <h1>Создайте API ключ</h1>
-                        <p>Добавьте метод: <strong>Статистика</strong> </p>
+                        <p>Добавьте метод: <strong>{methodName}</strong></p>
                     </div>
                     <textarea
                         type="text"

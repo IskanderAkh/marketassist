@@ -158,6 +158,25 @@ export const updateCalcApiKey = async (req, res) => {
         return res.status(500).json({ message: 'Ошибка сервера при обновлении api ключа' });
     }
 }
+export const updateWHApiKey = async (req, res) => {
+    try {
+        const { apiKey } = req.body;
+        const userId = req.user._id;
+        const whApiKey = apiKey
+        if(!apiKey){
+            return res.status(404).json({ message: "Api ключ не должен быть пустым" });
+        }
+        const user = await User.findOneAndUpdate(userId, {whApiKey})
+        if (!user) {
+            return res.status(404).json({ message: "Пользователь не найден" });
+        }
+        
+        res.status(200).json({ success: true, data: user });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: 'Ошибка сервера при обновлении api ключа' });
+    }
+}
 export const checkReviewPlanAccess = async (req, res) => {
     try {
         const requiredPlans = ['66dfdc354c02e37851cb52e7', '66dfdcd64c02e37851cb52e9'];

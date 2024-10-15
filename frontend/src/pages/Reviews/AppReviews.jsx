@@ -22,7 +22,6 @@ const AppReviews = ({ authUser, authUserLoading, authUserError }) => {
   const [marketName, setMarketName] = useState(authUser?.marketName || '');
   const [contacts, setContacts] = useState(authUser?.marketContacts || '');
 
-  // Responses state for storing review responses
   const [responses, setResponses] = useState({
     oneStar: '',
     twoStars: '',

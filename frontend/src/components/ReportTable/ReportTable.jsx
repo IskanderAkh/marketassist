@@ -18,9 +18,10 @@ const ReportTable = ({ groupedData, handleCostChange, logisticsCount, recalculat
                 - (item.totalPrice * tax)
                 - item.logisticsCost
                 - item.compensation
+                - item.penalty
                 + item.compensationForDamages
                 + item.acquiringAdjustments
-                + item.salesAdjustment;
+                + item.salesAdjustment
 
             return total + finalResult;
         }, 0);

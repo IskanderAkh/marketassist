@@ -1,6 +1,6 @@
 import e from "express";
-import { getAllPlans } from "../controllers/plans.controller.js";
 import { protectRoute } from "../middleware/protectRoute.js";
+import { getAllPlans } from "../controllers/plans.controller.js";
 
 const router = e.Router()
 

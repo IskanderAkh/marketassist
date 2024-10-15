@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
 import {
+	FOUND_WAREHOUSE,
 	PASSWORD_RESET_REQUEST_TEMPLATE,
 	PASSWORD_RESET_SUCCESS_TEMPLATE,
 	VERIFICATION_EMAIL_TEMPLATE,
@@ -70,4 +71,19 @@ export const sendResetSuccessEmail = async (email) => {
 		subject: "Сброс пароля проведен успешно ",
 		html,
 	});
+};
+
+export const sendSuccessWHEmail = async (email, warehouseName, boxTypeName, date, coefficient) => {
+    const html = FOUND_WAREHOUSE
+        .replace('{warehouseName}', warehouseName)
+        .replace('{boxType}', boxTypeName)
+        .replace('{date}', new Date(date).toLocaleDateString())
+        .replace('{acceptanceRate}', coefficient);
+
+    await sendEmail({
+        from: `"Marketassist.ru" <${process.env.EMAIL_USER}>`,
+        to: email,
+        subject: "Найдена доступная приёмка",
+        html,
+    });
 };

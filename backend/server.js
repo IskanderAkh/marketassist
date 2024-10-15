@@ -9,7 +9,7 @@ import reviewsRouter from './routes/reviews.routes.js'
 import apiKeyRouter from './routes/apiKey.routes.js'
 import reportRouter from './routes/report.routes.js'
 import plansRoutes from './routes/plans.routes.js'
-import OpenAI from 'openai';
+import warehouseRoutes from './routes/warehouse.routes.js'
 import path from 'path';
 
 dotenv.config();
@@ -29,7 +29,7 @@ const corsOptions = {
       callback(new Error('Not allowed by CORS'));
     }
   },
-  credentials: true, 
+  credentials: true,
 };
 
 app.use(cors(corsOptions));
@@ -44,6 +44,7 @@ app.use('/api/report', reportRouter);
 app.use('/api/user', userRoutes)
 app.use('/api/apiKey', apiKeyRouter)
 app.use('/api/plans', plansRoutes)
+app.use('/api/warehouse', warehouseRoutes)
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '/frontend/dist')))
