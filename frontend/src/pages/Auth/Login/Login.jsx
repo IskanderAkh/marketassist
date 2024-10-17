@@ -82,7 +82,12 @@ const Login = () => {
               className="form-container-input mt-10 bg-transparent"
               onChange={handleInputChange}
               value={formData.password} />
-            <button className='w-5' onClick={e => handleShowPass(e)}>{visible ? <img src={eyeOpen} alt="" /> : <img src={eyeClose} alt="" />}</button>
+            <button
+              type="button"
+              className='w-5'
+              onClick={e => handleShowPass(e)}>
+              {visible ? <img src={eyeOpen} alt="" /> : <img src={eyeClose} alt="" />}
+            </button>
           </div>
           <span className='border-b border-gray-300'></span>
         </div>

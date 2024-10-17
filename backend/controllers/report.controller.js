@@ -48,7 +48,7 @@ const initializeBarcodeData = (barcode, saName, allowedBarcodes, item) => {
         barcode,
         saName,
         totalPrice: 0,
-        transferGoodsToSeller:0,
+        transferGoodsToSeller: 0,
         productCost,
         quantity: 0,
         logisticsCost: 0,
@@ -102,6 +102,9 @@ const processReportData = (data, allowedBarcodes) => {
     let storage = 0;
     let retention = 0;
 
+    const tax = 0.07;
+    const excelData = {};
+
     data.forEach(item => {
         const barcode = item.barcode;
         const saName = item.sa_name;
@@ -113,7 +116,6 @@ const processReportData = (data, allowedBarcodes) => {
 
         if (item.supplier_oper_name.includes("Удержание") || item.supplier_oper_name.includes("Удержания")) {
             retention += Number(item.deduction) || 0;
-            console.log(item);
             return;
         }
 
@@ -131,6 +133,18 @@ const processReportData = (data, allowedBarcodes) => {
                 combinedGroupedData[barcodeToProcess] = initializeBarcodeData(barcodeToProcess, saName, allowedBarcodes, item);
             }
             updateBarcodeDataByOperation(item, combinedGroupedData[barcodeToProcess]);
+
+            const barcodeData = combinedGroupedData[barcodeToProcess];
+            barcodeData.finalResult =
+                barcodeData.transferGoodsToSeller
+                - (excelData[barcodeData.barcode] !== undefined ? excelData[barcodeData.barcode] : barcodeData.productCost) * barcodeData.quantity
+                - (barcodeData.totalPrice * tax)
+                - barcodeData.logisticsCost
+                - barcodeData.compensation
+                - barcodeData.penalty
+                + barcodeData.compensationForDamages
+                + barcodeData.acquiringAdjustments
+                + barcodeData.salesAdjustment;
         };
 
         if (barcode && allowedBarcodesSet.has(barcode)) {
@@ -142,14 +156,16 @@ const processReportData = (data, allowedBarcodes) => {
             }
         }
     });
+    const sortedCombinedData = Object.values(combinedGroupedData).sort((a, b) => b.finalResult - a.finalResult);
 
     return {
-        combinedData: Object.values(combinedGroupedData),
+        combinedData: sortedCombinedData,
         recalculationOfPaidAcceptance,
         storage,
         retention,
     };
 };
+
 
 
 

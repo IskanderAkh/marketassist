@@ -148,7 +148,7 @@ const userSchema = new mongoose.Schema({
     filters: {
         sliderValues: [Number],
         dateRange: [Date],
-        warehouseId: String,
+        warehouseIds: [String],
     },
     whsearchEnabled: {
         type: Boolean,

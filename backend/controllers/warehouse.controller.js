@@ -46,9 +46,9 @@ export const getAcceptanceRate = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 }
-const fetchWarehouses = async (whApiKey, warehouseId = null) => {
+const fetchWarehouses = async (whApiKey, warehouseIds = null) => {
     try {
-        const params = warehouseId ? { warehouseIDs: `${warehouseId}` } : {};
+        const params = warehouseIds ? { warehouseIDs: warehouseIds.join(',') } : {};
         const axiosResponse = await axios.get(
             "https://supplies-api.wildberries.ru/api/v1/acceptance/coefficients",
             {
@@ -64,6 +64,7 @@ const fetchWarehouses = async (whApiKey, warehouseId = null) => {
         return [];
     }
 };
+
 
 
 export const toggleAutoSearch = (req, res) => {
@@ -85,7 +86,7 @@ const runAutoSearchForUsers = async () => {
         for (const user of users) {
             const { whApiKey, filters } = user;
 
-            const warehouses = await fetchWarehouses(whApiKey, filters.warehouseId);
+            const warehouses = await fetchWarehouses(whApiKey, filters.warehouseIds);
 
             const filteredWarehouses = warehouses.filter(warehouse => {
                 const validDate = new Date(warehouse.date) >= new Date(filters.dateRange[0]) &&
@@ -106,9 +107,10 @@ const runAutoSearchForUsers = async () => {
                 console.log(`User ${user._id}: Found matching warehouses.`);
                 console.log(filteredWarehouses);
 
-                sendSuccessWHEmail(user.email, filteredWarehouses[0].warehouseName, filteredWarehouses[0].boxTypeName, filteredWarehouses[0].date, filteredWarehouses[0].coefficient)
+                sendSuccessWHEmail(user.email, filteredWarehouses[0].warehouseName, filteredWarehouses[0].boxTypeName, filteredWarehouses[0].date, filteredWarehouses[0].coefficient);
+
                 user.whsearchEnabled = false;
-                user.filters = {}
+                user.filters = {};
                 await user.save();
             } else {
                 console.log(`User ${user._id}: No matching warehouses found.`);
@@ -118,6 +120,7 @@ const runAutoSearchForUsers = async () => {
         console.error('Error running auto search cron:', error);
     }
 };
+
 
 export const toggleFilters = async (req, res) => {
     const { userId, whsearchEnabled } = req.body;

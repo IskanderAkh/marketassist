@@ -168,7 +168,7 @@ const ProductCost = ({ authUser, authUserLoading, authUserError }) => {
                             ))}
                             {barcodes.map((item, index) => (
                                 <tr key={index} className=''>
-                                    <td>{existingBarcodes?.length + index + 1}</td>
+                                    <td>{(existingBarcodes?.length || 0) + index + 1}</td>
                                     <td>
                                         <input
                                             type="text"

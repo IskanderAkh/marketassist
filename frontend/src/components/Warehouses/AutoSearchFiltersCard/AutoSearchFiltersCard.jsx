@@ -1,11 +1,18 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { format } from 'date-fns';
 
-const AutoSearchFiltersCard = ({ filters, warehouses }) => {
-    const { warehouseId, dateRange, sliderValues } = filters || {};
+const AutoSearchFiltersCard = ({ filters, warehouses, selectedWarehousesId }) => {
+    const { warehouseIds = [], dateRange, sliderValues } = filters || {};
 
-    // Find the warehouse name from the list of warehouses based on warehouseId
-    const warehouse = warehouses?.find(wh => String(wh.ID) === String(warehouseId));
+    const [loading, setLoading] = useState(true);
+    const [selectedWarehouses, setSelectedWarehouses] = useState([]);
+
+    useEffect(() => {
+        setLoading(true);
+        const filteredWarehouses = warehouses?.filter(wh => warehouseIds.includes(String(wh.ID))) || [];
+        setSelectedWarehouses(filteredWarehouses);
+        setLoading(false); 
+    }, [warehouses, warehouseIds]);
 
     return (
         <div className="card bg-base-100 shadow-xl mt-5">
@@ -13,8 +20,12 @@ const AutoSearchFiltersCard = ({ filters, warehouses }) => {
                 <h2 className="card-title">Текущие фильтры для автопоиска</h2>
                 <div className="divider"></div>
 
-                {warehouseId && warehouse ? (
-                    <p><strong>Склад:</strong> {warehouse.name}</p>
+                {loading ? (
+                    <p>Идет загрузка складов...</p>
+                ) : selectedWarehouses.length > 0 ? (
+                    <p>
+                        <strong>Склад(ы):</strong> {selectedWarehouses.map(wh => wh.name).join(', ')}
+                    </p>
                 ) : (
                     <p className="text-red-500">Склад не выбран</p>
                 )}

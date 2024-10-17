@@ -136,7 +136,17 @@ const Register = () => {
             required
 
           />
-          <button onClick={handleShowPass} className="border-none outline-none"><img className="w-6 h-6" src={showPass ? './eyeClose.svg' : './eyeOpen.svg'} title={showPass ? "Скрыть пароль" : "Показать пароль"} alt="" /></button>
+          <button
+            type="button"
+            onClick={handleShowPass}
+            className="border-none outline-none">
+            <img
+              className="w-6 h-6"
+              src={showPass ? './eyeClose.svg' : './eyeOpen.svg'}
+              title={showPass ? "Скрыть пароль" : "Показать пароль"}
+              alt=""
+            />
+          </button>
         </div>
         <span className="border-b border-gray-300"></span>
         <div className="flex pr-4">

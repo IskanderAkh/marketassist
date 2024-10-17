@@ -13,9 +13,7 @@ export default function Profile() {
   if (isLoading) {
     return <LoadingPage />
   }
-  if (!authUser) {
-    return <Navigate to={'/auth'} />
-  }
+ 
   return (
     <section className="py-8">
       <Container>
