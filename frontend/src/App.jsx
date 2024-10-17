@@ -6,7 +6,7 @@ import { Toaster } from 'react-hot-toast';
 import Main from './components/Main';
 
 function App() {
- 
+
 
   const { data: authUser, isLoading, isError } = useQuery({
     queryKey: ["authUser"],
@@ -20,12 +20,12 @@ function App() {
       }
     }
   })
-  
+
   return (
     <>
       <div className='flex min-h-screen flex-col'>
         <Header />
-        <Main />
+        <Main authUser={authUser} />
         <Footer />
       </div>
       <Toaster />
