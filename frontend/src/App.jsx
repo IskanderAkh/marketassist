@@ -25,7 +25,7 @@ function App() {
     <>
       <div className='flex min-h-screen flex-col'>
         <Header />
-        <Main authUser={authUser} />
+        <Main authUser={authUser} authUserLoading={isLoading} authUserError={isError} />
         <Footer />
       </div>
       <Toaster />

@@ -14,7 +14,7 @@ import ForgotPass from '../pages/Pass/ForgotPass';
 import ResetPass from '../pages/Pass/ResetPass';
 import Warehouses from '../pages/Warehouses/Warehouses';
 
-const Main = ({ authUser }) => {
+const Main = ({ authUser, authUserLoading, authUserError }) => {
     // const { data: authUser, isLoading: authUserLoading, isError: authUserError } = useQuery({ queryKey: ['authUser'] });
 
     const RedirectAuthenticatedUser = ({ children }) => {
