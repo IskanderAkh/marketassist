@@ -38,7 +38,7 @@ const Auth = () => {
 
   if (authUser) {
     // User is authenticated, redirect to another page
-    return <Navigate to="/" replace />;
+    return <Navigate to="/profile" replace />;
   }
 
   return (

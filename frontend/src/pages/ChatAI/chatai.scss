@@ -1,0 +1,75 @@
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 820px; /* Задана фиксированная высота для всего контейнера */
+    padding: 1rem;
+    border: 2px solid #ccc; /* Обводка вокруг контейнера */
+    border-radius: 10px; /* Закруглённые углы */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Лёгкая тень для придания объема */
+    background-color: white; /* Белый фон для контейнера */
+    overflow: hidden; /* Обрезает выходящие за пределы содержимое */
+}
+
+.messages {
+    flex-grow: 1;
+    overflow-y: auto; /* Добавляет скролл при переполнении сообщений */
+    margin-bottom: 1rem;
+}
+
+// .chat {
+//     display: flex;
+//     margin-bottom: 10px;
+// }
+
+// .chat-start {
+//     justify-content: flex-start;
+// }
+
+// .chat-end {
+//     justify-content: flex-end;
+// }
+
+// .chat-bubble {
+//     background-color: #f1f1f1;  /* Цвет для AI сообщений */
+//     padding: 10px;
+//     border-radius: 15px;
+//     max-width: 60%;
+// }
+
+.chat-end .chat-bubble {
+    // background-color: #d1e7dd;  /* Цвет для сообщений пользователя */
+}
+
+.message-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-top: 1px solid #ddd; /* Разделитель между сообщениями и инпутом */
+    padding-top: 10px;
+}
+
+.message-input {
+    width: 100%;
+    max-height: 150px; // Set maximum height for better UX
+    resize: none; // Disable manual resizing
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 16px;
+}
+
+
+.message-submit {
+    padding: 10px 15px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Класс для закругления */
+.rounded {
+    border-radius: 20px; /* Закругление для основного контейнера */
+}

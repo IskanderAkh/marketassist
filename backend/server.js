@@ -9,6 +9,8 @@ import reviewsRouter from './routes/reviews.routes.js'
 import apiKeyRouter from './routes/apiKey.routes.js'
 import reportRouter from './routes/report.routes.js'
 import plansRoutes from './routes/plans.routes.js'
+import chatRouter from './routes/chat.routes.js';
+
 import warehouseRoutes from './routes/warehouse.routes.js'
 import path from 'path';
 
@@ -38,6 +40,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
+
 app.use('/api/auth', authRoutes);
 app.use('/api/reviews', reviewsRouter)
 app.use('/api/report', reportRouter);
@@ -45,6 +48,7 @@ app.use('/api/user', userRoutes)
 app.use('/api/apiKey', apiKeyRouter)
 app.use('/api/plans', plansRoutes)
 app.use('/api/warehouse', warehouseRoutes)
+app.use('/api/chat', chatRouter);
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '/frontend/dist')))

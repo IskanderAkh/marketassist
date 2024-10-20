@@ -1,3 +1,5 @@
+@use './fonts.scss';
+@use './header.scss';
 .g-bg {
     background: linear-gradient(40deg, var(--color-bg1), var(--color-bg2));
 }
@@ -24,6 +26,3 @@ input::-webkit-inner-spin-button {
 input[type=number] {
     -moz-appearance: textfield;
 }
-
-@import './fonts.scss';
-@import './header.scss';

@@ -2,6 +2,7 @@ import Plan from "../models/plan.model.js"
 import User from "../models/user.model.js"
 import bcrypt from "bcryptjs"
 import crypto from 'crypto';
+import cron from 'node-cron';
 
 export const getUserBarcodes = async (req, res) => {
     try {
@@ -144,14 +145,14 @@ export const updateCalcApiKey = async (req, res) => {
         const { apiKey } = req.body;
         const userId = req.user._id;
         const calcApiKey = apiKey
-        if(!apiKey){
+        if (!apiKey) {
             return res.status(404).json({ message: "Api ключ не должен быть пустым" });
         }
-        const user = await User.findOneAndUpdate(userId, {calcApiKey})
+        const user = await User.findOneAndUpdate(userId, { calcApiKey })
         if (!user) {
             return res.status(404).json({ message: "Пользователь не найден" });
         }
-        
+
         res.status(200).json({ success: true, data: user });
     } catch (error) {
         console.log(error);
@@ -163,14 +164,14 @@ export const updateWHApiKey = async (req, res) => {
         const { apiKey } = req.body;
         const userId = req.user._id;
         const whApiKey = apiKey
-        if(!apiKey){
+        if (!apiKey) {
             return res.status(404).json({ message: "Api ключ не должен быть пустым" });
         }
-        const user = await User.findOneAndUpdate(userId, {whApiKey})
+        const user = await User.findOneAndUpdate(userId, { whApiKey })
         if (!user) {
             return res.status(404).json({ message: "Пользователь не найден" });
         }
-        
+
         res.status(200).json({ success: true, data: user });
     } catch (error) {
         console.log(error);
@@ -323,3 +324,73 @@ export const updateErrorVisibility = async (req, res) => {
         return res.status(500).json({ message: 'Internal server error' });
     }
 }
+
+async function checkAndRemoveExpiredPlans() {
+    try {
+        const currentTime = new Date();
+
+        const users = await User.find();
+
+        for (let user of users) {
+            const updatedPlans = user.currentPlans.filter(plan => {
+                return new Date(plan.endDate) > currentTime;
+            });
+
+            if (updatedPlans.length !== user.currentPlans.length) {
+                user.currentPlans = updatedPlans;
+                await user.save(); // Save the updated user
+                console.log(`Expired plans removed for user: ${user._id}`);
+            }
+        }
+        console.log('Cron job executed successfully');
+    } catch (error) {
+        console.error('Error checking expired plans:', error);
+    }
+}
+const updateSubscription = async (userId, planDetails) => {
+    try {
+        const user = await User.findById(userId);
+
+        if (!user) {
+            console.log(`User with ID ${userId} not found`);
+            return;
+        }
+
+        // Destructure the plan details
+        const { plan, startDate, endDate, subscriptionLvl, name } = planDetails;
+
+        // Check if the plan already exists in the currentPlans
+        const existingPlanIndex = user.currentPlans.findIndex(
+            (p) => p.plan.toString() === plan
+        );
+
+        if (existingPlanIndex !== -1) {
+            // Update existing plan
+            user.currentPlans[existingPlanIndex].startDate = startDate;
+            user.currentPlans[existingPlanIndex].endDate = endDate;
+            user.currentPlans[existingPlanIndex].subscriptionLvl = subscriptionLvl;
+            user.currentPlans[existingPlanIndex].name = name;
+            console.log(`Updated existing plan for user: ${userId}`);
+        } else {
+            // Add a new plan to currentPlans
+            user.currentPlans.push({
+                plan,
+                startDate,
+                endDate,
+                subscriptionLvl,
+                name,
+            });
+            console.log(`Added new plan for user: ${userId}`);
+        }
+
+        // Save the updated user
+        await user.save();
+        console.log(`Subscription updated successfully for user: ${userId}`);
+    } catch (error) {
+        console.error('Error updating subscription:', error);
+    }
+};
+
+
+// Schedule the cron job to run every minute
+cron.schedule('* * * * *', checkAndRemoveExpiredPlans);

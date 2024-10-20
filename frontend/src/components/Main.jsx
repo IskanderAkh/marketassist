@@ -13,6 +13,7 @@ import { useQuery } from '@tanstack/react-query';
 import ForgotPass from '../pages/Pass/ForgotPass';
 import ResetPass from '../pages/Pass/ResetPass';
 import Warehouses from '../pages/Warehouses/Warehouses';
+import ChatAI from '../pages/ChatAI/ChatAI';
 
 const Main = ({ authUser, authUserLoading, authUserError }) => {
     // const { data: authUser, isLoading: authUserLoading, isError: authUserError } = useQuery({ queryKey: ['authUser'] });
@@ -42,6 +43,7 @@ const Main = ({ authUser, authUserLoading, authUserError }) => {
                 <Route path='/app-reviews' element={<ProtectedRoute><AppReviews authUser={authUser} authUserLoading={authUserLoading} authUserError={authUserError} /></ProtectedRoute>} />
                 <Route path='/profile' element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path='/contact' element={<Contact />} />
+                <Route path='/chat-ai' element={<ChatAI />} />
                 <Route path='/warehouses' element={<ProtectedRoute><Warehouses /></ProtectedRoute>} />
                 <Route path='/forgot-password' element={<RedirectAuthenticatedUser><ForgotPass /></RedirectAuthenticatedUser>} />
                 <Route path='/password-reset/:token' element={<RedirectAuthenticatedUser><ResetPass /></RedirectAuthenticatedUser>} />

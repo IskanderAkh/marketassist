@@ -1,5 +1,11 @@
+@use './styles/common.scss';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import './styles/common.scss';
 
+.hover\:bg-accent:hover {
+  background-color: #afafaf; /* Replace with your desired hover color */
+}
+.hover\:text-accent-foreground:hover {
+  color: rgba($color: #afafaf, $alpha: 1.0); /* Replace with your desired text hover color */
+}

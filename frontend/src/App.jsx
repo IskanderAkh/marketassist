@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import Container from "@/components/ui/Container";
 import { Toaster } from 'react-hot-toast';
 import Main from './components/Main';
 
@@ -24,7 +25,9 @@ function App() {
   return (
     <>
       <div className='flex min-h-screen flex-col'>
-        <Header />
+        <Container>
+          <Header />
+        </Container>
         <Main authUser={authUser} authUserLoading={isLoading} authUserError={isError} />
         <Footer />
       </div>
