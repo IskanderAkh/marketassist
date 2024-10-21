@@ -1,12 +1,14 @@
 .chat-container {
+    width: 60%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 820px; /* Задана фиксированная высота для всего контейнера */
+    max-height: 750px;
+    height: calc(100vh - 200px); 
     padding: 1rem;
-    border: 2px solid #ccc; /* Обводка вокруг контейнера */
+    // border: 2px solid #ccc; /* Обводка вокруг контейнера */
     border-radius: 10px; /* Закруглённые углы */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Лёгкая тень для придания объема */
+    // box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Лёгкая тень для придания объема */
     background-color: white; /* Белый фон для контейнера */
     overflow: hidden; /* Обрезает выходящие за пределы содержимое */
 }
