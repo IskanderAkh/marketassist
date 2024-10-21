@@ -85,10 +85,11 @@ const ReportDetailByPeriod = () => {
             }
             <div className='flex mb-10 gap-4 flex-col mt-10 items-start'>
                 <div className='flex gap-4 w-full justify-between'>
-                    <DateRangePicker dateRange={dateRange} setDateRange={setDateRange} authUser={authUser} hasAccess={hasAccess} />
+                    <Link to={'/product-cost'}><button className='btn btn-wide'>Себестоимость</button> </Link>
                     <ApiInput apiKey={apiKey} setApiKey={setApiKey} authUser={authUser} hasAccess={hasAccess} />
                 </div>
-                <div className='flex items-center justify-end w-full'>
+                <div className='flex gap-4 w-full justify-between'>
+                    <DateRangePicker dateRange={dateRange} setDateRange={setDateRange} authUser={authUser} hasAccess={hasAccess} />
                     <button className='btn btn-secondary btn-wide' onClick={handleFetchData} disabled={!hasAccess || isButtonDisabled}>
                         {isButtonDisabled ? 'Подождите...' : 'Получить отчет'}
                     </button>

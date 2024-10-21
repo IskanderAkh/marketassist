@@ -66,7 +66,7 @@ function ChatAI() {
 
     return (
         <Container>
-            <div className="chat-container mt-5 m-auto">
+            <div className="chat-container mt-5 m-auto ">
                 <div className="messages">
                     {chat.map((msg, index) => (
                         <div key={index} className={`chat ${msg.role === 'user' ? 'chat-end' : 'chat-start'}`}>

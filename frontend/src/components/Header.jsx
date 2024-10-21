@@ -7,6 +7,17 @@ import './utilsheader.scss';
 import { useState, useEffect } from "react";
 
 const Header = () => {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768); // Условие для мобильных устройств (менее 768px)
+    };
+
+    handleResize(); // Проверить сразу при загрузке
+    window.addEventListener("resize", handleResize); // Слушаем изменение размера окна
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   const { data: authUser } = useQuery({
     queryKey: ["authUser"],
     queryFn: async () => {
@@ -48,20 +59,21 @@ const Header = () => {
         </div>
         <div className="navbar-center hidden lg:flex">
           <ul className="menu menu-horizontal px-1 z-[100]">
-            <ListItem href="/app-calculator" title="Калькулятор прибыли" isClickable={authUser}>
+            <ListItem href="/app-calculator" title="Калькулятор прибыли" isClickable={authUser} isMenuOpen={isMenuOpen}>
               Инструмент для расчета прибыли.
             </ListItem>
-            <ListItem href="/app-reviews" title="Управление Отзывами" isClickable={authUser}>
-              Генерируйте автоответы на отзывы клиентов.
+            <ListItem href="/app-reviews" title="Управление Отзывами" isClickable={authUser} isMenuOpen={isMenuOpen}>
+              Генерируйте автоответы на отзывы клиентов с помощью ИИ.
             </ListItem>
-            <ListItem href="/warehouses" title="Поиск лимитов" isClickable={authUser}>
+            <ListItem href="/warehouses" title="Поиск лимитов" isClickable={authUser} isMenuOpen={isMenuOpen}>
               Ищите лимиты в вашем складе.
             </ListItem>
-            <ListItem href="/chat-ai" title="ИИ" isClickable={authUser}>
+            <ListItem href="/chat-ai" title="ИИ" isClickable={authUser} isMenuOpen={isMenuOpen}>
               Чат с Искуственным интелектом.
             </ListItem>
           </ul>
         </div>
+
         <div className="navbar-end flex items-center space-x-4">
           <Link to="/auth" className="btn btn-ghost btn-circle">
             <div className="indicator">
@@ -89,9 +101,8 @@ const Header = () => {
 
       {/* Mobile Menu */}
       <div
-        className={`fixed top-0 left-0 duration-300 h-full w-64 bg-base-100 shadow-lg transform transition-transform  ${
-          isMenuOpen ? "translate-x-0" : "-translate-x-full"
-        } z-[52]`}
+        className={`fixed top-0 left-0 duration-300 h-full w-64 bg-base-100 shadow-lg transform transition-transform  ${isMenuOpen ? "translate-x-0" : "-translate-x-full"
+          } z-[52]`}
       >
         <div className="p-4 flex justify-between items-center">
           <h2 className="text-lg font-medium">Меню</h2>
@@ -104,16 +115,16 @@ const Header = () => {
           </button>
         </div>
         <ul className="menu p-4">
-          <ListItem href="/app-calculator" title="Калькулятор прибыли" isClickable={authUser}>
+          <ListItem href="/app-calculator" title="Калькулятор прибыли" isClickable={authUser} isMenuOpen={isMenuOpen}>
             Инструмент для расчета прибыли.
           </ListItem>
-          <ListItem href="/app-reviews" title="Управление Отзывами" isClickable={authUser}>
-            Генерируйте автоответы на отзывы клиентов.
+          <ListItem href="/app-reviews" title="Управление Отзывами" isClickable={authUser} isMenuOpen={isMenuOpen}>
+            Генерируйте автоответы на отзывы клиентов с помощью ИИ.
           </ListItem>
-          <ListItem href="/warehouses" title="Поиск лимитов" isClickable={authUser}>
+          <ListItem href="/warehouses" title="Поиск лимитов" isClickable={authUser} isMenuOpen={isMenuOpen}>
             Ищите лимиты в вашем складе.
           </ListItem>
-          <ListItem href="/chat-ai" title="ИИ" isClickable={authUser}>
+          <ListItem href="/chat-ai" title="ИИ" isClickable={authUser} isMenuOpen={isMenuOpen}>
             Чат с Искуственным интелектом.
           </ListItem>
         </ul>
@@ -122,19 +133,27 @@ const Header = () => {
   );
 };
 
-const ListItem = ({ className, title, children, isClickable, ...props }) => {
+const ListItem = ({ className, title, children, isMenuOpen, isClickable, ...props }) => {
   return (
     <li
       title={!isClickable ? "Что-бы пользоваться данной функциею, пожалуйста, авторизуйтесь" : ""}
       className={`block p-3 leading-none ${isClickable ? "" : "cursor-not-allowed opacity-50"}`}
     >
-      <Link
+      {/* <Link
         to={props.href}
         className={`no-underline ${isClickable ? "" : "pointer-events-none"}`}
         {...(isClickable ? props : { onClick: (e) => e.preventDefault() })}
-      >
-        <div className="text-sm font-medium leading-none">{title}</div>
-      </Link>
+      > */}
+      <div className={`text-sm font-medium leading-none ${!isMenuOpen ? 'tooltip tooltip-bottom' : ''} `} data-tip={`${children}`}>
+        <Link
+          to={props.href}
+          className={`no-underline ${isClickable ? "" : "pointer-events-none"}`}
+          {...(isClickable ? props : { onClick: (e) => e.preventDefault() })}
+        >
+          {title}
+        </Link>
+      </div>
+
     </li>
   );
 };
