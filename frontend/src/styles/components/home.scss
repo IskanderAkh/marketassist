@@ -1,0 +1,31 @@
+.home {
+    &-description {
+        display: flex;
+
+        &-text {
+            width: 100%;
+            flex: 3;
+
+            & div {
+                & h1 {
+                    font-weight: 600;
+                    font-size: 64px;
+                    // font-family: 'rfdewi';
+
+                    & span {
+                        font-weight: 900;
+                        // font-family: 'RF Dewi Extended Ultrabold';
+
+                    }
+                }
+
+            }
+
+        }
+
+        &-image {
+            width: 100%;
+            flex: 2;
+        }
+    }
+}

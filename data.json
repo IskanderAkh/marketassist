@@ -1,0 +1,595 @@
+{
+    "response": {
+        "data": {
+            "listGoods": [
+                {
+                    "nmID": 122298667,
+                    "vendorCode": "cremmedipeel1_r",
+                    "sizes": [
+                        {
+                            "sizeID": 215414348,
+                            "price": 3500,
+                            "discountedPrice": 175,
+                            "techSizeName": "0"
+                        }
+                    ],
+                    "currencyIsoCode4217": "RUB",
+                    "discount": 95,
+                    "editableSizePrice": false
+                },
+                {
+                    "nmID": 39312068,
+                    "vendorCode": "R7070",
+                    "sizes": [
+                        {
+                            "sizeID": 79772962,
+                            "price": 2950,
+                            "discountedPrice": 354,
+                            "techSizeName": "0"
+                        }
+                    ],
+                    "currencyIsoCode4217": "RUB",
+                    "discount": 88,
+                    "editableSizePrice": false
+                },
+                {
+                    "nmID": 100644956,
+                    "vendorCode": "biocushonbb_r",
+                    "sizes": [
+                        {
+                            "sizeID": 158646134,
+                            "price": 1950,
+                            "discountedPrice": 97.5,
+                            "techSizeName": "0"
+                        }
+                    ],
+                    "currencyIsoCode4217": "RUB",
+                    "discount": 95,
+                    "editableSizePrice": false
+                },
+                {
+                    "nmID": 142870827,
+                    "vendorCode": "tonerfarm9",
+                    "sizes": [
+                        {
+                            "sizeID": 241397507,
+                            "price": 1700,
+                            "discountedPrice": 595,
+                            "techSizeName": "0"
+                        }
+                    ],
+                    "currencyIsoCode4217": "RUB",
+                    "discount": 65,
+                    "editableSizePrice": false
+                },
+                {
+                    "nmID": 120746173,
+                    "vendorCode": "zozoavocado1_r",
+                    "sizes": [
+                        {
+                            "sizeID": 213517637,
+                            "price": 1250,
+                            "discountedPrice": 250,
+                            "techSizeName": "0"
+                        }
+                    ],
+                    "currencyIsoCode4217": "RUB",
+                    "discount": 80,
+                    "editableSizePrice": false
+                },
+                {
+                    "nmID": 164254459,
+                    "vendorCode": "lens001",
+                    "sizes": [
+                        {
+                            "sizeID": 273651762,
+                            "price": 865,
+                            "discountedPrice": 311.4,
+                            "techSizeName": "0"
+                        }
+                    ],
+                    "currencyIsoCode4217": "RUB",
+                    "discount": 64,
+                    "editableSizePrice": false
+                },
+                {
+                    "nmID": 164254710,
+                    "vendorCode": "lens002",
+                    "sizes": [
+                        {
+                            "sizeID": 273652805,
+                            "price": 865,
+                            "discountedPrice": 337.35,
+                            "techSizeName": "0"
+                        }
+                    ],
+                    "currencyIsoCode4217": "RUB",
+                    "discount": 61,
+                    "editableSizePrice": false
+                },
+                {
+                    "nmID": 164254864,
+                    "vendorCode": "lens003",
+                    "sizes": [
+                        {
+                            "sizeID": 273653097,
+                            "price": 865,
+                            "discountedPrice": 337.35,
+                            "techSizeName": "0"
+                        }
+                    ],
+                    "currencyIsoCode4217": "RUB",
+                    "discount": 61,
+                    "editableSizePrice": false
+                },
+                {
+                    "nmID": 164255119,
+                    "vendorCode": "lens004",
+                    "sizes": [
+                        {
+                            "sizeID": 273653417,
+                            "price": 865,
+                            "discountedPrice": 337.35,
+                            "techSizeName": "0"
+                        }
+                    ],
+                    "currencyIsoCode4217": "RUB",
+                    "discount": 61,
+                    "editableSizePrice": false
+                },
+                {
+                    "nmID": 164255530,
+                    "vendorCode": "lense006",
+                    "sizes": [
+                        {
+                            "sizeID": 273654127,
+                            "price": 865,
+                            "discountedPrice": 337.35,
+                            "techSizeName": "0"
+                        }
+                    ],
+                    "currencyIsoCode4217": "RUB",
+                    "discount": 61,
+                    "editableSizePrice": false
+                },
+                {
+                    "nmID": 164255616,
+                    "vendorCode": "lens005",
+                    "sizes": [
+                        {
+                            "sizeID": 273654268,
+                            "price": 865,
+                            "discountedPrice": 337.35,
+                            "techSizeName": "0"
+                        }
+                    ],
+                    "currencyIsoCode4217": "RUB",
+                    "discount": 61,
+                    "editableSizePrice": false
+                },
+                {
+                    "nmID": 164255826,
+                    "vendorCode": "lense008",
+                    "sizes": [
+                        {
+                            "sizeID": 273654601,
+                            "price": 865,
+                            "discountedPrice": 337.35,
+                            "techSizeName": "0"
+                        }
+                    ],
+                    "currencyIsoCode4217": "RUB",
+                    "discount": 61,
+                    "editableSizePrice": false
+                },
+                {
+                    "nmID": 164255873,
+                    "vendorCode": "lense009",
+                    "sizes": [
+                        {
+                            "sizeID": 273654683,
+                            "price": 865,
+                            "discountedPrice": 337.35,
+                            "techSizeName": "0"
+                        }
+                    ],
+                    "currencyIsoCode4217": "RUB",
+                    "discount": 61,
+                    "editableSizePrice": false
+                },
+                {
+                    "nmID": 164255934,
+                    "vendorCode": "lense007",
+                    "sizes": [
+                        {
+                            "sizeID": 273654780,
+                            "price": 865,
+                            "discountedPrice": 337.35,
+                            "techSizeName": "0"
+                        }
+                    ],
+                    "currencyIsoCode4217": "RUB",
+                    "discount": 61,
+                    "editableSizePrice": false
+                },
+                {
+                    "nmID": 164256112,
+                    "vendorCode": "lense010",
+                    "sizes": [
+                        {
+                            "sizeID": 273655021,
+                            "price": 865,
+                            "discountedPrice": 337.35,
+                            "techSizeName": "0"
+                        }
+                    ],
+                    "currencyIsoCode4217": "RUB",
+                    "discount": 61,
+                    "editableSizePrice": false
+                },
+                {
+                    "nmID": 164256200,
+                    "vendorCode": "lense011",
+                    "sizes": [
+                        {
+                            "sizeID": 273655295,
+                            "price": 865,
+                            "discountedPrice": 337.35,
+                            "techSizeName": "0"
+                        }
+                    ],
+                    "currencyIsoCode4217": "RUB",
+                    "discount": 61,
+                    "editableSizePrice": false
+                },
+                {
+                    "nmID": 164256269,
+                    "vendorCode": "lense012",
+                    "sizes": [
+                        {
+                            "sizeID": 273655409,
+                            "price": 865,
+                            "discountedPrice": 337.35,
+                            "techSizeName": "0"
+                        }
+                    ],
+                    "currencyIsoCode4217": "RUB",
+                    "discount": 61,
+                    "editableSizePrice": false
+                },
+                {
+                    "nmID": 164256453,
+                    "vendorCode": "lense013",
+                    "sizes": [
+                        {
+                            "sizeID": 273656053,
+                            "price": 865,
+                            "discountedPrice": 337.35,
+                            "techSizeName": "0"
+                        }
+                    ],
+                    "currencyIsoCode4217": "RUB",
+                    "discount": 61,
+                    "editableSizePrice": false
+                },
+                {
+                    "nmID": 168014181,
+                    "vendorCode": "синий сапфир",
+                    "sizes": [
+                        {
+                            "sizeID": 279358964,
+                            "price": 865,
+                            "discountedPrice": 337.35,
+                            "techSizeName": "0"
+                        }
+                    ],
+                    "currencyIsoCode4217": "RUB",
+                    "discount": 61,
+                    "editableSizePrice": false
+                },
+                {
+                    "nmID": 168014285,
+                    "vendorCode": "белые линзы",
+                    "sizes": [
+                        {
+                            "sizeID": 279359120,
+                            "price": 865,
+                            "discountedPrice": 337.35,
+                            "techSizeName": "0"
+                        }
+                    ],
+                    "currencyIsoCode4217": "RUB",
+                    "discount": 61,
+                    "editableSizePrice": false
+                },
+                {
+                    "nmID": 168014448,
+                    "vendorCode": "honey медовые",
+                    "sizes": [
+                        {
+                            "sizeID": 279359383,
+                            "price": 865,
+                            "discountedPrice": 337.35,
+                            "techSizeName": "0"
+                        }
+                    ],
+                    "currencyIsoCode4217": "RUB",
+                    "discount": 61,
+                    "editableSizePrice": false
+                },
+                {
+                    "nmID": 170325705,
+                    "vendorCode": "cosplay12",
+                    "sizes": [
+                        {
+                            "sizeID": 282836014,
+                            "price": 865,
+                            "discountedPrice": 389.25,
+                            "techSizeName": "0"
+                        }
+                    ],
+                    "currencyIsoCode4217": "RUB",
+                    "discount": 55,
+                    "editableSizePrice": false
+                },
+                {
+                    "nmID": 170325706,
+                    "vendorCode": "white12",
+                    "sizes": [
+                        {
+                            "sizeID": 282836015,
+                            "price": 865,
+                            "discountedPrice": 389.25,
+                            "techSizeName": "0"
+                        }
+                    ],
+                    "currencyIsoCode4217": "RUB",
+                    "discount": 55,
+                    "editableSizePrice": false
+                },
+                {
+                    "nmID": 170325707,
+                    "vendorCode": "turquoise12",
+                    "sizes": [
+                        {
+                            "sizeID": 282836016,
+                            "price": 865,
+                            "discountedPrice": 389.25,
+                            "techSizeName": "0"
+                        }
+                    ],
+                    "currencyIsoCode4217": "RUB",
+                    "discount": 55,
+                    "editableSizePrice": false
+                },
+                {
+                    "nmID": 170325708,
+                    "vendorCode": "dollheart12",
+                    "sizes": [
+                        {
+                            "sizeID": 282836017,
+                            "price": 865,
+                            "discountedPrice": 389.25,
+                            "techSizeName": "0"
+                        }
+                    ],
+                    "currencyIsoCode4217": "RUB",
+                    "discount": 55,
+                    "editableSizePrice": false
+                },
+                {
+                    "nmID": 170325709,
+                    "vendorCode": "truesaphirre12",
+                    "sizes": [
+                        {
+                            "sizeID": 282836018,
+                            "price": 865,
+                            "discountedPrice": 389.25,
+                            "techSizeName": "0"
+                        }
+                    ],
+                    "currencyIsoCode4217": "RUB",
+                    "discount": 55,
+                    "editableSizePrice": false
+                },
+                {
+                    "nmID": 170325710,
+                    "vendorCode": "brilliantblue12",
+                    "sizes": [
+                        {
+                            "sizeID": 282836019,
+                            "price": 865,
+                            "discountedPrice": 389.25,
+                            "techSizeName": "0"
+                        }
+                    ],
+                    "currencyIsoCode4217": "RUB",
+                    "discount": 55,
+                    "editableSizePrice": false
+                },
+                {
+                    "nmID": 170325711,
+                    "vendorCode": "choko12",
+                    "sizes": [
+                        {
+                            "sizeID": 282836020,
+                            "price": 865,
+                            "discountedPrice": 389.25,
+                            "techSizeName": "0"
+                        }
+                    ],
+                    "currencyIsoCode4217": "RUB",
+                    "discount": 55,
+                    "editableSizePrice": false
+                },
+                {
+                    "nmID": 170325712,
+                    "vendorCode": "sterlinggrey12",
+                    "sizes": [
+                        {
+                            "sizeID": 282836021,
+                            "price": 865,
+                            "discountedPrice": 389.25,
+                            "techSizeName": "0"
+                        }
+                    ],
+                    "currencyIsoCode4217": "RUB",
+                    "discount": 55,
+                    "editableSizePrice": false
+                },
+                {
+                    "nmID": 170325713,
+                    "vendorCode": "blue12",
+                    "sizes": [
+                        {
+                            "sizeID": 282836022,
+                            "price": 865,
+                            "discountedPrice": 389.25,
+                            "techSizeName": "0"
+                        }
+                    ],
+                    "currencyIsoCode4217": "RUB",
+                    "discount": 55,
+                    "editableSizePrice": false
+                },
+                {
+                    "nmID": 170325714,
+                    "vendorCode": "black12",
+                    "sizes": [
+                        {
+                            "sizeID": 282836023,
+                            "price": 865,
+                            "discountedPrice": 389.25,
+                            "techSizeName": "0"
+                        }
+                    ],
+                    "currencyIsoCode4217": "RUB",
+                    "discount": 55,
+                    "editableSizePrice": false
+                },
+                {
+                    "nmID": 170325715,
+                    "vendorCode": "kitty12",
+                    "sizes": [
+                        {
+                            "sizeID": 282836024,
+                            "price": 865,
+                            "discountedPrice": 389.25,
+                            "techSizeName": "0"
+                        }
+                    ],
+                    "currencyIsoCode4217": "RUB",
+                    "discount": 55,
+                    "editableSizePrice": false
+                },
+                {
+                    "nmID": 170325716,
+                    "vendorCode": "gemstonegreen12",
+                    "sizes": [
+                        {
+                            "sizeID": 282836025,
+                            "price": 865,
+                            "discountedPrice": 389.25,
+                            "techSizeName": "0"
+                        }
+                    ],
+                    "currencyIsoCode4217": "RUB",
+                    "discount": 55,
+                    "editableSizePrice": false
+                },
+                {
+                    "nmID": 170325717,
+                    "vendorCode": "brown12",
+                    "sizes": [
+                        {
+                            "sizeID": 282836026,
+                            "price": 865,
+                            "discountedPrice": 389.25,
+                            "techSizeName": "0"
+                        }
+                    ],
+                    "currencyIsoCode4217": "RUB",
+                    "discount": 55,
+                    "editableSizePrice": false
+                },
+                {
+                    "nmID": 170325718,
+                    "vendorCode": "ametist12",
+                    "sizes": [
+                        {
+                            "sizeID": 282836027,
+                            "price": 865,
+                            "discountedPrice": 389.25,
+                            "techSizeName": "0"
+                        }
+                    ],
+                    "currencyIsoCode4217": "RUB",
+                    "discount": 55,
+                    "editableSizePrice": false
+                },
+                {
+                    "nmID": 170325719,
+                    "vendorCode": "honeybrown12",
+                    "sizes": [
+                        {
+                            "sizeID": 282836028,
+                            "price": 865,
+                            "discountedPrice": 389.25,
+                            "techSizeName": "0"
+                        }
+                    ],
+                    "currencyIsoCode4217": "RUB",
+                    "discount": 55,
+                    "editableSizePrice": false
+                },
+                {
+                    "nmID": 170325720,
+                    "vendorCode": "pink12",
+                    "sizes": [
+                        {
+                            "sizeID": 282836029,
+                            "price": 865,
+                            "discountedPrice": 389.25,
+                            "techSizeName": "0"
+                        }
+                    ],
+                    "currencyIsoCode4217": "RUB",
+                    "discount": 55,
+                    "editableSizePrice": false
+                },
+                {
+                    "nmID": 99859492,
+                    "vendorCode": "siazupatch",
+                    "sizes": [
+                        {
+                            "sizeID": 157506195,
+                            "price": 750,
+                            "discountedPrice": 37.5,
+                            "techSizeName": "0"
+                        }
+                    ],
+                    "currencyIsoCode4217": "RUB",
+                    "discount": 95,
+                    "editableSizePrice": false
+                },
+                {
+                    "nmID": 164882529,
+                    "vendorCode": "ball001",
+                    "sizes": [
+                        {
+                            "sizeID": 274628452,
+                            "price": 700,
+                            "discountedPrice": 343,
+                            "techSizeName": "0"
+                        }
+                    ],
+                    "currencyIsoCode4217": "RUB",
+                    "discount": 51,
+                    "editableSizePrice": false
+                }
+            ]
+        },
+        "error": false,
+        "errorText": ""
+    }
+}

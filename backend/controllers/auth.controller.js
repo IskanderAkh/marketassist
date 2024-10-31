@@ -296,7 +296,6 @@ export const getUser = async (req, res) => {
         console.error(error);
         res.status(500).json({ error: "Internal server error in getUser" })
     }
-
 }
 
 

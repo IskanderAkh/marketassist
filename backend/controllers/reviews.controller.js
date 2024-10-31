@@ -9,7 +9,7 @@ const WB_API_BASE_URL = 'https://feedbacks-api.wildberries.ru/api/v1';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
-  baseURL: "https://api.proxyapi.ru/openai/v1", 
+  baseURL: "https://api.proxyapi.ru/openai/v1",
 });
 
 export const getReviews = async (req, res) => {
@@ -24,13 +24,13 @@ export const getReviews = async (req, res) => {
       },
     });
 
-   if (!response || !response.data || !response.data.data) {
+    if (!response || !response.data || !response.data.data) {
       console.error('Invalid response structure:', response);
       return res.status(500).json({ error: 'Invalid response from Wildberries API' });
     }
 
     const feedbacks = response.data.data.feedbacks
-      ? response.data.data.feedbacks.filter(feedback => feedback.text || (feedback.answer && feedback.answer.text) || feedback.pros )
+      ? response.data.data.feedbacks.filter(feedback => feedback.text || (feedback.answer && feedback.answer.text) || feedback.pros)
       : [];
     res.json(feedbacks);
 
@@ -86,15 +86,17 @@ const generateResponse = async (feedback, responses, marketName = null, contacts
     }
 
     if (!responseMessage) {
-      const prompt = `Сгенерированный тобой текст сразу будет прикреплен к отзыву без изменений! Купленный товар: ${feedback.subjectName}.\n\nЮзернейм покупателя: ${feedback.userName || 'Покупатель не указан'}.\n\nНиже приведен отзыв клиента о продукте:\n\n"${
-        feedback.text 
-          ? feedback.text 
-          : `${feedback.pros ? 'Плюсы: ' + feedback.pros : ''} ${feedback.cons ? 'Минусы: ' + feedback.cons : ''}`
-      }"\n\nСоздайте ответ на этот отзыв. Ответ должен учитывать рейтинг продукта ${feedback.productValuation} из 5. ${
-        feedback.productValuation <= 5 
-          ? `${marketName ? ` Название магазина: ${marketName}.` : ''} ${contacts ? ` Укажи контакты для связи: ${contacts}.` : ''}` 
+      const prompt = `Сгенерированный тобой текст сразу будет прикреплен к отзыву без изменений! Купленный товар: ${feedback.subjectName}.\n\nЮзернейм покупателя: ${feedback.userName || 'Покупатель не указан'}.\n\nНиже приведен отзыв клиента о продукте:\n\n"${feedback.text
+        ? feedback.text
+        : `${feedback.pros ? 'Плюсы: ' + feedback.pros : ''} ${feedback.cons ? 'Минусы: ' + feedback.cons : ''}`
+        }"\n\nСоздайте ответ на этот отзыв. Ответ должен учитывать рейтинг продукта ${feedback.productValuation} из 5.${feedback.productValuation <= 5
+          ? (marketName || contacts
+            ? ` ${marketName ? `Название магазина: ${marketName}.` : ''}${contacts ? ` Укажи контакты для связи: ${contacts}.` : ''}`
+            : ' Пожалуйста, не упоминайте название магазина и контакты, так как они не указаны.'
+          )
           : ''
-      }`;
+        }`;
+
 
       try {
         const aiResponse = await openai.chat.completions.create({
@@ -106,9 +108,9 @@ const generateResponse = async (feedback, responses, marketName = null, contacts
         responseMessage = aiResponse.choices[0].message.content.trim();
       } catch (aiError) {
         console.error('Ошибка при генерации ответа с помощью OpenAI:', aiError);
-        throw aiError; 
+        throw aiError;
       }
-      
+
       try {
         await axios.patch(
           `${WB_API_BASE_URL}/feedbacks`,
@@ -124,7 +126,7 @@ const generateResponse = async (feedback, responses, marketName = null, contacts
     return responseMessage;
   } catch (error) {
     console.error('Ошибка в generateResponse:', error);
-    throw error; 
+    throw error;
   }
 };
 

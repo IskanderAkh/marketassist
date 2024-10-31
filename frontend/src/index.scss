@@ -3,9 +3,17 @@
 @tailwind components;
 @tailwind utilities;
 
-.hover\:bg-accent:hover {
-  background-color: #afafaf; /* Replace with your desired hover color */
+
+:root:has(:is(.modal-open, .modal:target, .modal-toggle:checked + .modal, .modal[open])){
+  scrollbar-gutter: auto;
 }
+
+.hover\:bg-accent:hover {
+  background-color: #afafaf;
+  /* Replace with your desired hover color */
+}
+
 .hover\:text-accent-foreground:hover {
-  color: rgba($color: #afafaf, $alpha: 1.0); /* Replace with your desired text hover color */
+  color: rgba($color: #afafaf, $alpha: 1.0);
+  /* Replace with your desired text hover color */
 }

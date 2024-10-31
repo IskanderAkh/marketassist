@@ -3,10 +3,11 @@ import Container from "@/components/ui/Container";
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { Link } from 'react-router-dom';
 import VerifyLink from '../../components/VerifyLink/VerifyLink';
+import { useFetchUser } from '@/store/useUserStore';
 
-const ProductCost = ({ authUser, authUserLoading, authUserError }) => {
+const ProductCost = () => {
+    const { data: authUser, authUserLoading, authUserError, error } = useFetchUser();
     const queryClient = useQueryClient();
     const [barcodes, setBarcodes] = useState([{ barcode: '', costPrice: '', sa_name: '' }]);
     const [isSubmitted, setIsSubmitted] = useState(false);

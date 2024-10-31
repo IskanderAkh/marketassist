@@ -10,6 +10,7 @@ import apiKeyRouter from './routes/apiKey.routes.js'
 import reportRouter from './routes/report.routes.js'
 import plansRoutes from './routes/plans.routes.js'
 import chatRouter from './routes/chat.routes.js';
+import repriceRoutes from './routes/reprice.routes.js';
 
 import warehouseRoutes from './routes/warehouse.routes.js'
 import path from 'path';
@@ -49,6 +50,7 @@ app.use('/api/apiKey', apiKeyRouter)
 app.use('/api/plans', plansRoutes)
 app.use('/api/warehouse', warehouseRoutes)
 app.use('/api/chat', chatRouter);
+app.use('/api/reprice', repriceRoutes);
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '/frontend/dist')))

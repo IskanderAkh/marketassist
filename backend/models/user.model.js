@@ -152,8 +152,16 @@ const userSchema = new mongoose.Schema({
     },
     whsearchEnabled: {
         type: Boolean,
-        default: false,  
+        default: false,
     },
+    repricingData: [
+        {
+            barcode: String,
+            threshold: Number,
+            changeRatio: Number,
+        }
+    ],
+
 }, { timestamps: true });
 
 const User = mongoose.model("User", userSchema);

@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from 'react-hot-toast';
 import eyeOpen from "../../../assets/eyeOpen.svg"
 import eyeClose from "../../../assets/eyeClose.svg"
+import { useUserStore } from '@/store/useUserStore';
 const Login = () => {
   const [isSignIn, setIsSignIn] = useState(true);
   const location = useLocation()
@@ -13,6 +14,7 @@ const Login = () => {
   });
   const [visible, setVisible] = useState(false)
   const queryClient = useQueryClient();
+  // const {  fetchUser } = useUserStore();
 
   const { mutate: loginMutation, isPending, isError, error, } = useMutation({
     mutationFn: async ({ email, password }) => {
@@ -37,6 +39,7 @@ const Login = () => {
     onSuccess: () => {
       toast.success("Вы вошли в систему");
       queryClient.invalidateQueries({ queryKey: ["authUser"] });
+      // fetchUser()
       setIsSignIn(true);
       setTimeout(() => {
         formData.email = "";

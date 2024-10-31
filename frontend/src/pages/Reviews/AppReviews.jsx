@@ -11,8 +11,11 @@ import VerifyLink from "../../components/VerifyLink/VerifyLink";
 import LoadingPage from "../../components/LoadingPage/LoadingPage";
 import EditMarketDetailsModal from "../../components/EditMarketDetails/EditMarketDetailsModal";
 import EditReviewResponsesModal from "../../components/EditReviewResponses/EditReviewResponsesModal";
+import { useFetchUser } from "@/store/useUserStore";
 
-const AppReviews = ({ authUser, authUserLoading, authUserError }) => {
+const AppReviews = () => {
+  const { data: authUser, authUserLoading, authUserError, error } = useFetchUser();
+
   if (authUserLoading) {
     console.log('Loading');
     return <LoadingPage />;

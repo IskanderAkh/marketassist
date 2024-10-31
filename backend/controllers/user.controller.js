@@ -1,7 +1,6 @@
 import Plan from "../models/plan.model.js"
 import User from "../models/user.model.js"
 import bcrypt from "bcryptjs"
-import crypto from 'crypto';
 import cron from 'node-cron';
 
 export const getUserBarcodes = async (req, res) => {

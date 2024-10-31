@@ -1,5 +1,6 @@
 @use './fonts.scss';
-@use './header.scss';
+@use './components/header.scss';
+@use './components/home.scss';
 .g-bg {
     background: linear-gradient(40deg, var(--color-bg1), var(--color-bg2));
 }

@@ -14,6 +14,7 @@ router.post('/checkCalcPlanAccess', protectRoute, checkCalcPlanAccess);
 router.post('/checkReviewPlanAccess', protectRoute, checkReviewPlanAccess);
 router.put('/update-market-details', protectRoute, updateMarketDetails)
 router.put('/:userId/errors/:errorId', protectRoute, updateErrorVisibility);
+
 router.put('/update-calc-api-key', protectRoute, updateCalcApiKey)
 router.put('/update-wh-api-key', protectRoute, updateWHApiKey)
 

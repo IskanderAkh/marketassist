@@ -9,12 +9,12 @@ import LoadingPage from '../LoadingPage/LoadingPage';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { useFetchUser } from '@/store/useUserStore';
 
 const ReportDetailByPeriod = () => {
-    const { data: authUser, isLoading: authUserLoading, isError: authUserError } = useQuery({ queryKey: ['authUser'] });
-
+    const { data: authUser, authUserLoading, authUserError, error } = useFetchUser();
     const [apiKey, setApiKey] = useState('');
-    const [isButtonDisabled, setIsButtonDisabled] = useState(false); // Button disable state
+    const [isButtonDisabled, setIsButtonDisabled] = useState(false); 
 
     useEffect(() => {
         if (authUser && authUser.calcApiKey) {

@@ -4,36 +4,17 @@ import { Link, Navigate, useLocation } from "react-router-dom";
 import Login from "./Login/Login";
 import { useQuery } from "@tanstack/react-query";
 import Register from "./Register/Register";
+import { useFetchUser } from "@/store/useUserStore";
+import LoadingPage from "@/components/LoadingPage/LoadingPage";
 
 const Auth = () => {
   const [login, setLogin] = useState(true);
   const location = useLocation();
+  const { data: authUser, isLoading, isError, error } = useFetchUser();
 
-  const {
-    data: authUser,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["authUser"],
-    queryFn: async () => {
-      try {
-        const res = await fetch("/api/auth/me");
-        if (!res.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const data = await res.json();
-        return data;
-      } catch (error) {
-        console.log(error);
-        throw error;
-      }
-    },
-    retry: false,
-    staleTime: 5 * 60 * 1000,
-  });
 
   if (isLoading) {
-    return <div></div>;
+    return <div><LoadingPage /></div>;
   }
 
   if (authUser) {
@@ -45,7 +26,6 @@ const Auth = () => {
     <>
       {isError && (
         <div className="mb-20">
-          <h1 className="title text-center text-2xl mt-10">Войдите в аккаунт что-бы пользоваться функциями сайта</h1>
           <div className="auth-choice mx-auto mt-14 flex h-16 max-w-lg p-1">
             <button
               className={`auth-choice-btn flex-1`}

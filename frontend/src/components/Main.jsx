@@ -14,6 +14,7 @@ import ForgotPass from '../pages/Pass/ForgotPass';
 import ResetPass from '../pages/Pass/ResetPass';
 import Warehouses from '../pages/Warehouses/Warehouses';
 import ChatAI from '../pages/ChatAI/ChatAI';
+import Repricer from '@/pages/Repricer/Repricer';
 
 const Main = ({ authUser, authUserLoading, authUserError }) => {
     // const { data: authUser, isLoading: authUserLoading, isError: authUserError } = useQuery({ queryKey: ['authUser'] });
@@ -38,16 +39,17 @@ const Main = ({ authUser, authUserLoading, authUserError }) => {
                 <Route path='/' element={<Home />} />
                 <Route path='/auth' element={<Auth />} />
                 <Route path='/calculator' element={<Calculator />} />
-                <Route path='/app-calculator' element={<ProtectedRoute><AppCalculator authUser={authUser} authUserLoading={authUserLoading} authUserError={authUserError} /></ProtectedRoute>} />
+                <Route path='/app-calculator' element={<ProtectedRoute><AppCalculator /></ProtectedRoute>} />
                 <Route path='/reviews' element={<Reviews />} />
-                <Route path='/app-reviews' element={<ProtectedRoute><AppReviews authUser={authUser} authUserLoading={authUserLoading} authUserError={authUserError} /></ProtectedRoute>} />
+                <Route path='/app-reviews' element={<ProtectedRoute><AppReviews/></ProtectedRoute>} />
                 <Route path='/profile' element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path='/contact' element={<Contact />} />
+                <Route path='/repricer' element={<Repricer />} />
                 <Route path='/chat-ai' element={<ProtectedRoute><ChatAI /></ProtectedRoute>} />
                 <Route path='/warehouses' element={<ProtectedRoute><Warehouses /></ProtectedRoute>} />
                 <Route path='/forgot-password' element={<RedirectAuthenticatedUser><ForgotPass /></RedirectAuthenticatedUser>} />
                 <Route path='/password-reset/:token' element={<RedirectAuthenticatedUser><ResetPass /></RedirectAuthenticatedUser>} />
-                <Route path='/product-cost' element={<ProtectedRoute><ProductCost authUser={authUser} authUserLoading={authUserLoading} authUserError={authUserError} /></ProtectedRoute>} />
+                <Route path='/product-cost' element={<ProtectedRoute><ProductCost  /></ProtectedRoute>} />
                 <Route path='*' element={<Home />} />
             </Routes>
         </div>

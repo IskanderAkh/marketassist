@@ -8,8 +8,12 @@ import Subscriptions from "../../ProfileSubRoutes/Subscriptions";
 import axios from 'axios'; // Make sure axios is imported
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
+import ApiKeys from "@/components/ProfileSubRoutes/ApiKeys";
+import { useFetchUser } from "@/store/useUserStore";
 
-const AuthorizedProfile = ({ authUser }) => {
+const AuthorizedProfile = () => {
+  const { data: authUser, isLoading: isLoadingUser, isError: isUserError, error: userError } = useFetchUser();
+
   const { logout } = useLogout();
   const [activeLink, setActiveLink] = useState(() => {
     return localStorage.getItem('activeLink') || "account";
@@ -48,7 +52,7 @@ const AuthorizedProfile = ({ authUser }) => {
   return (
     <div className="authorized-profile">
       <div className="text-center">
-        <h1>Приветствуем, {authUser.firstName}!</h1>
+
         {authUser.userErrors && authUser.userErrors.map((error) => (
           error.visible && (
             <div key={error._id} className="alert alert-warning flex justify-between">
@@ -82,6 +86,12 @@ const AuthorizedProfile = ({ authUser }) => {
             >
               Подписки и счета
             </button>
+            <button
+              className={`btn ${activeLink === "apikeys" ? "btn-primary" : ""}`}
+              onClick={() => changeActiveLink("apikeys")}
+            >
+              API ключи
+            </button>
           </div>
           <button className="btn btn-wide btn-error btn-outline" onClick={logout}>
             Выйти из аккаунта <LogOut />
@@ -91,6 +101,7 @@ const AuthorizedProfile = ({ authUser }) => {
           {(activeLink === "account" && authUser.isVerified) && <Account authUser={authUser} />}
           {(activeLink === "plans" && authUser.isVerified) && <Plans authUser={authUser} />}
           {(activeLink === "subscriptions" && authUser.isVerified) && <Subscriptions authUser={authUser} />}
+          {(activeLink === "apikeys" && authUser.isVerified) && <ApiKeys authUser={authUser} />}
         </div>
       </div>
     </div>
