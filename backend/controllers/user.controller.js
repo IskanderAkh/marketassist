@@ -16,7 +16,14 @@ export const getUserBarcodes = async (req, res) => {
     }
 };
 
-
+export const getUserApiKeys = async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).select('apiKeys');
+        res.json(user.apiKeys);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error' });
+    }
+};
 
 export const changeUserInformation = async (req, res) => {
     try {
@@ -143,40 +150,97 @@ export const updateCalcApiKey = async (req, res) => {
     try {
         const { apiKey } = req.body;
         const userId = req.user._id;
-        const calcApiKey = apiKey
+
         if (!apiKey) {
             return res.status(404).json({ message: "Api ключ не должен быть пустым" });
         }
-        const user = await User.findOneAndUpdate(userId, { calcApiKey })
+
+        const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ message: "Пользователь не найден" });
         }
+
+        user.apiKeys = {
+            ...user.apiKeys,
+            calcApiKey: apiKey,
+        };
+
+
+        if (!user) {
+            return res.status(404).json({ message: "Пользователь не найден" });
+        }
+        user.save()
 
         res.status(200).json({ success: true, data: user });
     } catch (error) {
         console.log(error);
         return res.status(500).json({ message: 'Ошибка сервера при обновлении api ключа' });
     }
-}
+};
+
+export const updateRepriceApiKey = async (req, res) => {
+    try {
+        const { apiKey } = req.body;
+        const userId = req.user._id;
+
+        if (!apiKey) {
+            return res.status(404).json({ message: "Api ключ не должен быть пустым" });
+        }
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: "Пользователь не найден" });
+        }
+
+        user.apiKeys = {
+            ...user.apiKeys,
+            repriceApiKey: apiKey,
+        };
+
+
+        if (!user) {
+            return res.status(404).json({ message: "Пользователь не найден" });
+        }
+        user.save()
+        res.status(200).json({ success: true, data: user });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: 'Ошибка сервера при обновлении api ключа' });
+    }
+};
+
 export const updateWHApiKey = async (req, res) => {
     try {
         const { apiKey } = req.body;
         const userId = req.user._id;
-        const whApiKey = apiKey
+
         if (!apiKey) {
             return res.status(404).json({ message: "Api ключ не должен быть пустым" });
         }
-        const user = await User.findOneAndUpdate(userId, { whApiKey })
+
+        const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ message: "Пользователь не найден" });
         }
+
+        user.apiKeys = {
+            ...user.apiKeys,
+            whApiKey: apiKey,
+        };
+
+
+        if (!user) {
+            return res.status(404).json({ message: "Пользователь не найден" });
+        }
+        user.save()
 
         res.status(200).json({ success: true, data: user });
     } catch (error) {
         console.log(error);
         return res.status(500).json({ message: 'Ошибка сервера при обновлении api ключа' });
     }
-}
+};
+
 export const checkReviewPlanAccess = async (req, res) => {
     try {
         const requiredPlans = ['66dfdc354c02e37851cb52e7', '66dfdcd64c02e37851cb52e9'];

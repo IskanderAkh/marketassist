@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+
 const filterSchema = new mongoose.Schema({
     boxTypeName: String,
     coefficient: Number,
@@ -97,6 +98,9 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
+    reviewsApiKey: String,
+    whApiKey: String,
+    calcApiKey: String,
     marketName: {
         type: String,
         default: ''
@@ -111,14 +115,11 @@ const userSchema = new mongoose.Schema({
     verificationTokenExpiresAt: {
         type: Date,
     },
-    whApiKey: {
-        type: String,
-    },
-    reviewsApiKey: {
-        type: String,
-    },
-    calcApiKey: {
-        type: String,
+    apiKeys: {
+        whApiKey: { type: String },
+        reviewsApiKey: { type: String },
+        calcApiKey: { type: String },
+        repriceApiKey: { type: String },
     },
     verificationTokenRequestedAt: {
         type: Date

@@ -14,11 +14,11 @@ import { useFetchUser } from '@/store/useUserStore';
 const ReportDetailByPeriod = () => {
     const { data: authUser, authUserLoading, authUserError, error } = useFetchUser();
     const [apiKey, setApiKey] = useState('');
-    const [isButtonDisabled, setIsButtonDisabled] = useState(false); 
-
+    const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+   
     useEffect(() => {
-        if (authUser && authUser.calcApiKey) {
-            setApiKey(authUser.calcApiKey);
+        if (authUser && authUser.apiKeys.calcApiKey) {
+            setApiKey(authUser.apiKeys.calcApiKey);
         }
     }, [authUser]);
 

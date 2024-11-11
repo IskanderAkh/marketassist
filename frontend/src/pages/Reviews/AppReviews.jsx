@@ -20,7 +20,7 @@ const AppReviews = () => {
     console.log('Loading');
     return <LoadingPage />;
   }
-  const [apiKey, setApiKey] = useState(Cookies.get('apiKey') || authUser?.reviewsApiKey || '');
+  const [apiKey, setApiKey] = useState(authUser?.apiKeys.reviewsApiKey || '');
   const [editable, setEditable] = useState(false);
   const [marketName, setMarketName] = useState(authUser?.marketName || '');
   const [contacts, setContacts] = useState(authUser?.marketContacts || '');

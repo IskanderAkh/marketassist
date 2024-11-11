@@ -4,7 +4,7 @@
 @tailwind utilities;
 
 
-:root:has(:is(.modal-open, .modal:target, .modal-toggle:checked + .modal, .modal[open])){
+:root:has(:is(.modal-open, .modal:target, .modal-toggle:checked + .modal, .modal[open])) {
   scrollbar-gutter: auto;
 }
 
@@ -17,3 +17,23 @@
   color: rgba($color: #afafaf, $alpha: 1.0);
   /* Replace with your desired text hover color */
 }
+
+.input-container {
+  position: relative;
+}
+
+.input-with-unit {
+  padding-right: 2rem;
+  /* Adjust to fit the unit */
+}
+
+.unit-label {
+  position: absolute;
+  right: 0.5rem;
+  /* Positioning of the unit label */
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  /* Prevent interaction with the label */
+}
+

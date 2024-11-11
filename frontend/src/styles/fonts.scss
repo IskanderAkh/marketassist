@@ -10,6 +10,22 @@
     url('./assets/fonts/RFDewiExtended-Ultrabold.ttf') format('truetype')
 }
 
+@font-face {
+  font-family: "RFDewiExtended-Regular";
+  src: local("RFDewiExtended-Regular"),
+    url('./assets/fonts/RFDewiExtended-Regular.ttf') format('truetype')
+}
+@font-face {
+  font-family: "RFDewiExtended-Bold";
+  src: local("RFDewiExtended-Bold"),
+    url('./assets/fonts/RFDewiExtended-Bold.ttf') format('truetype')
+}
+@font-face {
+  font-family: "RFDewiExtended-UltralightItalic";
+  src: local("RFDewiExtended-UltralightItalic"),
+    url('./assets/fonts/RFDewiExtended-UltralightItalic.ttf') format('truetype')
+}
+
 .roboto-thin {
   font-family: "Roboto", sans-serif;
   font-weight: 100;
@@ -87,6 +103,12 @@
   font-family: "Manrope", sans-serif;
   font-optical-sizing: auto;
   font-weight: 700;
+  font-style: normal;
+}
+.manrope-medium {
+  font-family: "Manrope", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
   font-style: normal;
 }
 

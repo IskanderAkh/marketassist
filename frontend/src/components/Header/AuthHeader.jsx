@@ -6,7 +6,6 @@ import { User, X } from "lucide-react";
 import '@/styles/components/header.scss';
 import { useState, useEffect } from "react";
 import Container from "@/components/ui/Container";
-import logo from "@/assets/images/logo.png"
 
 const Header = () => {
   const [isMobile, setIsMobile] = useState(false);

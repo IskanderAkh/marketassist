@@ -14,7 +14,7 @@ const openai = new OpenAI({
 
 export const getReviews = async (req, res) => {
   try {
-    const apiKey = req.user.reviewsApiKey;
+    const apiKey = req.user.apiKeys.reviewsApiKey;
     const response = await axios.get(`${WB_API_BASE_URL}/feedbacks`, {
       headers: { Authorization: apiKey },
       params: {
@@ -202,14 +202,14 @@ cron.schedule('*/20 * * * *', async () => {
     const users = await User.find({ responseOnReviewsEnabled: true }).select('reviewsApiKey marketName marketContacts userErrors responses');
 
     for (const user of users) {
-      if (!user.reviewsApiKey) {
+      if (!user.apiKeys.reviewsApiKey) {
         continue;
       }
 
       try {
         const { data: responseData } = await axios.get(`${WB_API_BASE_URL}/feedbacks`, {
           headers: {
-            Authorization: user.reviewsApiKey,
+            Authorization: user.apiKeys.reviewsApiKey,
             'Content-Type': 'application/json',
           },
           params: {
@@ -224,7 +224,7 @@ cron.schedule('*/20 * * * *', async () => {
 
         for (const feedback of feedbacks) {
           try {
-            await generateResponse(feedback, user.responses, user.marketName, user.marketContacts, user.reviewsApiKey);
+            await generateResponse(feedback, user.responses, user.marketName, user.marketContacts, user.apiKeys.reviewsApiKey);
             console.log(`Ответ сгенерирован для отзыва _id: ${feedback.id}, пользователя: ${user._id}`);
           } catch (responseError) {
             console.error(`Ошибка при генерации ответа для отзыва _id: ${feedback.id}:`, responseError);

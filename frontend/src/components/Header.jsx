@@ -26,16 +26,14 @@ const Header = () => {
     setMenuOpen(false);
   };
 
-  if (isLoading) {
-    return <div className="relative header flex justify-center items-center"></div>;
-  }
+ 
   return (
-    <div className="relative header flex justify-center items-center">
+    <div className="header flex justify-center items-center z-20 bg-white">
       <Container>
         {
-          authUser ? <div><div className={`navbar bg-base-100 z-[50] relative navbar-radius`}>
+          authUser && !isLoading ? <div><div className={`navbar bg-base-100 z-[50] relative navbar-radius`}>
             <div className="navbar-start">
-              <Link to="/" className="header-logo manrope-bold">
+              <Link to="/" className="header-logo ">
                 MarketAssist
               </Link>
             </div>

@@ -19,12 +19,12 @@ const RepricerAddProductModal = ({ authUser, userBarcodes }) => {
     }, [authUser]);
 
     const filteredBarcodes = userBarcodes?.filter(barcode => !existingBarcodes?.includes(barcode.barcode));
-    
+
     const handleCheckboxChange = (barcode) => {
         setSelectedBarcodes((prevSelected) =>
-            prevSelected.includes(barcode)
-                ? prevSelected.filter((b) => b !== barcode)
-                : [...prevSelected, barcode]
+            prevSelected.includes(barcode.barcode)
+                ? prevSelected.filter((b) => b !== barcode.barcode)
+                : [...prevSelected, barcode.barcode]
         );
     };
 
@@ -45,7 +45,7 @@ const RepricerAddProductModal = ({ authUser, userBarcodes }) => {
                 selectedBarcodes.map(async (barcode) => {
                     const { stock, priceChange } = conditions[barcode] || {};
                     await axios.post('/api/reprice/set-product-reprice', {
-                        barcode: barcode.barcode,
+                        barcode: barcode,
                         threshold: stock,
                         changeRatio: priceChange,
                     });
@@ -53,7 +53,7 @@ const RepricerAddProductModal = ({ authUser, userBarcodes }) => {
             );
             document.getElementById('my_modal_3').close();
         } catch (error) {
-            console.error('Failed to set product reprice:', error);
+            console.error('Не удалось установить переоценку продукта:', error);
         } finally {
             setIsSubmitting(false);
         }
@@ -74,33 +74,33 @@ const RepricerAddProductModal = ({ authUser, userBarcodes }) => {
                         <div className="mt-4">
                             <h3 className="text-lg font-medium">Выберите продукт для добавления в реплейс</h3>
                             <ul>
-                                {filteredBarcodes.map((barcode) => (
-                                    <li key={barcode} className='my-4'>
+                                {filteredBarcodes?.map((barcode, i) => (
+                                    <li key={i} className="my-4">
                                         <div className="flex items-center space-x-4 text-center">
                                             <Checkbox
-                                                checked={selectedBarcodes.includes(barcode)}
+                                                checked={selectedBarcodes.includes(barcode.barcode)}
                                                 onCheckedChange={() => handleCheckboxChange(barcode)}
                                             />
                                             <span>{barcode.barcode}</span>
 
-                                            {selectedBarcodes.includes(barcode) && (
+                                            {selectedBarcodes.includes(barcode.barcode) && (
                                                 <div className="flex space-x-2 items-center">
                                                     <input
                                                         type="number"
                                                         placeholder="Порог Запаса"
                                                         className="input input-bordered"
-                                                        value={conditions[barcode]?.stock || ''}
+                                                        value={conditions[barcode.barcode]?.stock || ''}
                                                         onChange={(e) =>
-                                                            handleConditionChange(barcode, 'stock', e.target.value)
+                                                            handleConditionChange(barcode.barcode, 'stock', e.target.value)
                                                         }
                                                     />
                                                     <input
                                                         type="number"
                                                         placeholder="Изменение цены (%)"
                                                         className="input input-bordered"
-                                                        value={conditions[barcode]?.priceChange || ''}
+                                                        value={conditions[barcode.barcode]?.priceChange || ''}
                                                         onChange={(e) =>
-                                                            handleConditionChange(barcode, 'priceChange', e.target.value)
+                                                            handleConditionChange(barcode.barcode, 'priceChange', e.target.value)
                                                         }
                                                     />
                                                 </div>
@@ -116,7 +116,7 @@ const RepricerAddProductModal = ({ authUser, userBarcodes }) => {
                             onClick={handleSubmit}
                             disabled={isSubmitting}
                         >
-                            {isSubmitting ? 'Saving...' : 'Save Conditions'}
+                            {isSubmitting ? 'Сохраняю...' : 'Добавить'}
                         </button>
                     </form>
                 </div>

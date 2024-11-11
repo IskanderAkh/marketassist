@@ -1,0 +1,42 @@
+.contact {
+    &-title {
+        font-size: 64px;
+        font-weight: 600;
+        line-height: 64px;
+        letter-spacing: 0%;
+        position: relative;
+
+        &::after {
+            display: flex;
+            content: "";
+            z-index: -1;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 51.72px;
+            filter: blur(40px);
+            background: linear-gradient(90.00deg, rgba(200, 0, 255, 0.15) 21.345%, rgba(15, 78, 202, 0.15) 95.711%);
+        }
+    }
+
+    &-subtitle {
+        font-size: 64px;
+        text-align: center;
+
+        &-span {
+            font-weight: 250;
+        }
+    }
+
+    &-text {
+        color: rgb(33, 33, 33);
+        font-size: 50px;
+        font-weight: 600;
+        line-height: 55px;
+        letter-spacing: 0%;
+        text-align: center;
+    }
+
+}

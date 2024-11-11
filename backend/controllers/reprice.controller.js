@@ -1,19 +1,36 @@
 import axios from "axios";
 import fs from "fs"
 import User from "../models/user.model.js";
-// Controller to get products with a filter
+
 export const getProducts = async (req, res) => {
+    const { dateFrom } = req.body;
+    const userId = req.user._id;
     try {
-        const { apiKey, limit, nmID, dateFrom } = req.body;
+        const user = await User.findById(userId)
+        if (!user) {
+            return res.status(404).json({ error: "Пользователь не найден" })
+        }
+
+        const apiKey = user.apiKeys.repriceApiKey;
 
         const response = await axios.get(
             'https://statistics-api.wildberries.ru/api/v1/supplier/stocks',
             {
                 headers: { Authorization: apiKey },
-                params: { dateFrom }
+                params: { dateFrom: dateFrom ? dateFrom : '2024-01-01' }
             }
         );
 
+        const data = await axios.get('https://marketplace-api.wildberries.ru/api/v3/warehouses',
+            {
+                headers: {
+                    Authorization: apiKey
+                }
+            }
+        )
+        const sellerWarehouses = data.data
+        fs.writeFileSync('sellerWarehouses.json', JSON.stringify(sellerWarehouses))
+        
         return res.json({ response: response.data });
     } catch (error) {
         console.error('Error fetching products:', error);
@@ -83,7 +100,7 @@ export const getExistingBarcodes = async (req, res) => {
 
         // Map to get an array of all barcodes in repricingData
         const barcodes = user.repricingData.map(product => product.barcode);
-        
+
         res.status(200).json({ barcodes });
     } catch (error) {
         console.error('Error in getExistingBarcodes:', error);
@@ -116,7 +133,8 @@ export const setProductReprice = async (req, res) => {
 export const deleteProductReprice = async (req, res) => {
     try {
         const userId = req.user._id;
-        const { barcode } = req.body;
+        const { barcode } = req.params;
+
 
         // Find the user by ID
         const user = await User.findById(userId);

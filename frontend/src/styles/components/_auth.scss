@@ -1,0 +1,146 @@
+.auth {
+    &-btns {
+        font-size: 64px;
+        font-weight: 600;
+        line-height: 64px;
+        letter-spacing: 0;
+        text-align: left;
+    }
+}
+
+.auth-choice {
+    background: rgb(239, 239, 239);
+    position: relative;
+    padding: 5px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+
+    & button {
+        color: rgb(0, 0, 0);
+        font-size: 20px;
+        font-weight: 400;
+        line-height: 26px;
+    }
+}
+
+.golden-text {
+    color: rgb(161, 138, 104);
+}
+
+.whitespace {
+    width: 50%;
+    position: absolute;
+    top: 0;
+    height: 100%;
+    border-radius: 8px;
+    padding: 5px;
+    z-index: 1;
+    transition: transform 0.5s;
+}
+
+.whitespace-nowrap {
+    background-color: white;
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+}
+
+.auth-choice-btn {
+    z-index: 5;
+    background: transparent;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    flex: 1;
+}
+
+.left {
+    transform: translateX(0);
+}
+
+.right {
+    transform: translateX(100%);
+}
+
+.form-container {
+    height: 600px;
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &-form {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+    }
+
+    &-inputs {
+        height: 100%;
+        max-width: 500px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+
+        &-item {
+            width: 100%;
+            padding: 6px 30px;
+            border: 1px solid rgba(0, 0, 0, 0.3);
+            border-radius: 500px;
+            background: rgba(255, 255, 255, 0.3);
+            position: relative;
+            display: flex;
+
+            &::after {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                border-radius: 500px;
+                background: linear-gradient(
+                    90deg,
+                    rgba(200, 0, 255, 0.15) 21.35%,
+                    rgba(15, 78, 202, 0.15) 95.71%
+                );
+                filter: blur(40px);
+                z-index: -1; /* Make sure it sits behind content */
+            }
+        }
+    }
+}
+
+.forgot-password {
+    width: 100%;
+    text-align: center;
+    margin-top: 50px;
+}
+.form-container-inputs-item {
+    position: relative; // Ensure ::after is anchored
+    padding: 6px 30px;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.3);
+    outline: none;
+    display: flex;
+
+    &::after {
+        content: "";
+        display: block; // Ensure it's rendered
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: inherit; // Match parent radius
+        background: linear-gradient(90deg, rgba(200, 0, 255, 0.15) 21.35%, rgba(15, 78, 202, 0.15) 95.71%);
+        filter: blur(40px);
+        z-index: 0; // Adjust based on needs
+    }
+}

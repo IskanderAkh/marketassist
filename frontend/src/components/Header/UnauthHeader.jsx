@@ -1,13 +1,13 @@
 import { MenuIcon, User } from 'lucide-react'
 import React from 'react'
 import { Link } from 'react-router-dom'
-
+import logo from "@/assets/images/logo.svg"
 const UnauthHeader = () => {
     return (
         <div className={`navbar bg-base-100 z-[50] relative`}>
             <div className="navbar-start">
                 <Link to="/" className="header-logo manrope-bold">
-                    MarketAssist
+                    <img src={logo} alt="" />
                 </Link>
             </div>
 

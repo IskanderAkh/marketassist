@@ -4,17 +4,14 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from 'react-hot-toast';
 import eyeOpen from "../../../assets/eyeOpen.svg"
 import eyeClose from "../../../assets/eyeClose.svg"
-import { useUserStore } from '@/store/useUserStore';
 const Login = () => {
-  const [isSignIn, setIsSignIn] = useState(true);
-  const location = useLocation()
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
   const [visible, setVisible] = useState(false)
   const queryClient = useQueryClient();
-  // const {  fetchUser } = useUserStore();
 
   const { mutate: loginMutation, isPending, isError, error, } = useMutation({
     mutationFn: async ({ email, password }) => {
@@ -67,22 +64,23 @@ const Login = () => {
 
   return (
     <div className="form-container">
-      <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
-        <div className='flex flex-col gap-4 mb-8 mt-32'>
-          <input
-            type="email"
-            placeholder="E-mail"
-            name='email'
-            className="form-container-input bg-transparent"
-            onChange={handleInputChange}
-            value={formData.email} />
-          <span className='border-b border-gray-300 '></span>
-          <div className='flex items-end'>
+      <form className='flex gap-4 form-container-form' onSubmit={handleSubmit}>
+        <div className='flex flex-col gap-4 mb-8  form-container-inputs'>
+          <div className='flex items-end justify-between w-full'>
+            <input
+              type="email"
+              placeholder="E-mail"
+              name='email'
+              className="form-container-inputs-item bg-transparent"
+              onChange={handleInputChange}
+              value={formData.email} />
+          </div>
+          <div className='flex items-end justify-between w-full'>
             <input
               type={visible ? "text" : "password"}
               name='password'
               placeholder="Пароль"
-              className="form-container-input mt-10 bg-transparent"
+              className="form-container-inputs-item  bg-transparent"
               onChange={handleInputChange}
               value={formData.password} />
             <button
@@ -92,14 +90,14 @@ const Login = () => {
               {visible ? <img src={eyeOpen} alt="" /> : <img src={eyeClose} alt="" />}
             </button>
           </div>
-          <span className='border-b border-gray-300'></span>
         </div>
-
-        <button className="submit-button bg-black text-white w-full py-4 mt-16">{isPending ? "Входим..." : "Войти"}</button>
-        <div href="/forgot-password" className="forgot-password text-center">
-          <Link to="/forgot-password">
-            Забыли свой пароль?
-          </Link>
+        <div>
+          <div href="/forgot-password" className="forgot-password text-center">
+            <Link to="/forgot-password">
+              Забыли свой пароль?
+            </Link>
+          </div>
+          <button className="w-full py-4 mt-16 try-btn " >{isPending ? "Входим..." : "Войти"}</button>
         </div>
       </form>
     </div>

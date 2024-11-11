@@ -1,14 +1,18 @@
 import React from 'react'
 import HomeDescription from '../../components/Home/HomeDescription'
+import { useFetchUser, useUserStore } from '@/store/useUserStore'
+import HomeAuthenticated from '@/components/Home/HomeAuthenticated';
 
 const Home = () => {
+  const { data: authUser, isLoading: isLoadingUser, isError: isUserError, error: userError } = useFetchUser();
   return (
     <div>
-      <HomeDescription />
-      <div className='w-full
+      {(!authUser || isLoadingUser) && <HomeDescription />}
+      {/* <div className='w-full
       h-screen'>
 
-      </div>
+      </div> */}
+      {authUser && <HomeAuthenticated />}
     </div>
   )
 }

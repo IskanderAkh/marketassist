@@ -1,0 +1,107 @@
+.faq {
+    margin-top: 120px;
+
+    &-title {
+        & {
+            font-size: 64px;
+            font-weight: 900;
+            line-height: 64px;
+            letter-spacing: 0%;
+            text-align: left;
+        }
+
+        &-gradient {
+            position: relative;
+            display: inline-block;
+
+            &::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                border-radius: 51.72px;
+                filter: blur(63.99px);
+                background: linear-gradient(90deg, rgba(200, 0, 255, 0.15) 21.345%, rgba(15, 78, 202, 0.15) 95.711%);
+                z-index: -1;
+            }
+        }
+
+         span {
+            background: linear-gradient(to right, rgb(200, 0, 255) -50%, rgb(15, 78, 202) 90%);
+            -webkit-text-fill-color: transparent;
+            -webkit-background-clip: text;
+
+            &::after {
+                border-radius: 51.72px;
+                filter: blur(63.99px);
+                background: linear-gradient(90.00deg, rgba(200, 0, 255, 0.15) 21.345%, rgba(15, 78, 202, 0.15) 95.712%);
+            }
+        }
+    }
+
+    &-collapse {
+        position: relative;
+        padding: 50px 100px;
+        // overflow: hidden;
+        background-color: white;
+        border-radius: 161.5px !important;
+
+        &::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 5%;
+            bottom: 0;
+            filter: blur(60.99px);
+            background: linear-gradient(90.00deg, rgba(200, 0, 255, 0.15), rgba(15, 78, 202, 0.15) 100%);
+
+
+            z-index: -1;
+            border-radius: 10px;
+            // opacity: 0.6;
+        }
+
+        &-content {
+            position: relative;
+
+            &::after {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 20%;
+                bottom: 0;
+                background: linear-gradient(90deg, rgba(200, 0, 255, 0.15), rgba(15, 78, 202, 0.15) 80%);
+                filter: blur(80px);
+                z-index: 0;
+                border-radius: 10px;
+                opacity: 0.6;
+            }
+
+            &-text {
+                color: rgba(33, 33, 33, 0.7);
+                font-size: 25px;
+                line-height: 52px;
+                letter-spacing: 0%;
+                text-align: left;
+            }
+        }
+
+        &-title {
+            color: rgb(33, 33, 33);
+            font-size: 40px;
+            font-weight: 600;
+            line-height: 64px;
+            letter-spacing: 0%;
+            text-align: left;
+        }
+    }
+}
+
+.lucide {
+    width: 45px !important;
+    height: 45px !important;
+}

@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 
 const ApiInput = ({ authUser, hasAccess, page }) => {
     // Determine the initial API key based on the page
-    const initialApiKeyValue = page === 'wh' ? authUser?.whApiKey || '' : authUser?.calcApiKey || '';
+    const initialApiKeyValue = page === 'wh' ? authUser?.apiKeys.whApiKey || '' : authUser?.apiKeys.calcApiKey || '';
     const [apiKey, setApiKey] = useState(initialApiKeyValue);
     const [initialApiKey, setInitialApiKey] = useState(apiKey);
     const queryClient = useQueryClient();

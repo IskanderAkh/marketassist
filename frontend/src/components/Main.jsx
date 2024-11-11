@@ -15,10 +15,10 @@ import ResetPass from '../pages/Pass/ResetPass';
 import Warehouses from '../pages/Warehouses/Warehouses';
 import ChatAI from '../pages/ChatAI/ChatAI';
 import Repricer from '@/pages/Repricer/Repricer';
+import FAQ from '@/pages/FAQ/FAQ';
+import ScrollToTop from './ScrollToTop';
 
 const Main = ({ authUser, authUserLoading, authUserError }) => {
-    // const { data: authUser, isLoading: authUserLoading, isError: authUserError } = useQuery({ queryKey: ['authUser'] });
-
     const RedirectAuthenticatedUser = ({ children }) => {
         if (authUser) {
             return <Navigate to='/' replace />;
@@ -35,21 +35,23 @@ const Main = ({ authUser, authUserLoading, authUserError }) => {
 
     return (
         <div className='flex-[1_0_auto]'>
+            <ScrollToTop /> {/* Add this component */}
             <Routes>
                 <Route path='/' element={<Home />} />
                 <Route path='/auth' element={<Auth />} />
                 <Route path='/calculator' element={<Calculator />} />
                 <Route path='/app-calculator' element={<ProtectedRoute><AppCalculator /></ProtectedRoute>} />
                 <Route path='/reviews' element={<Reviews />} />
-                <Route path='/app-reviews' element={<ProtectedRoute><AppReviews/></ProtectedRoute>} />
+                <Route path='/app-reviews' element={<ProtectedRoute><AppReviews /></ProtectedRoute>} />
                 <Route path='/profile' element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path='/contact' element={<Contact />} />
+                <Route path='/questions' element={<FAQ />} />
                 <Route path='/repricer' element={<Repricer />} />
                 <Route path='/chat-ai' element={<ProtectedRoute><ChatAI /></ProtectedRoute>} />
                 <Route path='/warehouses' element={<ProtectedRoute><Warehouses /></ProtectedRoute>} />
                 <Route path='/forgot-password' element={<RedirectAuthenticatedUser><ForgotPass /></RedirectAuthenticatedUser>} />
                 <Route path='/password-reset/:token' element={<RedirectAuthenticatedUser><ResetPass /></RedirectAuthenticatedUser>} />
-                <Route path='/product-cost' element={<ProtectedRoute><ProductCost  /></ProtectedRoute>} />
+                <Route path='/product-cost' element={<ProtectedRoute><ProductCost /></ProtectedRoute>} />
                 <Route path='*' element={<Home />} />
             </Routes>
         </div>
