@@ -3,11 +3,13 @@
 @tailwind components;
 @tailwind utilities;
 
-
 :root:has(:is(.modal-open, .modal:target, .modal-toggle:checked + .modal, .modal[open])) {
   scrollbar-gutter: auto;
+};
+:root{
+  --accent-foreground: #2b2525;
+  --accent:#c42323;
 }
-
 .hover\:bg-accent:hover {
   background-color: #afafaf;
   /* Replace with your desired hover color */

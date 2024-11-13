@@ -3,22 +3,33 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { User, X } from "lucide-react";
-import '@/styles/components/header.scss';
 import { useState, useEffect } from "react";
 import Container from "@/components/ui/Container";
+import logo from "@/assets/images/logo.svg";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
 
-const Header = () => {
+const AuthHeader = () => {
   const [isMobile, setIsMobile] = useState(false);
+  const [isMenuOpen, setMenuOpen] = useState(false);
+
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768); // Условие для мобильных устройств (менее 768px)
-    };
-
-    handleResize(); // Проверить сразу при загрузке
-    window.addEventListener("resize", handleResize); // Слушаем изменение размера окна
-
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    handleResize();
+    window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  useEffect(() => {
+    document.body.classList.toggle("overflow-hidden", isMenuOpen);
+  }, [isMenuOpen]);
+
   const { data: authUser } = useQuery({
     queryKey: ["authUser"],
     queryFn: async () => {
@@ -30,138 +41,122 @@ const Header = () => {
       }
     },
   });
-
-  const [isMenuOpen, setMenuOpen] = useState(false);
-
-  // Disable scroll when menu is open
-  useEffect(() => {
-    if (isMenuOpen) {
-      document.body.classList.add("overflow-hidden");
-    } else {
-      document.body.classList.remove("overflow-hidden");
-    }
-  }, [isMenuOpen]);
-
-  const toggleMenu = () => {
-    setMenuOpen(!isMenuOpen);
-  };
-
-  const closeMenu = () => {
-    setMenuOpen(false);
-  };
+  const setProfileSate = (page) => {
+    localStorage.setItem("activeLink", page);
+  }
+  const toggleMenu = () => setMenuOpen(!isMenuOpen);
+  const closeMenu = () => setMenuOpen(false);
 
   return (
     <div className="relative">
       <Container>
+        <div>
+          <div className={`navbar bg-base-100 z-[50] relative navbar-radius`}>
+            <div className="navbar-start">
+              <Link to="/" className="header-logo manrope-bold">
+                <img src={logo} alt="" />
+              </Link>
+            </div>
 
-        <div className={`navbar bg-base-100 z-[50] relative rounded-md`}>
-          <div className="navbar-start">
-            <Link to="/" className="header-logo manrope-bold">
-              {/* <img src={logo} alt="" /> */}
-              MarketAssist
-            </Link>
-          </div>
-          <div className="navbar-center hidden lg:flex">
-            <ul className="menu menu-horizontal px-1 z-[100]">
-              <ListItem href="/app-calculator" title="Калькулятор прибыли" isClickable={authUser} isMenuOpen={isMenuOpen}>
-                Инструмент для расчета прибыли.
-              </ListItem>
-              <ListItem href="/app-reviews" title="Управление Отзывами" isClickable={authUser} isMenuOpen={isMenuOpen}>
-                Генерируйте автоответы на отзывы клиентов с помощью ИИ.
-              </ListItem>
-              <ListItem href="/warehouses" title="Поиск лимитов" isClickable={authUser} isMenuOpen={isMenuOpen}>
-                Ищите лимиты в вашем складе.
-              </ListItem>
-              <ListItem href="/chat-ai" title="ИИ" isClickable={authUser} isMenuOpen={isMenuOpen}>
-                Чат с Искуственным интелектом.
-              </ListItem>
-            </ul>
+            <div className="navbar-end flex items-center justify-end">
+              <NavigationMenu className="">
+                <NavigationMenuList className="">
+                  <NavigationMenuItem className="">
+                    <NavigationMenuTrigger className="poppins-medium custom-trigger px-10 font-rfSemibold">Утилиты</NavigationMenuTrigger>
+                    <NavigationMenuContent className=" left-auto">
+                      <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
+                        <ListItem href="/product-cost" title="Себестоимость" isClickable={authUser} className="">
+                          Добавьте продукт в список себестоимости.
+                        </ListItem>
+                        <ListItem href="/app-calculator" title="Калькулятор прибыли" isClickable={authUser}>
+                          Инструмент для расчета прибыли.
+                        </ListItem>
+                        <ListItem href="/app-reviews" title="Управление Отзывами" isClickable={authUser}>
+                          Генерируйте автоответы на отзывы клиентов.
+                        </ListItem>
+                        <ListItem href="/warehouses" title="Поиск лимитов" isClickable={authUser}>
+                          Ищите лимиты в вашем складе.
+                        </ListItem>
+                        <ListItem href="/chat-ai" title="Искуственный интелект" isClickable={authUser}>
+                          Чат с Искуственным интелектом.
+                        </ListItem>
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                  <NavigationMenuItem className="">
+                    <NavigationMenuTrigger className="poppins-medium custom-trigger">
+                      <button className="w-full flex items-center justify-center px-10">
+                        <User className="font-rfSemibold" />
+                      </button>
+
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent className="left-auto " >
+                      <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
+                        <ListItem href="/profile/account" title="Аккаунт" isClickable={authUser} onClick={() => setProfileSate("account")}>
+                          Аккаунт.
+                        </ListItem>
+                        <ListItem href="/profile/plans" title="Тарифные планы" isClickable={authUser} onClick={() => setProfileSate("plans")}>
+                          Тарифные планы.
+                        </ListItem>
+                        <ListItem href="/profile/subscriptions" title="Подписки и счета" isClickable={authUser} onClick={() => setProfileSate("subscriptions")}>
+                          Подписки и счета.
+                        </ListItem>
+                        <ListItem href={`/questions`} title="Вопросы" isClickable={authUser} className="">
+                          Вопросы.
+                        </ListItem>
+                        <ListItem href="/contact" title="Контакты" isClickable={authUser} >
+                          Контакты.
+                        </ListItem>
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                </NavigationMenuList>
+                {/* <NavigationMenuList>
+
+                </NavigationMenuList> */}
+              </NavigationMenu>
+
+
+              <button
+                className="lg:hidden btn btn-ghost btn-circle"
+                onClick={toggleMenu}
+                aria-label="Toggle Menu"
+              >
+                <MenuIcon className="w-6 h-6" />
+              </button>
+            </div>
           </div>
 
-          <div className="navbar-end flex items-center space-x-4">
-            <Link to="/auth" className="btn btn-ghost btn-circle">
-              <div className="indicator">
-                <User />
-              </div>
-            </Link>
-            <button
-              className="lg:hidden btn btn-ghost btn-circle"
-              onClick={toggleMenu}
-              aria-label="Toggle Menu"
-            >
-              <MenuIcon className="w-6 h-6" />
-            </button>
-          </div>
-        </div>
-
-        {/* Dark overlay when menu is open */}
-        {isMenuOpen && (
-          <div
-            className="fixed inset-0 bg-black/50 z-[51]"
-            onClick={closeMenu}
-            aria-label="Close Menu"
-          ></div>
-        )}
-
-        {/* Mobile Menu */}
-        <div
-          className={`fixed top-0 left-0 duration-300 h-full w-64 bg-base-100 shadow-lg transform transition-transform  ${isMenuOpen ? "translate-x-0" : "-translate-x-full"
-            } z-[52]`}
-        >
-          <div className="p-4 flex justify-between items-center">
-            <h2 className="text-lg font-medium">Меню</h2>
-            <button
-              onClick={closeMenu}
-              className="btn btn-ghost btn-circle"
-              aria-label="Close Menu"
-            >
-              <X className="w-6 h-6" />
-            </button>
-          </div>
-          <ul className="menu p-4">
-            <ListItem href="/app-calculator" title="Калькулятор прибыли" isClickable={authUser} isMenuOpen={isMenuOpen}>
-              Инструмент для расчета прибыли.
-            </ListItem>
-            <ListItem href="/app-reviews" title="Управление Отзывами" isClickable={authUser} isMenuOpen={isMenuOpen}>
-              Генерируйте автоответы на отзывы клиентов с помощью ИИ.
-            </ListItem>
-            <ListItem href="/warehouses" title="Поиск лимитов" isClickable={authUser} isMenuOpen={isMenuOpen}>
-              Ищите лимиты в вашем складе.
-            </ListItem>
-            <ListItem href="/chat-ai" title="ИИ" isClickable={authUser} isMenuOpen={isMenuOpen}>
-              Чат с Искуственным интелектом.
-            </ListItem>
-          </ul>
+          {isMenuOpen && (
+            <div className="fixed inset-0 bg-black/50 z-[51]" onClick={closeMenu} aria-label="Close Menu"></div>
+          )}
         </div>
       </Container>
     </div>
   );
 };
 
-const ListItem = ({ className, title, children, isMenuOpen, isClickable, ...props }) => {
+const ListItem = React.forwardRef(({ className, title, children, isClickable, ...props }, ref) => {
   return (
-    <li
-      title={!isClickable ? "Что-бы пользоваться данной функциею, пожалуйста, авторизуйтесь" : ""}
-      className={`block p-3 leading-none ${isClickable ? "" : "cursor-not-allowed opacity-50"}`}
-    >
-      {/* <Link
-        to={props.href}
-        className={`no-underline ${isClickable ? "" : "pointer-events-none"}`}
-        {...(isClickable ? props : { onClick: (e) => e.preventDefault() })}
-      > */}
-      <div className={`text-sm font-medium leading-none ${!isMenuOpen ? 'tooltip tooltip-bottom' : ''} `} data-tip={`${children}`}>
+    <li>
+      <NavigationMenuLink asChild>
         <Link
           to={props.href}
-          className={`no-underline ${isClickable ? "" : "pointer-events-none"}`}
+          title={!isClickable ? "Что-бы пользоваться данной функциею, пожалуйста, авторизуйтесь" : ""}
+          className={`block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors 
+            hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground 
+            ${className} ${isClickable ? "" : "cursor-not-allowed opacity-50"}`}
           {...(isClickable ? props : { onClick: (e) => e.preventDefault() })}
         >
-          {title}
+          <div className="text-sm font-medium leading-none ">{title}</div>
+          <p className="text-sm leading-tight text-muted-foreground">{children}</p>
         </Link>
-      </div>
-
+      </NavigationMenuLink>
     </li>
   );
-};
+});
+
+ListItem.displayName = "ListItem";
 
 function MenuIcon(props) {
   return (
@@ -184,4 +179,4 @@ function MenuIcon(props) {
   );
 }
 
-export default Header;
+export default AuthHeader;

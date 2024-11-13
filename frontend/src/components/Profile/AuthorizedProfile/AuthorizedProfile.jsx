@@ -5,43 +5,53 @@ import useLogout from "@/hooks/useLogout";
 import Account from "../../ProfileSubRoutes/Account";
 import Plans from "../../ProfileSubRoutes/Plans";
 import Subscriptions from "../../ProfileSubRoutes/Subscriptions";
-import axios from 'axios'; // Make sure axios is imported
+import axios from 'axios';
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import ApiKeys from "@/components/ProfileSubRoutes/ApiKeys";
 import { useFetchUser } from "@/store/useUserStore";
+import { useLocation } from "react-router-dom";
 
 const AuthorizedProfile = () => {
   const { data: authUser, isLoading: isLoadingUser, isError: isUserError, error: userError } = useFetchUser();
-
+  const location = useLocation();
   const { logout } = useLogout();
+
   const [activeLink, setActiveLink] = useState(() => {
-    return localStorage.getItem('activeLink') || "account";
+    return location.pathname.split('/')[2] || "account";
   });
+
   const queryClient = useQueryClient();
+
   const changeActiveLink = (linkName) => {
     setActiveLink(linkName);
     localStorage.setItem('activeLink', linkName);
   };
+
   const { mutate: handleErrorVisibilityToggle } = useMutation({
     mutationFn: async (errorId) => {
       try {
         await axios.put(`/api/user/${authUser._id}/errors/${errorId}`, { visible: false });
-
       } catch (error) {
         console.error("Error updating visibility:", error);
       }
     },
     onSuccess: () => {
       toast.success("Ошибка скрыта");
-      queryClient.invalidateQueries({ queryKey: ['authUser'] })
+      queryClient.invalidateQueries({ queryKey: ['authUser'] });
     },
     onError: () => {
       toast.error("Не удалось скрыть ошибку");
     }
-  })
+  });
 
+  // Update activeLink when location changes
+  useEffect(() => {
+    const subLocation = location.pathname.split('/')[2] || "account";
+    setActiveLink(subLocation);
+  }, [location]);
 
+  // Load saved active link from localStorage
   useEffect(() => {
     const savedActiveLink = localStorage.getItem('activeLink');
     if (savedActiveLink) {
@@ -52,7 +62,6 @@ const AuthorizedProfile = () => {
   return (
     <div className="authorized-profile">
       <div className="text-center">
-
         {authUser.userErrors && authUser.userErrors.map((error) => (
           error.visible && (
             <div key={error._id} className="alert alert-warning flex justify-between">

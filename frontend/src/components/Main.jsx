@@ -43,7 +43,7 @@ const Main = ({ authUser, authUserLoading, authUserError }) => {
                 <Route path='/app-calculator' element={<ProtectedRoute><AppCalculator /></ProtectedRoute>} />
                 <Route path='/reviews' element={<Reviews />} />
                 <Route path='/app-reviews' element={<ProtectedRoute><AppReviews /></ProtectedRoute>} />
-                <Route path='/profile' element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+                <Route path='/profile/:pagename' element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path='/contact' element={<Contact />} />
                 <Route path='/questions' element={<FAQ />} />
                 <Route path='/repricer' element={<Repricer />} />

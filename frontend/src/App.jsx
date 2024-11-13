@@ -26,7 +26,7 @@ function App() {
     <>
       <div className='flex min-h-screen flex-col'>
         <Header />
-        {authUser && <HomeRoutes />}
+        {/* {authUser && <HomeRoutes />} */}
         <Main authUser={authUser} authUserLoading={isLoading} authUserError={isError} />
         <Footer />
       </div>

@@ -1,10 +1,14 @@
 import React from 'react'
 import HomeDescription from '../../components/Home/HomeDescription'
-import { useFetchUser, useUserStore } from '@/store/useUserStore'
-import HomeAuthenticated from '@/components/Home/HomeAuthenticated';
+import { useFetchUser } from '@/store/useUserStore'
+import { Navigate } from 'react-router-dom';
+import LoadingPage from '@/components/LoadingPage/LoadingPage';
 
 const Home = () => {
   const { data: authUser, isLoading: isLoadingUser, isError: isUserError, error: userError } = useFetchUser();
+  if(isLoadingUser){
+        return <div><LoadingPage/></div>;
+  }
   return (
     <div>
       {(!authUser || isLoadingUser) && <HomeDescription />}
@@ -12,7 +16,7 @@ const Home = () => {
       h-screen'>
 
       </div> */}
-      {authUser && <HomeAuthenticated />}
+      {authUser && <Navigate to={'/app-calculator'} />}
     </div>
   )
 }

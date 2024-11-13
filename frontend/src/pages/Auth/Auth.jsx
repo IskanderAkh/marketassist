@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "./auth.scss";
 import { Navigate } from "react-router-dom";
 import Login from "./Login/Login";
 import Register from "./Register/Register";
@@ -27,7 +26,7 @@ const Auth = () => {
 
         {isError && (
           <div className="mb-20 flex items-center justify-center flex-col">
-            <div className="mt-20 auth-btns">
+            <div className="mt-20 auth-btns flex gap-5">
               <button
                 className={`${login ? 'gradient-color ' : ''}font-rfSemibold`}
                 onClick={() => setLogin(true)}
