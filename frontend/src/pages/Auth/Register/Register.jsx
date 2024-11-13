@@ -86,7 +86,7 @@ const Register = () => {
 
   return (
     <div className="form-container">
-      <form onSubmit={handleSubmit} className=" flex gap-4 mt-10 w-full form-container-form">
+      <form className=" flex gap-4 mt-10 w-full form-container-form">
         <div className="form-container-inputs">
 
           <div className="flex form-container-inputs-div">
