@@ -1,24 +1,33 @@
-import React from 'react'
-import HomeDescription from '../../components/Home/HomeDescription'
-import { useFetchUser } from '@/store/useUserStore'
+import React from 'react';
+import HomeDescription from '../../components/Home/HomeDescription';
+import { useFetchUser, useUserStore } from '@/store/useUserStore';
 import { Navigate } from 'react-router-dom';
 import LoadingPage from '@/components/LoadingPage/LoadingPage';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 
 const Home = () => {
-  const { data: authUser, isLoading: isLoadingUser, isError: isUserError, error: userError } = useFetchUser();
-  if(isLoadingUser){
-        return <div><LoadingPage/></div>;
-  }
+  const { data: authUser, isLoading, isError } = useQuery({
+    queryKey: ['authUser'],
+    queryFn: async () => {
+      try {
+        const res = await axios.get('/api/auth/me')
+        return res.data
+      } catch (error) {
+        console.log(error);
+      }
+    },
+  })
+  // Initiate fetchUser only if authUser is not already loaded
+  useFetchUser();
+
+
   return (
     <div>
-      {(!authUser || isLoadingUser) && <HomeDescription />}
-      {/* <div className='w-full
-      h-screen'>
-
-      </div> */}
+      {!authUser && <HomeDescription />}
       {authUser && <Navigate to={'/app-calculator'} />}
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

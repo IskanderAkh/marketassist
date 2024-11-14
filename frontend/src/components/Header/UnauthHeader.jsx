@@ -12,7 +12,7 @@ const UnauthHeader = () => {
             </div>
 
             <div className="navbar-end flex items-center space-x-4 ">
-                <div className='justify-between w-full items-center flex'>
+                <div className='justify-between w-full items-center flex text-center'>
                     <Link to="/questions" className="poppins-medium">
                         <div className="">
                             Вопросы

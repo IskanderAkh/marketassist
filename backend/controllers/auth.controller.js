@@ -227,10 +227,13 @@ export const resetPassword = async (req, res) => {
 
 
         const user = await User.findOne({ email });
+
         if (!user) {
             return res.status(404).json({ error: "Пользователь не найден" });
         }
-
+        if (email !== user.email) {
+            return res.status(400).json({ error: "Проверьте адрес электронной почты" });
+        }
         const resetToken = crypto.randomBytes(32).toString("hex");
 
         const resetTokenExpire = Date.now() + 3600000;

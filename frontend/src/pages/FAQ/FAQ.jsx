@@ -17,9 +17,9 @@ const FAQ = () => {
                     Часто задаваемые <span className='uppercase font-rfBlack faq-title-gradient'>вопросы</span>
                 </h1>
 
-                <img src={illustration_3} alt="" />
+                <img src={illustration_3} alt="" className='w-8/12 mx-auto' />
 
-                <div className='flex flex-col gap-20'>
+                <div className='flex flex-col gap-10'>
                     <Accordion type="multiple" collapsible className='faq-collapse'>
                         <AccordionItem value="item-1" className='faq-collapse-content'>
                             <AccordionTrigger><h2 className='font-rfSemibold faq-collapse-title z-10'>Как рассчитать чистую прибыль?</h2></AccordionTrigger>
@@ -38,7 +38,7 @@ const FAQ = () => {
                                     <AccordionTrigger><h2 className='font-rfSemibold faq-collapse-title z-10'>{item.question}</h2></AccordionTrigger>
                                     <AccordionContent className="z-10 ">
                                         <p className='faq-collapse-content-text manrope-medium'>
-                                           {item.answer}
+                                            {item.answer}
                                         </p>
                                     </AccordionContent>
                                 </AccordionItem>

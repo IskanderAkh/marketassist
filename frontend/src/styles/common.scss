@@ -4,6 +4,7 @@
 @use './components/faq';
 @use './components/contacts';
 @use './components/auth';
+@use './components/forgotpass';
 
 .g-bg {
     background: linear-gradient(40deg, var(--color-bg1), var(--color-bg2));
