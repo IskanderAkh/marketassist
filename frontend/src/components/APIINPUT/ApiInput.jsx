@@ -37,9 +37,11 @@ const ApiInput = ({ authUser, hasAccess, page }) => {
 
     return (
         <>
-            <button className="btn btn-warning btn-wide text-black" onClick={() => document.getElementById('api-key-modal').click()}>
-                Изменить API ключ
-            </button>
+            <div className='btn-universal'>
+                <button className="w-full h-full btn-universal-btn font-rfBold" onClick={() => document.getElementById('api-key-modal').click()}>
+                    Изменить API ключ
+                </button>
+            </div>
 
             <input type="checkbox" id="api-key-modal" className="modal-toggle" />
             <div className="modal">

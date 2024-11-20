@@ -3,6 +3,16 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { ru } from 'date-fns/locale';
 
+const CustomInput = React.forwardRef(({ value, onClick }, ref) => (
+    <button
+        className=" h-full pr-10 outline-none cursor-pointer btn-universal-btn select-none font-rfBold"
+        onClick={onClick}
+        ref={ref}
+    >
+        {value || "Выберите период"}
+    </button>
+));
+
 const DateRangePicker = ({ dateRange, setDateRange, authUser, hasAccess }) => {
     const [startDate, endDate] = dateRange;
 
@@ -34,21 +44,22 @@ const DateRangePicker = ({ dateRange, setDateRange, authUser, hasAccess }) => {
     const maxEndDate = startDate ? new Date(new Date(startDate).setMonth(startDate.getMonth() + 6)) : null;
 
     return (
-        <div className='indicator'>
-            <div className='flex items-center border pr-2 max-w-60 w-full'>
+        <div className='indicator btn-universal w-full'>
+            <div className='w-full relative flex items-center h-full '>
                 <DatePicker
                     selectsRange
                     startDate={startDate}
                     endDate={endDate}
                     onChange={handleDateChange}
                     dateFormat="yyyy/MM/dd"
-                    className="py-2 pl-2 outline-none cursor-pointer"
                     placeholderText="Выберите период"
                     locale={ru}
+                    className='w-full '
                     disabled={!authUser?.isVerified || !hasAccess}
                     maxDate={maxEndDate} // Limit the maximum end date to 6 months after the start date
+                    customInput={<CustomInput />}
                 />
-                <img src="/calendar.svg" alt="" />
+                <img src="/calendar.svg" alt="" className='absolute right-10 font-rfBold' />
             </div>
             {!dateRange.every(date => date) && <span className="indicator-item badge badge-warning">Заполните!</span>}
         </div>

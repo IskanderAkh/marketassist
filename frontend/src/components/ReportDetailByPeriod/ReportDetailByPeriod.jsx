@@ -15,7 +15,7 @@ const ReportDetailByPeriod = () => {
     const { data: authUser, authUserLoading, authUserError, error } = useFetchUser();
     const [apiKey, setApiKey] = useState('');
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-   
+
     useEffect(() => {
         if (authUser && authUser.apiKeys.calcApiKey) {
             setApiKey(authUser.apiKeys.calcApiKey);
@@ -57,17 +57,18 @@ const ReportDetailByPeriod = () => {
         }, 60000);
     };
 
-    if (isLoadingAccess) {
+    if (isLoadingAccess || authUserLoading) {
         return <LoadingPage />;
     }
 
+    
     return (
         <div className='mt-10'>
             {
                 (!authUser?.isVerified && !authUserLoading && !authUserError) && <VerifyLink />
             }
             {
-                isErrorAccess && <div role="alert" className="alert alert-error">
+                (isErrorAccess && !isLoadingAccess) && <div role="alert" className="alert alert-error">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         className="h-6 w-6 shrink-0 stroke-current"
@@ -84,15 +85,17 @@ const ReportDetailByPeriod = () => {
                 </div>
             }
             <div className='flex mb-10 gap-4 flex-col mt-10 items-start'>
-                <div className='flex gap-4 w-full justify-between'>
-                    <Link to={'/product-cost'}><button className='btn btn-wide'>Себестоимость</button> </Link>
+                <div className='flex gap-4 w-full justify-between '>
+                    <Link to={'/product-cost'} className='btn-universal'><button className='w-full h-full btn-universal-btn font-rfBold'>Себестоимость</button> </Link>
                     <ApiInput apiKey={apiKey} setApiKey={setApiKey} authUser={authUser} hasAccess={hasAccess} />
                 </div>
                 <div className='flex gap-4 w-full justify-between'>
                     <DateRangePicker dateRange={dateRange} setDateRange={setDateRange} authUser={authUser} hasAccess={hasAccess} />
-                    <button className='btn btn-secondary btn-wide' onClick={handleFetchData} disabled={!hasAccess || isButtonDisabled}>
-                        {isButtonDisabled ? 'Подождите...' : 'Получить отчет'}
-                    </button>
+                    <div className='btn-universal'>
+                        <button className='btn-universal-btn w-full h-full font-rfBold' onClick={handleFetchData} disabled={!hasAccess || isButtonDisabled}>
+                            {isButtonDisabled ? 'Подождите...' : 'Получить отчет'}
+                        </button>
+                    </div>
                 </div>
             </div>
             {isLoading && <LoadingPage />}

@@ -10,11 +10,12 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import ApiKeys from "@/components/ProfileSubRoutes/ApiKeys";
 import { useFetchUser } from "@/store/useUserStore";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const AuthorizedProfile = () => {
   const { data: authUser, isLoading: isLoadingUser, isError: isUserError, error: userError } = useFetchUser();
   const location = useLocation();
+  const navigate = useNavigate();
   const { logout } = useLogout();
 
   const [activeLink, setActiveLink] = useState(() => {
@@ -26,6 +27,7 @@ const AuthorizedProfile = () => {
   const changeActiveLink = (linkName) => {
     setActiveLink(linkName);
     localStorage.setItem('activeLink', linkName);
+    navigate(`/profile/${linkName}`); // Update the URL
   };
 
   const { mutate: handleErrorVisibilityToggle } = useMutation({
@@ -45,7 +47,7 @@ const AuthorizedProfile = () => {
     }
   });
 
-  // Update activeLink when location changes
+  // Sync activeLink with location.pathname when the URL changes
   useEffect(() => {
     const subLocation = location.pathname.split('/')[2] || "account";
     setActiveLink(subLocation);

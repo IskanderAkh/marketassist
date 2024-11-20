@@ -1,0 +1,45 @@
+// Define your gradient colors
+$gradient-start: rgb(200, 0, 255); // Start color
+$gradient-end: rgb(15, 78, 202); // End color
+
+// Mixin for gradient border
+@mixin linear-gradient-bg($start-color, $end-color) {
+    background: linear-gradient(90deg, $start-color, $end-color);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+// Styles for the input wrapper
+.input-wrapper {
+    & span{
+        position: absolute;
+        
+        font-size: 14px;
+        line-height: 14px;
+        height: 14px;
+    }
+}
+
+// Styles for the input
+.operationalCosts-input {
+    width: 100%; // Adjust as needed
+    padding: 2px 30px 2px 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc; // Normal border for the input (optional)
+    border-radius: 200px; // Border radius for the input (same as wrapper)
+    background-color: transparent; // Transparent background for the input
+    outline: none;
+    border-color: $gradient-start;
+
+    // Focus state - You can highlight the border with a color or effect
+    &:focus {
+        border-color: $gradient-start; // Highlight border on focus
+        background-color: transparent; // Keep background transparent
+    }
+
+    // Disabled state
+    &:disabled {
+        opacity: 0.5; // Make it clear when input is disabled
+        pointer-events: none; // Prevent interactions
+    }
+}

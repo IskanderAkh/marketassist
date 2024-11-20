@@ -1,0 +1,34 @@
+.card {
+    position: relative;
+
+    &::after {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        transition: 0.5s;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: -1;
+        content: "";
+        border-radius: 76.5px;
+        filter: blur(100px);
+        background: linear-gradient(90.00deg, rgba(200, 0, 255, 0.15), rgba(15, 78, 202, 0.15) 100%);
+    }
+    
+}
+
+.plan {
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 76.5px !important;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.3) !important;
+    &-price{
+        font-size: 35px;
+    }
+}

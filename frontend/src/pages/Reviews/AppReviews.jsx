@@ -12,6 +12,8 @@ import LoadingPage from "../../components/LoadingPage/LoadingPage";
 import EditMarketDetailsModal from "../../components/EditMarketDetails/EditMarketDetailsModal";
 import EditReviewResponsesModal from "../../components/EditReviewResponses/EditReviewResponsesModal";
 import { useFetchUser } from "@/store/useUserStore";
+import star from "@/assets/images/star.svg"
+
 
 const AppReviews = () => {
   const { data: authUser, authUserLoading, authUserError, error } = useFetchUser();
@@ -116,51 +118,57 @@ const AppReviews = () => {
           <Link className='btn btn-info' to={'/profile'}>Купить план</Link>
         </div>
       }
-      <div className="mt-10">
-        <div className="flex">
-          <div className="flex-1 mr-20">
+      <div className="mt-24 flex flex-col">
+        <h1 className="page-title gradient-color font-rfBlack uppercase">Управление отзывами</h1>
+        <div className="flex flex-row-reverse justify-between mt-24">
+          <div className="">
             <div className="flex justify-between items-end mt-10 w-full mb-8">
-              <div className="flex-1 flex items-end justify-start gap-2">
-                <input
-                  type="text"
-                  placeholder="Введите API ключ"
-                  className="input input-bordered input-info w-full max-w-48"
-                  onChange={handleApiKeyChange}
-                  value={apiKey}
-                  disabled={isLoading || !authUser?.isVerified || !hasAccess || !editable}
-                />
-                <button className="btn btn-secondary" onClick={() => document.getElementById('edit-details-modal').click()}>
-                  Изменить данные
-                </button>
+              <div className="flex-1 flex flex-col items-end justify-start gap-2">
+                <div className="btn-universal">
+                  <button className="btn-universal-btn font-rfBold" onClick={() => document.getElementById('edit-details-modal').click()}>
+                    Изменить данные
+                  </button>
+                </div>
+                <div className="btn-universal">
+                  <input
+                    type="text"
+                    placeholder="Введите API ключ"
+                    className="btn-universal-btn w-full px-10 reviews-api-key"
+                    onChange={handleApiKeyChange}
+                    value={apiKey}
+                    disabled={isLoading || !authUser?.isVerified || !hasAccess || !editable}
+                  />
+                </div>
 
                 <EditMarketDetailsModal authUser={authUser} refetchUserData={refetch} />
 
               </div>
             </div>
-            <div className="flex items-center justify-end gap-3 flex-1 w-full mb-10">
-              <div className="w-1/2">
-                <h2>Название магазина:</h2>
-                <strong>{authUser?.marketName}</strong>
+            <div className="flex flex-col items-end justify-end gap-3 flex-1 w-full mb-10">
+              <div className="text-end">
+                <h2>Название магазина</h2>
+                <strong className="font-rfBold">{authUser?.marketName}</strong>
               </div>
-              <div className=" w-1/2">
+              <div className=" text-end">
                 <h2>Контакты</h2>
-                <strong>{authUser?.marketContacts}</strong>
+                <strong className="font-rfBold">{authUser?.marketContacts}</strong>
               </div>
             </div>
           </div>
-          <div className="flex justify-end gap-4 flex-row-reverse">
+          <div className="flex justify-end items-center gap-4 flex-col-reverse">
             <div className="flex flex-col gap-2 w-full">
-              <p>Если поле "Текст отзыва" не <br /> заполнено, тогда его автоматически отвечает ИИ.</p>
+              <p className="manrope-medium">Если поле "Текст отзыва" не заполнено,<br /> тогда его автоматически отвечает ИИ.</p>
             </div>
             <div className="flex flex-col gap-2 w-full">
               {Object.entries(responses)?.map(([key, value], index) => (
-                <div className="w-full flex items-center" key={index}>
-                  <div className="h-full flex items-center justify-center">
-                    {index + 1} <OneStar />
+                <div className="max-w-400 flex items-center relative btn-universal " key={index} >
+                  <div className="h-full flex items-center justify-center absolute left-7 manrope-bold text-center">
+                    {index + 1}  <img src={star} alt="" />
                   </div>
+                  
                   <input
                     type="text"
-                    className="border p-2 mr-2 w-full"
+                    className="p-2 pl-16 mr-2 w-full btn-universal-btn "
                     value={value} // Use the value from the responses object
                     onClick={() => handleInputClick(value)} // Copy the value to clipboard
                     readOnly
@@ -168,9 +176,11 @@ const AppReviews = () => {
                   />
                 </div>
               ))}
-              <button className="btn btn-primary" onClick={() => document.getElementById('edit-responses-modal').click()}>
-                Редактировать мануальные ответы
-              </button>
+              <div className="btn-universal btn-universal-manual-responses">
+                <button className="btn-universal-btn font-rfBold" onClick={() => document.getElementById('edit-responses-modal').click()}>
+                  Редактировать мануальные ответы
+                </button>
+              </div>
               <EditReviewResponsesModal responses={responses} setResponses={setResponses} refetchReviews={refetch} />
 
             </div>

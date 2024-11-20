@@ -57,8 +57,9 @@ const EditMarketDetailsModal = ({ authUser, refetchUserData }) => {
             <input type="checkbox" id="edit-details-modal" className="modal-toggle" />
             <div className="modal">
                 <div className="modal-box">
-                    <h3 className="font-bold text-lg">Редактировать детали магазина и API</h3>
+                    <h3 className="font-black text-center text-lg mb-4">Редактировать детали магазина и API</h3>
 
+                    <strong className='font-rfBold'>Название Магазина</strong>
                     <input
                         type="text"
                         placeholder="Название магазина"
@@ -66,7 +67,7 @@ const EditMarketDetailsModal = ({ authUser, refetchUserData }) => {
                         value={marketName}
                         onChange={(e) => setMarketName(e.target.value)}
                     />
-
+                    <strong className='font-rfBold'>Контакты</strong>
                     <input
                         type="text"
                         placeholder="Контакты"
@@ -74,7 +75,7 @@ const EditMarketDetailsModal = ({ authUser, refetchUserData }) => {
                         value={contacts}
                         onChange={(e) => setContacts(e.target.value)}
                     />
-
+                    <strong className='font-rfBold'>API токен</strong>
                     <textarea
                         type="text"
                         placeholder="API-ключ для отзывов"

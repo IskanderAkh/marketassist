@@ -60,13 +60,13 @@ const Plan = ({ plan, i, authUser, userPlan }) => {
     };
     return (
         <div>
-            <div className="card bg-base-100 w-96 shadow-xl h-full">
+            <div className="card bg-base-100 w-96 shadow-xl h-full plan">
                 <div className="card-body">
-                    <h2 className="card-title">{plan.name}</h2>
+                    <h2 className="card-title mx-auto">{plan.name}</h2>
                     <div className='my-4'>
                         <div>
-                            <p>{calculatePrice()}₽/мес.</p>
-                            <p className='line-through'>{calculatePrevPrice()}₽/мес. <span>{-plan.planDiscount}%</span></p>
+                            <p className='gradient-color font-rfBold plan-price'>{calculatePrice()}₽/мес.</p>
+                            <p className='line-through '>{calculatePrevPrice()}₽/мес. <span>{-plan.planDiscount}%</span></p>
                         </div>
                         {plan._id === "66dfdcd64c02e37851cb52e9" && <div>
                             {/* Specific content for this plan */}

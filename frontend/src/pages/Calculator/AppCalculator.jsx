@@ -5,7 +5,8 @@ import ReportDetailByPeriod from "@/components/ReportDetailByPeriod/ReportDetail
 const AppCalculator = () => {
   return (
     <Container>
-      <div>
+      <div className="flex flex-col">
+         <h1 className="uppercase font-rfBlack page-title gradient-color mx-auto mt-24 mb-10">Калькулятор прибыли</h1>
         <ReportDetailByPeriod/>
       </div>
     </Container>

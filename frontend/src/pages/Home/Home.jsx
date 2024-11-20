@@ -17,10 +17,13 @@ const Home = () => {
         console.log(error);
       }
     },
+    retry: false
   })
   // Initiate fetchUser only if authUser is not already loaded
-  useFetchUser();
 
+  if (isLoading) {
+    return <div></div>
+  }
 
   return (
     <div>

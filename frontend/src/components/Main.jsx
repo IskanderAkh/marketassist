@@ -21,10 +21,12 @@ import ScrollToTop from './ScrollToTop';
 const Main = ({ authUser, authUserLoading, authUserError }) => {
     const RedirectAuthenticatedUser = ({ children }) => {
         if (authUser) {
-            return <Navigate to='/' replace />;
+            return <Navigate to='/profile' replace />;
         }
         return children;
     };
+    
+    
 
     const ProtectedRoute = ({ children }) => {
         if (!authUser && !authUserLoading) {
@@ -38,7 +40,7 @@ const Main = ({ authUser, authUserLoading, authUserError }) => {
             <ScrollToTop /> {/* Add this component */}
             <Routes>
                 <Route path='/' element={<Home />} />
-                <Route path='/auth' element={<Auth />} />
+                <Route path='/Auth/:pagename' element={<Auth />} />
                 <Route path='/calculator' element={<Calculator />} />
                 <Route path='/app-calculator' element={<ProtectedRoute><AppCalculator /></ProtectedRoute>} />
                 <Route path='/reviews' element={<Reviews />} />

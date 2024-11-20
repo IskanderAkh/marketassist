@@ -9,7 +9,8 @@ import { Navigate } from 'react-router-dom';
 
 export default function Profile() {
   const { data: authUser, isLoading, isError } = useQuery({ queryKey: ['authUser'] });
-
+  console.log('Proflke');
+  
   if (isLoading) {
     return <LoadingPage />
   }

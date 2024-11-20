@@ -23,10 +23,10 @@ const UnauthHeader = () => {
                             Контакты
                         </div>
                     </Link>
-                    <Link to="/auth" className="poppins-bold navbar-end-auth flex items-center">
+                    <Link to="/Auth/Login" className="poppins-bold navbar-end-auth flex items-center">
                         <div className='relative w-full h-full flex items-center justify-center'>
                             <div className='navbar-end-auth-circle'>
-                                <div className='header-btn flex items-center justify-center'>
+                                <div className='header-btn'>
                                     Вход
                                 </div>
                             </div>

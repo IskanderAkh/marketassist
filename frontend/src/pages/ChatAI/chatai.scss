@@ -4,74 +4,103 @@
     flex-direction: column;
     justify-content: space-between;
     max-height: 750px;
-    height: calc(100vh - 200px); 
+    height: calc(100vh - 200px);
     padding: 1rem;
-    border: 2px solid #ccc; /* Обводка вокруг контейнера */
-    border-radius: 10px; /* Закруглённые углы */
-    // box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Лёгкая тень для придания объема */
-    background-color: white; /* Белый фон для контейнера */
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    // background-color: white;
     overflow: hidden; /* Обрезает выходящие за пределы содержимое */
+
 }
 
 .messages {
     flex-grow: 1;
-    overflow-y: auto; /* Добавляет скролл при переполнении сообщений */
+    overflow-y: auto;
     margin-bottom: 1rem;
 }
 
-// .chat {
-//     display: flex;
-//     margin-bottom: 10px;
-// }
 
-// .chat-start {
-//     justify-content: flex-start;
-// }
-
-// .chat-end {
-//     justify-content: flex-end;
-// }
-
-// .chat-bubble {
-//     background-color: #f1f1f1;  /* Цвет для AI сообщений */
-//     padding: 10px;
-//     border-radius: 15px;
-//     max-width: 60%;
-// }
-
-.chat-end .chat-bubble {
-    // background-color: #d1e7dd;  /* Цвет для сообщений пользователя */
-}
 
 .message-box {
+
     display: flex;
     align-items: center;
     gap: 10px;
-    border-top: 1px solid #ddd; /* Разделитель между сообщениями и инпутом */
-    padding-top: 10px;
+    position: relative;
+
+    &-container {
+        max-width: none !important;
+        width: 100%;
+        height: 100%;
+        border-radius: 76.5px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 76.5px;
+        background: rgba(255, 255, 255, 0.3);
+        color: rgb(33, 33, 33);
+        font-size: 22px;
+        &::after {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: -1;
+            content: "";
+            border-radius: 76.5px;
+            filter: blur(50px);
+            background: linear-gradient(90.00deg, rgba(200, 0, 255, 0.3), rgba(15, 78, 202, 0.3) 100%);
+            transition: 0.35s;
+        }
+    }
+
+}
+
+.scroll-wrapper {
+    position: relative;
+    padding-right: 90px; /* Creates the space for the scrollbar */
+    width: 100%;
+    margin-top: 10px;
+    border: 1px solid #888;
+    border-radius: 76px;
 }
 
 .message-input {
     width: 100%;
-    max-height: 150px; // Set maximum height for better UX
-    resize: none; // Disable manual resizing
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 10px;
+    max-height: 150px;
+    resize: none;
+    background: transparent;
+    border-radius: 76px;
+    padding: 10px 35px 10px 50px ; 
     font-size: 16px;
+    overflow-y: auto;
+    box-sizing: border-box;
 }
+
+.message-input::-webkit-scrollbar {
+    width: 12px; 
+}
+
+.message-input::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 10px;
+}
+
+.message-input::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
 
 
 .message-submit {
-    padding: 10px 15px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 5px;
+    position: absolute;
+    right: 30px;
+    bottom: 10px;
+    border-radius: 50%;
     cursor: pointer;
 }
 
-/* Класс для закругления */
 .rounded {
-    border-radius: 20px; /* Закругление для основного контейнера */
+    border-radius: 20px;
 }

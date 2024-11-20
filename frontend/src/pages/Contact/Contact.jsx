@@ -6,7 +6,7 @@ const Contact = () => {
   return (
     <Container>
       <section className='contact flex flex-col mt-28'>
-        <h1 className='uppercase contact-title gradient-color mx-auto'>контакты</h1>
+        <h1 className='uppercase page-title gradient-color mx-auto'>контакты</h1>
         <h4 className='contact-subtitle mx-auto mt-12 font-rfSemibold'>Поделитесь своим мнением
           о сервисе <span className='gradient-color font-rfBlack'><span className='font-rfUltralightItalic contact-subtitle-span'>Market</span>Аssist</span> </h4>
         <div className='flex items-center justify-center'>

@@ -3,6 +3,7 @@ import axios from 'axios';
 import Container from '@/components/ui/Container';
 import './chatai.scss';
 import { Send } from 'lucide-react';
+import arrowtop from "@/assets/images/arrowtop1.svg";
 
 function ChatAI() {
     const [message, setMessage] = useState('');
@@ -10,6 +11,12 @@ function ChatAI() {
     const [resizeCount, setResizeCount] = useState(0);
     const [loading, setLoading] = useState(false); // State to track loading
     const textareaRef = useRef(null);
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) { // Send message only if Shift is not pressed
+            e.preventDefault(); // Prevent default newline behavior
+            sendMessage();
+        }
+    };
 
     const sendMessage = async () => {
         if (message.trim() === '') return;
@@ -64,40 +71,65 @@ function ChatAI() {
         }
     }, [message]); // Adjust height on message change
 
+    const formatMessageContent = (content) => {
+        // Use regex to replace `**_` text with a bold tag
+        const formattedContent = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        return (
+            <span
+                dangerouslySetInnerHTML={{ __html: formattedContent }}
+            />
+        );
+    };
+
     return (
         <Container>
-            <div className="chat-container mt-5 m-auto ">
+            <div className="chat-container mt-5 m-auto">
                 <div className="messages">
                     {chat.map((msg, index) => (
                         <div key={index} className={`chat ${msg.role === 'user' ? 'chat-end' : 'chat-start'}`}>
-                            <div className={`chat-bubble ${msg.role === 'user' ? 'chat-bubble-success' : ''}`}>
-                                {typeof msg.content === 'string' ? msg.content.split('\n').map((line, i) => (
-                                    <div key={i}>{line}</div>
-                                )) : msg.content}
+                            <div className={`font-rfSemibold ${msg.role === 'user' ? 'text-end' : 'gradient-color'}`}>
+                                {typeof msg.content === 'string' ? (
+                                    msg.content.split('\n').map((line, i) => (
+                                        <div key={i} className="font-rfBold">
+                                            {formatMessageContent(line)}
+                                        </div>
+                                    ))
+                                ) : (
+                                    msg.content
+                                )}
                             </div>
                         </div>
                     ))}
                 </div>
 
-                <div className="message-box">
-                    <textarea
-                        ref={textareaRef}
-                        className="message-input"
-                        type="text"
-                        placeholder="Введите вопрос..."
-                        value={message}
-                        onChange={handleInputChange}
-                        style={{ overflowY: resizeCount >= 5 ? 'auto' : 'hidden' }}
-                        disabled={loading} // Disable textarea while loading
-                    />
+                <div className="message-box ">
+                    <div className='message-box-container flex items-center pr-28'>
+
+                        <textarea
+                            ref={textareaRef}
+                            className="message-input outline-none font-rfRegular"
+                            type="text"
+                            placeholder="Введите вопрос..."
+                            value={message}
+                            onChange={handleInputChange}
+                            onKeyDown={handleKeyDown} // Add key down event
+                            style={{ overflowY: resizeCount >= 5 ? 'auto' : 'hidden' }}
+                            disabled={loading} // Disable textarea while loading
+                        />
+
+
+                    </div>
                     <button
                         className="message-submit"
                         type="button"
                         onClick={sendMessage}
                         disabled={loading} // Disable button while loading
                     >
-                        {loading ? <span className="loading loading-spinner loading-sm"></span>
-                            : <Send />} {/* Button text changes while loading */}
+                        {loading ? (
+                            <span className="loading loading-spinner loading-sm"></span>
+                        ) : (
+                            <img src={arrowtop} alt="Send" />
+                        )}
                     </button>
                 </div>
             </div>

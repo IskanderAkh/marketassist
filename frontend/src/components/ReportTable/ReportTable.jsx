@@ -48,13 +48,13 @@ const ReportTable = ({ groupedData, handleCostChange, logisticsCount, recalculat
                 </button>
             </div>
 
-            <div id="table-container" className="overflow-x-auto border p-4">
-                <table className="table table-sm">
+            <div id="table-container" className="overflow-x-auto p-4">
+                <table className="table table-xs">
                     <thead>
                         <tr className='font-bold text-black text-base'>
-                            <th  >
+                            <th >
                                 <label>
-                                    <select value={columnType} onChange={handleColumnChange} className="select select-bordered">
+                                    <select value={columnType} onChange={handleColumnChange} className="select">
                                         <option value="Баркод">Баркод</option>
                                         <option value="Артикул поставщика">Артикул поставщика</option>
                                     </select>
@@ -67,7 +67,7 @@ const ReportTable = ({ groupedData, handleCostChange, logisticsCount, recalculat
 
                             <th className=''>
                                 <label>
-                                    <select value={showPenalty} onChange={handlePenaltyChange} className="select select-bordered">
+                                    <select value={showPenalty} onChange={handlePenaltyChange} className="select">
                                         <option value="Возмещение/Возврат">Возмещение/Возврат</option>
                                         <option value="Штрафы">Штрафы</option>
                                     </select>
@@ -76,7 +76,7 @@ const ReportTable = ({ groupedData, handleCostChange, logisticsCount, recalculat
                             </th>
                             <th>
                                 <label>
-                                    <select value={kkk} onChange={handleKkkColumnChange} className="select select-bordered">
+                                    <select value={kkk} onChange={handleKkkColumnChange} className="select">
                                         <option value="Компенсация ущерба">Компенсация ущерба</option>
                                         <option value="Коррекция продаж">Коррекция продаж</option>
                                         <option value="Корректировка эквайринга">Корректировка эквайринга</option>
@@ -108,21 +108,25 @@ const ReportTable = ({ groupedData, handleCostChange, logisticsCount, recalculat
                             <th className='text-black font-bold text-lg pr-5'>Итог:</th>
                             <th className='text-black font-bold text-lg'> ₽ {calculateTotalFinalResult().toFixed(2)}</th>
                         </tr>
-                        <tr className='border-t border-black'>
+                        <tr className=' '>
                             <th colSpan="2" className='font-bold text-black text-base'>Итог с учетом следующих данных</th>
                             <th className='font-semibold text-base'>Хранение: <br /> <span className='text-black'>₽ {storage.toFixed(2)}</span></th>
                             <th className='font-semibold text-base'>Удержание: <br /><span className='text-black'> ₽ {retention.toFixed(2)} </span></th>
                             <th colSpan="2" className='font-semibold text-base'>Пересчет платной приемки: <br /> <span className='text-black'>₽ {recalculationOfPaidAcceptance.toFixed(2)}</span> </th>
                             <th className='font-semibold text-base flex flex-col gap-0.5 items-start'>
                                 <p>Операционные расходы</p>
-                                <label className='border px-3 py-1 flex gap-1'>
-                                    <span className='text-black'>₽</span>
-                                    <input
-                                        type="number"
-                                        value={operationalCosts}
-                                        disabled={groupedData.length == 0}
-                                        onChange={handleOperationalCostsChange}
-                                        className="operationalCosts-input outline-none text-sm" />
+                                <label className=' py-1 flex gap-1'>
+                                    <div className="input-wrapper relative flex items-center">
+                                        <input
+                                            type="number"
+                                            value={operationalCosts}
+                                            disabled={groupedData.length == 0}
+                                            onChange={handleOperationalCostsChange}
+                                            className="operationalCosts-input max-w-32"
+                                        />
+                                        <span className='absolute right-4 '>₽</span>
+                                    </div>
+
                                 </label>
                             </th>
                             {/* <th className='text-black font-bold text-lg pr-5'></th> */}

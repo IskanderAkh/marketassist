@@ -12,7 +12,11 @@
 }
 
 .header-logo {
-    width: 100%;
+    width: 80%;
+    img{
+        max-width: 250px;
+        width: 100%;
+    }
 }
 
 .header-btn {
@@ -43,7 +47,6 @@
 
 .navbar-end {
     & a {
-        width: 100%;
         line-height: 28px;
         font-size: 23.04px;
         // text-align: center;
@@ -53,7 +56,7 @@
         // width: 100%;
         line-height: 28px;
         font-size: 23.04px;
-        text-align: center;
+        // text-align: center;
     }
 }
 
@@ -67,11 +70,11 @@
 }
 
 .navbar-end-auth::before {
-    width: 50%;
+    width: 100%;
     content: "";
     position: absolute;
     top: 0;
-    left: 25%;
+    left: 0;
     bottom: 0;
     border-radius: 26.88px;
     background: linear-gradient(90deg, rgb(200, 0, 255) 0%, rgb(15, 77, 202) 100%);

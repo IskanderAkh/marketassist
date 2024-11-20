@@ -188,8 +188,8 @@ const Register = () => {
         </div>
         <div className='flex flex-col items-center justify-center gap-10'>
           <div href="/forgot-password" className="text-center">
-            <Link to="/forgot-password" className='manrope-bold forgot-pass'>
-              Забыли пароль?
+            <Link to="/auth" className='manrope-bold forgot-pass'>
+              Есть Аккаунт?
             </Link>
           </div>
           <div className='relative'>

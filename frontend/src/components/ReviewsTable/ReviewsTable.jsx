@@ -26,25 +26,27 @@ const ReviewsTable = ({ isError, isLoading, reviews, authUser }) => {
 
   return (
     <div>
-      <div className="flex w-full items-center justify-between my-10">
+      <div className="flex w-full items-center justify-between mt-32 mb-10">
         <div className="text-center text-xl font-bold">
           Отзывы клиентов
         </div>
-        <button
-          className={`btn ${responseOnReviewsEnabled ? 'btn-success' : 'btn-primary'}`}
-          onClick={toggleAutoResponses}
-        >
-          {responseOnReviewsEnabled ? 'Отключить автоответы' : 'Включить автоответы'}
-        </button>
+        <div className="btn-universal">
+          <button
+            className={`${responseOnReviewsEnabled ? '' : ''} btn-universal-btn`}
+            onClick={toggleAutoResponses}
+          >
+            {responseOnReviewsEnabled ? 'Отключить автоответы' : 'Включить автоответы'}
+          </button>
+        </div>
       </div>
       <div className="overflow-x-auto">
         {isLoading && <p>Загрузка...</p>}
-        {!isLoading && <table className="table">
+        {!isLoading && <table className="table border-none">
           <thead>
             <tr>
               <th> </th>
               <th>Имя</th>
-              <th>Отзыв</th>
+              <th >Отзыв</th>
               <th>Рейтинг</th>
               <th>Товар</th>
               <th>Ответ на отзыв</th>
@@ -53,23 +55,21 @@ const ReviewsTable = ({ isError, isLoading, reviews, authUser }) => {
           <tbody>
             {(reviews?.length > 0) && !isError ? (
               reviews.map((review, i) => (
-                <tr key={i}>
+                <tr key={i} className="border-none">
                   <th>
                     {i + 1}
                   </th>
                   <td>
                     <div className="flex items-center gap-3">
-
                       <div>
                         <div className="font-medium">{review.userName || 'Покупатель'}</div>
-
                       </div>
                     </div>
                   </td>
-                  <td className="max-w-52">
+                  <td className="max-w-52" >
                     {review.text ? review.text : review.pros}
                   </td>
-                  <td>
+                  <td className="w-40">
                     <RatingStars rating={review.productValuation} />
                   </td>
                   <td>

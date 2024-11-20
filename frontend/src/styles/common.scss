@@ -5,6 +5,9 @@
 @use './components/contacts';
 @use './components/auth';
 @use './components/forgotpass';
+@use './components/calculator';
+@use './components/reviews';
+@use './components/plans';
 
 .g-bg {
     background: linear-gradient(40deg, var(--color-bg1), var(--color-bg2));
@@ -25,7 +28,7 @@
         bottom: 0;
         z-index: -1;
         content: "";
-       
+
     }
 }
 
@@ -57,3 +60,66 @@ input::-webkit-inner-spin-button {
 input[type=number] {
     -moz-appearance: textfield;
 }
+
+.btn-universal {
+    max-width: 400px;
+    width: 100%;
+    height: 60px;
+    position: relative;
+
+    &::after {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: -1;
+        content: "";
+        border-radius: 76.5px;
+        filter: blur(50px);
+        background: linear-gradient(90.00deg, rgba(200, 0, 255, 0.3), rgba(15, 78, 202, 0.3) 100%);
+        transition: 0.35s;
+    }
+
+    &:hover {
+        &::after {
+            filter: blur(30px);
+
+        }
+    }
+
+    &-btn {
+        width: 100%;
+        height: 100%;
+        border-radius: 76.5px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 76.5px;
+        background: rgba(255, 255, 255, 0.3);
+
+        color: rgb(33, 33, 33);
+        font-size: 22px;
+        letter-spacing: 0%;
+    }
+}
+
+.react-datepicker-wrapper {
+    width: 100%;
+}
+
+.page-title {
+    margin: auto;
+    font-size: 50px;
+    font-weight: 600;
+    line-height: 50px;
+    letter-spacing: 0%;
+    position: relative;
+}
+
+@mixin linear-gradient-bg($start-color, $end-color) {
+    background: linear-gradient(90deg, $start-color, $end-color);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
