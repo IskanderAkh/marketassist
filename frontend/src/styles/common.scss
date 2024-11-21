@@ -85,7 +85,12 @@ input[type=number] {
 
     &:hover {
         &::after {
-            filter: blur(30px);
+            filter: blur(10px);
+
+        }
+
+        & button {
+            color: white;
 
         }
     }
@@ -121,5 +126,4 @@ input[type=number] {
     background: linear-gradient(90deg, $start-color, $end-color);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-  }
-  
+}
