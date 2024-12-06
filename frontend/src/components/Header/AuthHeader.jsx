@@ -3,11 +3,9 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { User, X } from "lucide-react";
-// import '@/styles/components/header.scss';
 import { useState, useEffect } from "react";
 import Container from "@/components/ui/Container";
 import logo from "@/assets/images/logo.svg"
-import ai_stars from "@/assets/images/AI-stars.svg"
 
 const Header = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -70,12 +68,12 @@ const Header = () => {
               <ListItem href="/app-reviews" title="Управление Отзывами" isClickable={authUser} isMenuOpen={isMenuOpen} className={"text-sm font-medium"}>
                 Генерируйте автоответы на отзывы клиентов с помощью ИИ.
               </ListItem>
-              <ListItem href="/warehouses" title="Поиск лимитов" isClickable={authUser} isMenuOpen={isMenuOpen} className={"text-sm font-medium"}>
+              {/* <ListItem href="/warehouses" title="Поиск лимитов" isClickable={authUser} isMenuOpen={isMenuOpen} className={"text-sm font-medium"}>
                 Ищите лимиты в вашем складе.
-              </ListItem>
-              <ListItem href="/repricer" title="Репрайсер" isClickable={authUser} isMenuOpen={isMenuOpen} className={"text-sm font-medium"}>
+              </ListItem> */}
+              {/* <ListItem href="/repricer" title="Репрайсер" isClickable={authUser} isMenuOpen={isMenuOpen} className={"text-sm font-medium"}>
                 Изменение цен на текущие товары.
-              </ListItem>
+              </ListItem> */}
               {/* <div className={`h-full flex items-center leading-none ${!isMenuOpen ? 'tooltip tooltip-bottom' : ''} `} data-tip={`asdasda`}>
                 <li className="relative py-2.5 px-6 flex items-center flex-row">
                   <Link to={'/chat-ai'} className={'login-btn p-0 text-2xl font-rfBlack'}>AI</Link>
