@@ -80,25 +80,25 @@ const AuthorizedProfile = () => {
         <div className="flex items-center justify-between mt-10">
           <div className="flex gap-4 items-center">
             <button
-              className={`btn ${activeLink === "account" ? "btn-primary" : ""}`}
+              className={`font-rfBold ${activeLink === "account" ? "bg-custom-gradient active-route text-white" : "unactive-route"}`}
               onClick={() => changeActiveLink("account")}
             >
               Аккаунт
             </button>
             <button
-              className={`btn ${activeLink === "plans" ? "btn-primary" : ""}`}
+              className={`font-rfBold ${activeLink === "plans" ? "bg-custom-gradient active-route text-white" : "unactive-route"}`}
               onClick={() => changeActiveLink("plans")}
             >
               Тарифные планы
             </button>
             <button
-              className={`btn ${activeLink === "subscriptions" ? "btn-primary" : ""}`}
+              className={`font-rfBold ${activeLink === "subscriptions" ? "bg-custom-gradient active-route text-white" : "unactive-route"}`}
               onClick={() => changeActiveLink("subscriptions")}
             >
               Подписки и счета
             </button>
             <button
-              className={`btn ${activeLink === "apikeys" ? "btn-primary" : ""}`}
+              className={`font-rfBold ${activeLink === "apikeys" ? "bg-custom-gradient active-route text-white" : "unactive-route"}`}
               onClick={() => changeActiveLink("apikeys")}
             >
               API ключи

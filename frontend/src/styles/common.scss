@@ -8,6 +8,8 @@
 @use './components/calculator';
 @use './components/reviews';
 @use './components/plans';
+@use './components/account';
+@use './components/footer';
 
 .g-bg {
     background: linear-gradient(40deg, var(--color-bg1), var(--color-bg2));
@@ -31,6 +33,12 @@
 
     }
 }
+.rounded-500{
+    border-radius: 500px;
+}
+.bg-custom-gradient {
+    background: linear-gradient(90.00deg, rgb(200, 0, 255), rgb(15, 78, 202) 100%);
+}
 
 .gradient-color {
     background: linear-gradient(to right, rgb(200, 0, 255), rgb(15, 78, 202));
@@ -43,7 +51,6 @@ header {
     position: relative;
     z-index: 10;
     background: rgba(255, 255, 255, 0.8);
-    /* Легкое размытие для читабельности */
     backdrop-filter: blur(10px);
 }
 
@@ -80,12 +87,19 @@ input[type=number] {
         border-radius: 76.5px;
         filter: blur(50px);
         background: linear-gradient(90.00deg, rgba(200, 0, 255, 0.3), rgba(15, 78, 202, 0.3) 100%);
-        transition: 0.35s;
+        transition: 0.3s;
     }
 
     &:hover {
+        
         &::after {
-            filter: blur(30px);
+            filter: blur(10px);
+        }
+        
+        & button {
+            transition: 0.3s;
+            background: linear-gradient(90.00deg, rgb(200, 0, 255), rgb(15, 78, 202) 100%);
+            color: #ffffff !important;
 
         }
     }
@@ -121,5 +135,4 @@ input[type=number] {
     background: linear-gradient(90deg, $start-color, $end-color);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-  }
-  
+}

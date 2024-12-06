@@ -158,6 +158,6 @@ export const applyFilters = async (req, res) => {
         res.status(500).send({ message: 'Failed to save filters' });
     }
 }
-cron.schedule('*/5 * * * *', runAutoSearchForUsers);
+// cron.schedule('*/5 * * * *', runAutoSearchForUsers);
 
 

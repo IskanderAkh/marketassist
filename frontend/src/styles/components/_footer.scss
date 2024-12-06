@@ -1,0 +1,16 @@
+.footer {
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 120px;
+    border-radius: 90px 90px 0 0;
+    box-shadow:
+        0 5px 25px -10px rgba(200, 0, 255, 0.3),
+        5px 0 25px -10px rgba(15, 78, 202, 0.3),
+        -5px 0 25px -10px rgba(15, 78, 202, 0.3);
+
+    &-rights {
+        color: #212121;
+    }
+}

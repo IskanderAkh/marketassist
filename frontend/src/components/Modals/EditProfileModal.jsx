@@ -10,11 +10,13 @@ const EditProfileModal = ({ authUser }) => {
 		email: "",
 		phoneNumber: "",
 		firstName: "",
-		lastName: ""
+		lastName: "",
+		newPassword: "",
+		currentPassword: "",
 	});
 
 	const { updateProfile, isUpdatingProfile } = useUpdateUserProfile();
-   
+
 	const handleInputChange = (e) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
@@ -38,13 +40,13 @@ const EditProfileModal = ({ authUser }) => {
 
 	return (
 		<>
-			<button
-				className='btn btn-primary btn-outline'
-				onClick={() => document.getElementById("edit_profile_modal").showModal()}
-				title='Для изменения текущих данных, а также пароля'
-			>
-				Изменить данные
-			</button>
+				<button
+					className='bg-custom-gradient font-rfBold text-white rounded-500 px-12 py-2.5'
+					onClick={() => document.getElementById("edit_profile_modal").showModal()}
+					title='Для изменения текущих данных, а также пароля'
+				>
+					Изменить данные
+				</button>
 			<dialog id='edit_profile_modal' className='modal'>
 				<div className='modal-box border rounded-md border-gray-700 shadow-md'>
 					<h3 className='font-bold text-lg my-3'>Обновить профиль</h3>
@@ -129,9 +131,29 @@ const EditProfileModal = ({ authUser }) => {
 								onChange={handleInputChange}
 							/>
 						</div>
-						<button className='btn btn-primary rounded-full btn-sm text-white'>
-							{isUpdatingProfile ? "Обновление..." : "Обновить"}
-						</button>
+						<div className='flex flex-wrap gap-2'>
+							<input
+								type='text'
+								placeholder='ИНН/ОГРНИП'
+								className='flex-1 input border border-gray-700 rounded p-2 input-md'
+								value={formData.innOrOgrnip}
+								name='innOrOgrnip'
+								onChange={handleInputChange}
+							/>
+							<input
+								type='text'
+								placeholder='Название компании'
+								className='flex-1 input border border-gray-700 rounded p-2 input-md'
+								value={formData.companyName}
+								name='companyName'
+								onChange={handleInputChange}
+							/>
+						</div>
+						<div className="btn-universal mx-auto mt-10">
+							<button className='btn-universal-btn font-rfBold'>
+								{isUpdatingProfile ? "Обновление..." : "Обновить"}
+							</button>
+						</div>
 					</form>
 				</div>
 				<form method='dialog' className='modal-backdrop'>

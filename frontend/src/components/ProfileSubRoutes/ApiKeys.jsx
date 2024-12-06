@@ -36,27 +36,22 @@ const ApiKeys = () => {
         }));
     };
 
-    // Update Reviews API Key
     const updateReviewsApiKey = async () => {
         await updateApiKey('reviewsApiKey', apiKeys.reviewsApiKey, '/api/user/update-reviews-api-key');
     };
 
-    // Update Calculator API Key
     const updateCalcApiKey = async () => {
         await updateApiKey('calcApiKey', apiKeys.calcApiKey, '/api/user/update-calc-api-key');
     };
 
-    // Update WH API Key
     const updateWHApiKey = async () => {
         await updateApiKey('whApiKey', apiKeys.whApiKey, '/api/user/update-wh-api-key');
     };
 
-    // Update Reprice API Key
     const updateRepriceApiKey = async () => {
         await updateApiKey('repriceApiKey', apiKeys.repriceApiKey, '/api/user/update-reprice-api-key');
     };
 
-    // Generalized function to update API key
     const updateApiKey = async (keyName, keyValue, url) => {
         try {
             await axios.put(url, { apiKey: keyValue });
@@ -70,7 +65,7 @@ const ApiKeys = () => {
     if (loading) return <div>Загрузка...</div>;
 
     return (
-        <div className="container mx-auto my-8 p-6 bg-base-200 rounded-lg shadow-md">
+        <div className="container mx-auto my-8 p-6 rounded-lg">
             <h2 className="text-2xl font-semibold mb-4">Обновление API ключей</h2>
             {message && (
                 <div className={`alert ${message.includes('успешно') ? 'alert-success' : 'alert-error'} shadow-lg mb-4`}>

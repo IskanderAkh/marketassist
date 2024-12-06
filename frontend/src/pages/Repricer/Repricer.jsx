@@ -6,7 +6,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import LoadingPage from '@/components/LoadingPage/LoadingPage';
 import toast from 'react-hot-toast';
-import { useFetchProducts } from '@/store/useProductsState.js';  // Import the hook
+// import { useFetchProducts } from '@/store/useProductsState.js';  
 
 const Repricer = () => {
     const queryClient = useQueryClient();
@@ -15,13 +15,23 @@ const Repricer = () => {
 
     const [editedProducts, setEditedProducts] = useState({});
     const repriceData = authUser?.repricingData;
-    const { productsData, isLoading: isLoadingProducts, error: productsError } = useFetchProducts(authUser?.apiKeys?.repriceApiKey);
+    // const { data: productsData, isLoading: isLoadingProducts, error: productsError } = useFetchProducts(authUser?.apiKeys?.repriceApiKey);
 
-
+    const { data: productsData, isLoading: isLoadingProducts, error: productsError } = useQuery({
+        queryKey: ['productsData'],
+        queryFn: async () => {
+            const response = await axios.get('/api/reprice/get-products');
+            return response.data.products;
+        },
+        staleTime: 5 * 60 * 1000,  // Cache data for 5 minutes
+        cacheTime: 10 * 60 * 1000,  // Store data in cache for 10 minutes
+    });
+    
+    
     const filteredProductsData = productsData?.filter(product =>
         authUser?.repricingData.some(userBarcode => userBarcode.barcode === product.barcode)
     ) || [];
-  
+
     const aggregatedData = filteredProductsData.reduce((acc, product) => {
         const { barcode, quantity, supplierArticle, brand, subject, Price, Discount } = product;
         if (!acc[barcode]) {
@@ -119,8 +129,11 @@ const Repricer = () => {
                     <table className="table-auto w-full mt-4">
                         <thead>
                             <tr>
-                                <th className="px-4 py-2">Товар</th>
-                                <th className="px-4 py-2">Текущая Цена</th>
+                                <th className="px-4 py-2">Штрих-код</th>
+                                <th className="px-4 py-2">Наименование</th>
+                                <th className="px-4 py-2">Бренд</th>
+                                <th className="px-4 py-2">Предмет</th>
+                                <th className="px-4 py-2">Цена</th>
                                 <th className="px-4 py-2">Скидка</th>
                                 <th className="px-4 py-2">Порог</th>
                                 <th className="px-4 py-2">Коэффициент изменений</th>
@@ -132,17 +145,15 @@ const Repricer = () => {
                         <tbody className=''>
                             {mergedData.map((product) => (
                                 <tr key={product.barcode} className=''>
-                                    <td className="border px-4 py-2" >
-                                        <div>
-                                            <div4>Штрих-код: {product.barcode}</div4>
-                                            <div>Наименование: {product.supplierArticle}</div>
-                                            <div>Бренд: {product.brand}</div>
-                                            <div>Предмет: {product.subject}</div>
-                                        </div>
+                                    <td className="px-4 py-2" >
+                                        {product.barcode}
                                     </td>
-                                    <td className="border px-4 py-2">{product.Price} ₽</td>
-                                    <td className="border px-4 py-2">{product.Discount}%</td>
-                                    <td className="border px-4 py-2">
+                                    <td className='py-2 text-center'>{product.supplierArticle}</td>
+                                    <td className='py-2 text-center'>{product.brand}</td>
+                                    <td className='py-2 text-center'>{product.subject}</td>
+                                    <td className=" px-4 py-2">{product.Price} ₽</td>
+                                    <td className=" px-4 py-2">{product.Discount}%</td>
+                                    <td className=" px-4 py-2">
                                         <div className="input-container">
                                             <input
                                                 type="number"
@@ -153,7 +164,7 @@ const Repricer = () => {
                                             <span className="unit-label">Шт</span>
                                         </div>
                                     </td>
-                                    <td className="border px-4 py-2">
+                                    <td className=" px-4 py-2">
                                         <input
                                             type="number"
                                             value={editedProducts[product.barcode]?.changeRatio ?? product.changeRatio}
@@ -161,18 +172,18 @@ const Repricer = () => {
                                             className="input input-bordered w-full"
                                         />
                                     </td>
-                                    <td className="border px-4 py-2">{(product.Price * (1 + product.changeRatio / 100)).toFixed(2)}</td>
-                                    <td className="border px-4 py-2">{product.totalQuantity}</td>
-                                    <td className="border px-4 py-2 gap-2 flex items-center h-full justify-center flex-col">
+                                    <td className=" px-4 py-2">{(product.Price * (1 + product.changeRatio / 100)).toFixed(2)}</td>
+                                    <td className=" px-4 py-2">{product.totalQuantity}</td>
+                                    <td className=" px-4 py-2 gap-2 flex items-center h-full ">
                                         <button
-                                            className="btn btn-primary w-full"
+                                            className="py-2 px-3 border rounded-3xl"
                                             onClick={() => handleSaveClick(product)}
                                             disabled={!hasChanges(product)}
                                         >
                                             Сохранить
                                         </button>
                                         <button
-                                            className="btn btn-error w-full"
+                                            className="btn btn-error "
                                             onClick={() => handleDeleteClick(product.barcode)}
                                         >
                                             Удалить

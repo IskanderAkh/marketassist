@@ -14,7 +14,7 @@ const WarehousesWrapper = ({ authUser }) => {
     const [sliderValues, setSliderValues] = useState([0, 100]);
     const [filtersEnabled, setFiltersEnabled] = useState(authUser?.whsearchEnabled || false);
 
-   
+
     const { data: warehouses, isLoading: warehousesLoading } = useQuery({
         queryKey: ['warehouses', apiKey],
         queryFn: async () => {
@@ -49,7 +49,7 @@ const WarehousesWrapper = ({ authUser }) => {
     const applyFilters = async () => {
         const [min, max] = sliderValues;
 
-        if (!selectedWarehouses.size) { 
+        if (!selectedWarehouses.size) {
             toast.error('Пожалуйста, выберите склад');
             return;
         }
@@ -81,9 +81,9 @@ const WarehousesWrapper = ({ authUser }) => {
         const { value, checked } = e.target;
         const updatedWarehouses = new Set(selectedWarehouses);
         if (checked) {
-            updatedWarehouses.add(value); 
+            updatedWarehouses.add(value);
         } else {
-            updatedWarehouses.delete(value); 
+            updatedWarehouses.delete(value);
         }
 
         setSelectedWarehouses(updatedWarehouses);
@@ -92,21 +92,23 @@ const WarehousesWrapper = ({ authUser }) => {
 
     return (
         <div className='mt-10'>
-            <h1>Бронь лимитов</h1>
+            <h1 className='font-rfBold'>Бронь лимитов</h1>
             <div className="flex justify-between items-end mt-10 w-full mb-8">
                 <ApiInput authUser={authUser} page={'wh'} hasAccess={true} />
             </div>
-            <div className='flex flex-row-reverse items-start justify-between w-full'>
+            <div className='flex flex-row-reverse items-end justify-between w-full'>
 
-                <div className=''>
+                <div className='flex-1 flex items-center justify-end h-full'>
                     {/* Button to open modal */}
-                    <button className="btn" onClick={() => document.getElementById('my_modal_3').showModal()}>
-                        Выбрать склады
-                    </button>
+                    <div className='btn-universal w-full'>
+                        <button className="btn-universal-btn font-rfBold" onClick={() => document.getElementById('my_modal_3').showModal()}>
+                            Выбрать склады
+                        </button>
+                    </div>
                 </div>
-                <div className=''>
-                    <h3 className=''>Фильтр по дате</h3>
-                    <div className='flex justify-between'>
+                <div className='flex-1 flex justify-center items-center flex-col'>
+                    <div className='flex items-center justify-center flex-col w-full'>
+                        <h3 className='font-rfBold'>Фильтр по дате</h3>
                         <DateRangePicker
                             dateRange={dateRange}
                             setDateRange={setDateRange}
@@ -115,8 +117,8 @@ const WarehousesWrapper = ({ authUser }) => {
                         />
                     </div>
                 </div>
-                <div>
-                    <h3>Фильтр коэффициентов</h3>
+                <div className='flex-1'>
+                    <h3 className='font-rfBold'>Фильтр коэффициентов</h3>
                     <AcceptanceFilter
                         min={0}
                         max={100}
@@ -124,22 +126,28 @@ const WarehousesWrapper = ({ authUser }) => {
                     />
                 </div>
             </div>
-            <button className='btn btn-accent mt-4' onClick={applyFilters}>
-                Применить фильтры
-            </button>
+            <div className='w-full flex justify-end items-center mt-4'>
+                <div className='btn-universal '>
+                    <button className='btn-universal-btn font-rfBold' onClick={applyFilters}>
+                        Применить фильтры
+                    </button>
+                </div>
+            </div>
 
             <AutoSearchFiltersCard
                 filters={authUser?.filters}
-                selectedWarehouses={Array.from(selectedWarehouses)} // Convert Set to array
+                selectedWarehouses={Array.from(selectedWarehouses)}
                 dateRange={dateRange}
                 sliderValues={sliderValues}
                 warehouses={warehouses}
             />
 
-            <div className='mt-5 flex w-full justify-end items-end'>
-                <button className="btn btn-primary" onClick={toggleFilters}>
-                    {filtersEnabled ? 'Выключить Автопоиск' : 'Включить Автопоиск'}
-                </button>
+            <div className='mt-10 flex w-full justify-end items-end '>
+                <div className='btn-universal'>
+                    <button className="btn-universal-btn font-rfBold" onClick={toggleFilters}>
+                        {filtersEnabled ? 'Выключить Автопоиск' : 'Включить Автопоиск'}
+                    </button>
+                </div>
             </div>
 
             <dialog id="my_modal_3" className="modal">

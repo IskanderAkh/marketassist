@@ -25,22 +25,24 @@ const Plans = () => {
   });
 
   return (
-    <div className="flex flex-wrap gap-4 mt-10">
-      {isLoadingUserPlan ? (
-        Array.from({ length: 2 }).map((_, i) => <Skeleton key={i} />) 
-      ) : (
-        plans?.map((plan, i) => {
-          return (
-            <Plan
-              plan={plan}
-              key={plan._id}
-              userPlan={userPlan}
-              authUser={authUser}
-              planIndex={i}
-            />
-          );
-        })
-      )}
+    <div className="mx-auto mt-10">
+      <div className='flex flex-wrap gap-20'>
+        {isLoadingUserPlan ? (
+          Array.from({ length: 2 }).map((_, i) => <Skeleton key={i} />)
+        ) : (
+          plans?.map((plan, i) => {
+            return (
+              <Plan
+                plan={plan}
+                key={plan._id}
+                userPlan={userPlan}
+                authUser={authUser}
+                planIndex={i}
+              />
+            );
+          })
+        )}
+      </div>
     </div>
   );
 };

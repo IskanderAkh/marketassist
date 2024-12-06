@@ -15,7 +15,7 @@ const AutoSearchFiltersCard = ({ filters, warehouses, selectedWarehousesId }) =>
     }, [warehouses, warehouseIds]);
 
     return (
-        <div className="card bg-base-100 shadow-xl mt-5">
+        <div className="card bg-base-100 shadow-xl mt-20">
             <div className="card-body">
                 <h2 className="card-title">Текущие фильтры для автопоиска</h2>
                 <div className="divider"></div>

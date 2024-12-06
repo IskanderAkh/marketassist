@@ -12,6 +12,9 @@ const Warehouses = () => {
     return (
         <div>
             <Container>
+                <div className='flex items-center justify-center'>
+                    <h1 className='uppercase font-rfBlack page-title text-center gradient-color mx-auto mt-24 mb-10'>Поиск Лимитов</h1>
+                </div>
                 <WarehousesWrapper authUser={authUser} authUserLoading={authUserLoading} authUserError={authUserError} />
             </Container>
         </div>
