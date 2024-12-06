@@ -11,7 +11,7 @@ const Header = () => {
 
   const { data: authUser, isLoading, isError, error } = useQuery({
     queryKey: ['authUser'],
-    // retry: false,
+    retry: 1,
   });
 
   if (isLoading) {

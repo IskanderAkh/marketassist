@@ -1,6 +1,10 @@
+<<<<<<< HEAD
 .plan {
+=======
+.card {
+    
+>>>>>>> 3e2c4e58720f922eeeb186a5d1e90828f6dc59fc
     position: relative;
-
     &::after {
         display: flex;
         width: 100%;
@@ -14,7 +18,7 @@
         z-index: -1;
         content: "";
         border-radius: 76.5px;
-        filter: blur(100px);
+        filter: blur(50px);
         background: linear-gradient(90.00deg, rgba(200, 0, 255, 0.15), rgba(15, 78, 202, 0.15) 100%);
     }
     
