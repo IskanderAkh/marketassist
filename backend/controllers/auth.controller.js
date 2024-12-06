@@ -11,7 +11,7 @@ const generateVerificationCode = () => {
 
 export const signUp = async (req, res) => {
     try {
-        const { firstName, lastName, innOrOgrnip, phoneNumber, email, password, companyName } = req.body
+        const { firstName, lastName, innOrOgrnip, phoneNumber, email, password } = req.body
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         let emailResult = emailRegex.test(email);
@@ -21,13 +21,14 @@ export const signUp = async (req, res) => {
 
         const existingEmail = await User.findOne({ email })
         if (existingEmail) {
-            return res.status(400).json({ error: "Эта почта уже зарегистрирована. Пожалуйста, используйте другую почту или войдите в свою учетную запись." })
+            return res.status(400).json({ error: "Попробуйте ввести другую почту." })
         }
 
         const existingPhone = await User.findOne({ phoneNumber })
         if (existingPhone) {
             return res.status(400).json({ error: "Номер телефона уже занят. Попробуйте другой номер." })
         }
+
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$/;
         let passwordResult = passwordRegex.test(password);
         if (!passwordResult) {

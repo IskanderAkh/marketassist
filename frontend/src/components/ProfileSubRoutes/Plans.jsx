@@ -25,7 +25,11 @@ const Plans = () => {
   });
 
   return (
+<<<<<<< HEAD
     <div className="mx-auto mt-10">
+=======
+    <div className="mt-10 mx-auto">
+>>>>>>> 3e2c4e58720f922eeeb186a5d1e90828f6dc59fc
       <div className='flex flex-wrap gap-20'>
         {isLoadingUserPlan ? (
           Array.from({ length: 2 }).map((_, i) => <Skeleton key={i} />)

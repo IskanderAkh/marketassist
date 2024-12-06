@@ -94,6 +94,7 @@ input[type=number] {
         
         &::after {
             filter: blur(10px);
+
         }
         
         & button {
@@ -101,6 +102,11 @@ input[type=number] {
             background: linear-gradient(90.00deg, rgb(200, 0, 255), rgb(15, 78, 202) 100%);
             color: #ffffff !important;
 
+
+        }
+
+        & button {
+            color: white;
         }
     }
 
